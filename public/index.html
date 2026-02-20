@@ -27,6 +27,10 @@
             --completed: #6f42c1;
             --bg-page: #0a0c14;
             --border: #3a3f4e;
+            --admin-color: #0078d4;
+            --counselor-color: #17a2b8;
+            --helper-color: #ffc107;
+            --user-color: #6c757d;
         }
 
         body {
@@ -913,13 +917,11 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
-        // Загрузка публичных данных при запуске
         async function loadPublicData() {
             try {
                 const res = await fetch('/api/public-data');
                 if (res.ok) {
                     const publicData = await res.json();
-                    // Обновляем данные, но сохраняем пользовательские
                     data.groups = publicData.groups || {};
                     data.members = publicData.members || {};
                     data.marks = publicData.marks || {};
@@ -930,8 +932,6 @@
                     
                     renderAll();
                     console.log('✅ Публичные данные загружены из data.json');
-                } else {
-                    console.log('❌ Не удалось загрузить публичные данные');
                 }
             } catch (error) {
                 console.log('⚠️ Ошибка загрузки публичных данных:', error);
@@ -1078,7 +1078,6 @@
             if (lastUser) {
                 try {
                     const user = JSON.parse(lastUser);
-                    // Загружаем только если это НЕ демо-пользователь
                     if (user && !user.demo) {
                         const storageKey = `user_${user.id}`;
                         const saved = localStorage.getItem(storageKey);
@@ -1191,7 +1190,6 @@
             
             if (!u || !p) return showToast('введите логин и пароль', 'error');
             
-            // Проверяем, есть ли соединение с сервером
             if (!isOnline) {
                 showToast('⚠️ сервер недоступен', 'error');
                 return;
@@ -1207,15 +1205,13 @@
                 const d = await res.json();
                 
                 if (res.ok) {
-                    // Успешный вход
                     token = d.token;
                     currentUser = d.user;
-                    isDemoMode = false; // ВАЖНО: выключаем демо-режим
+                    isDemoMode = false;
                     
                     localStorage.setItem('token', token);
                     saveToLocalStorage();
                     
-                    // Загружаем данные с сервера
                     await loadData();
                     
                     showApp();
@@ -1842,46 +1838,157 @@
             document.getElementById('allGroupsList').innerHTML = html || '<div class="no-data">Нет групп</div>';
         }
 
+        // ========== НОВЫЕ ФУНКЦИИ ДЛЯ УПРАВЛЕНИЯ ПОЛЬЗОВАТЕЛЯМИ ==========
         async function loadUsers() {
             if (!currentUser || currentUser.role !== 'admin' || !isOnline || isDemoMode) return;
             try {
                 let res = await fetch(`${API_URL}/users`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (res.ok) {
-                    let uu = await res.json();
-                    document.getElementById('totalUsers').textContent = uu.length;
-                    document.getElementById('adminCount').textContent = uu.filter(u => u.role === 'admin').length;
-                    document.getElementById('counselorCount').textContent = uu.filter(u => u.role === 'counselor').length;
-                    document.getElementById('helperCount').textContent = uu.filter(u => u.role === 'helper').length;
+                    let users = await res.json();
+                    document.getElementById('totalUsers').textContent = users.length;
+                    document.getElementById('adminCount').textContent = users.filter(u => u.role === 'admin').length;
+                    document.getElementById('counselorCount').textContent = users.filter(u => u.role === 'counselor').length;
+                    document.getElementById('helperCount').textContent = users.filter(u => u.role === 'helper').length;
                     
                     let html = '';
-                    uu.forEach(user => {
+                    users.forEach(user => {
+                        const isCurrentUser = user.id === currentUser.id;
+                        const isMainAdmin = user.id === 1;
+                        
+                        let statusClass = user.isActive ? 'success' : 'danger';
+                        let statusText = user.isActive ? 'Активен' : 'Заблокирован';
+                        
                         html += `
-                            <div class="card">
+                            <div class="card" style="margin-bottom: 15px;">
                                 <div class="card-header">
                                     <strong>${user.username}</strong>
-                                    <span class="badge">${user.role}</span>
+                                    <span class="badge" style="background: var(--${user.role}-color);">${user.role}</span>
                                 </div>
-                                <div>Статус: ${user.isActive ? '✅ Активен' : '❌ Заблокирован'}</div>
-                                <div>Последний вход: ${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'никогда'}</div>
+                                <div style="margin: 10px 0;">
+                                    <span class="badge" style="background: var(--${statusClass});">${statusText}</span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">
+                                    📅 Создан: ${new Date(user.createdAt).toLocaleDateString()}<br>
+                                    🕒 Последний вход: ${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Никогда'}
+                                </div>
+                                ${!isMainAdmin ? `
+                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <button class="btn-${user.isActive ? 'warning' : 'success'}" 
+                                                style="width: auto; padding: 8px 16px; flex: 1;"
+                                                onclick="toggleUserStatus(${user.id})">
+                                            ${user.isActive ? '🔒 Заблокировать' : '🔓 Разблокировать'}
+                                        </button>
+                                        <select id="roleSelect_${user.id}" style="flex: 1; padding: 8px; width: auto;">
+                                            <option value="user" ${user.role === 'user' ? 'selected' : ''}>👤 Пользователь</option>
+                                            <option value="counselor" ${user.role === 'counselor' ? 'selected' : ''}>👨‍🏫 Вожатый</option>
+                                            <option value="helper" ${user.role === 'helper' ? 'selected' : ''}>🆘 Помощник</option>
+                                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>👑 Админ</option>
+                                        </select>
+                                        <button class="btn-info" 
+                                                style="width: auto; padding: 8px 16px;"
+                                                onclick="changeUserRole(${user.id})">
+                                            🔄 Сменить роль
+                                        </button>
+                                        ${!isCurrentUser ? `
+                                            <button class="btn-danger" 
+                                                    style="width: auto; padding: 8px 16px;"
+                                                    onclick="deleteUser(${user.id})">
+                                                🗑️ Удалить
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                ` : '<div style="color: var(--info);">👑 Главный администратор</div>'}
                             </div>
                         `;
                     });
                     document.getElementById('usersList').innerHTML = html;
                 }
-            } catch(e) {}
+            } catch(e) {
+                showToast('❌ Ошибка загрузки пользователей', 'error');
+            }
         }
 
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
-        function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+        async function toggleUserStatus(userId) {
+            if (!confirm('Изменить статус пользователя?')) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/users/${userId}/toggle`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Статус изменен', 'success');
+                    loadUsers();
+                } else {
+                    const error = await res.json();
+                    showToast(error.error || '❌ Ошибка', 'error');
+                }
+            } catch {
+                showToast('⚠️ Ошибка подключения', 'error');
+            }
+        }
+
+        async function changeUserRole(userId) {
+            const select = document.getElementById(`roleSelect_${userId}`);
+            const newRole = select.value;
+            
+            if (!confirm(`Изменить роль пользователя на "${newRole}"?`)) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+                if (res.ok) {
+                    showToast(`✅ Роль изменена на ${newRole}`, 'success');
+                    loadUsers();
+                } else {
+                    const error = await res.json();
+                    showToast(error.error || '❌ Ошибка', 'error');
+                }
+            } catch {
+                showToast('⚠️ Ошибка подключения', 'error');
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('⚠️ Вы уверены, что хотите удалить этого пользователя?\nВсе его данные будут безвозвратно удалены!')) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Пользователь удален', 'success');
+                    loadUsers();
+                } else {
+                    const error = await res.json();
+                    showToast(error.error || '❌ Ошибка', 'error');
+                }
+            } catch {
+                showToast('⚠️ Ошибка подключения', 'error');
+            }
+        }
+
+        function closeModal() { 
+            document.getElementById('modal').classList.remove('active'); 
+        }
+
+        function closeDetailModal() { 
+            document.getElementById('detailModal').classList.remove('active'); 
+        }
 
         window.addEventListener('load', () => {
             checkConnection();
             setInterval(checkConnection, 30000);
             
-            // Загружаем публичные данные из data.json
             loadPublicData();
             
-            // Загружаем пользователя из localStorage если есть
             if (loadFromLocalStorage()) {
                 showApp();
             }
