@@ -197,6 +197,25 @@ app.get('/api/health', (req, res) => res.json({
     time: new Date().toISOString()
 }));
 
+// Новый эндпоинт для получения публичных данных (без авторизации)
+app.get('/api/public-data', async (req, res) => {
+    try {
+        const data = await loadData();
+        // Отдаем только общие данные, без пользователей
+        res.json({
+            groups: data.groups || {},
+            members: data.members || {},
+            marks: data.marks || {},
+            activities: data.activities || {},
+            counselors: data.counselors || {},
+            helpers: data.helpers || {},
+            books: data.books || { list: [] }
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Ошибка загрузки данных' });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password, role = 'user' } = req.body;

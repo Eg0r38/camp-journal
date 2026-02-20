@@ -6,7 +6,16 @@
       "password": "$2a$10$aSvSfG7XRkR38hRHHzOJJuzIwv7UaELVpA4XjaG0FdTHVtUQOlGRa",
       "role": "admin",
       "createdAt": "2024-09-29T00:00:00.000Z",
-      "lastLogin": "2026-02-19T14:56:18.271Z",
+      "lastLogin": "2026-02-20T05:02:08.682Z",
+      "isActive": true
+    },
+    {
+      "id": 2,
+      "username": "22",
+      "password": "$2a$10$OCVYYvH/kBdnKgZizjVf6./VRX0V1UNTFHRB3nwivo5/ER4fQmAV2",
+      "role": "user",
+      "createdAt": "2026-02-20T05:01:59.537Z",
+      "lastLogin": "2026-02-20T05:02:03.924Z",
       "isActive": true
     }
   ],
@@ -123,6 +132,17 @@
             "addedAt": "2026-02-19T14:18:31.332Z"
           }
         ]
+      }
+    },
+    "2": {
+      "groups": {},
+      "members": {},
+      "marks": {},
+      "activities": {},
+      "counselors": {},
+      "helpers": {},
+      "books": {
+        "list": []
       }
     }
   },
