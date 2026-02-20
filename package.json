@@ -1,11 +1,18 @@
 {
   "name": "counselor-journal",
-  "version": "1.0.0",
-  "description": "Журнал вожатого",
+  "version": "2.0.0",
+  "description": "Журнал вожатого - полная версия с сервером",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "pm2-start": "pm2 start server.js --name counselor-journal",
+    "pm2-stop": "pm2 stop counselor-journal",
+    "pm2-restart": "pm2 restart counselor-journal",
+    "pm2-logs": "pm2 logs counselor-journal",
+    "pm2-delete": "pm2 delete counselor-journal",
+    "pm2-save": "pm2 save",
+    "pm2-status": "pm2 status"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -18,5 +25,11 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": ["journal", "camp", "counselor", "attendance"],
+  "author": "Egor38",
+  "license": "MIT"
 }
