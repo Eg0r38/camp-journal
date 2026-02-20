@@ -15,7 +15,6 @@ const HOST = '0.0.0.0';
 const JWT_SECRET = 'counselor-journal-super-secret-key-2024';
 const DATA_FILE = path.join(__dirname, 'data.json');
 
-// Настройки безопасности
 app.use(helmet({ 
     contentSecurityPolicy: false, 
     crossOriginEmbedderPolicy: false 
@@ -39,7 +38,6 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Логирование
 function log(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
     const colors = { 
@@ -51,7 +49,6 @@ function log(message, type = 'info') {
     console.log(`${colors[type]}[${timestamp}] ${message}\x1b[0m`);
 }
 
-// Получение всех локальных IP
 function getAllLocalIPs() {
     const interfaces = os.networkInterfaces();
     const ips = [];
@@ -65,7 +62,6 @@ function getAllLocalIPs() {
     return ips;
 }
 
-// Инициализация данных
 async function initializeData() {
     try {
         await fs.access(DATA_FILE);
@@ -130,7 +126,6 @@ async function initializeData() {
     }
 }
 
-// Загрузка данных
 async function loadData() {
     try {
         return JSON.parse(await fs.readFile(DATA_FILE, 'utf8'));
@@ -150,7 +145,6 @@ async function loadData() {
     }
 }
 
-// Сохранение данных
 async function saveData(data) {
     try {
         await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
@@ -160,7 +154,6 @@ async function saveData(data) {
     }
 }
 
-// Мидлвары
 async function authenticateToken(req, res, next) {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
@@ -188,7 +181,6 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-// API для получения информации о сервере
 app.get('/api/server-info', (req, res) => {
     const ips = getAllLocalIPs();
     res.json({
@@ -200,7 +192,6 @@ app.get('/api/server-info', (req, res) => {
     });
 });
 
-// API авторизации
 app.get('/api/health', (req, res) => res.json({ 
     status: 'ok',
     time: new Date().toISOString()
@@ -287,7 +278,6 @@ app.get('/api/me', authenticateToken, (req, res) => {
     res.json({ user: { id: req.user.id, username: req.user.username, role: req.user.role } });
 });
 
-// Управление пользователями
 app.get('/api/users', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const data = await loadData();
@@ -383,7 +373,6 @@ app.put('/api/users/:id/role', authenticateToken, requireAdmin, async (req, res)
     }
 });
 
-// Получение данных пользователя
 app.get('/api/data', authenticateToken, async (req, res) => {
     try {
         const data = await loadData();
@@ -438,7 +427,6 @@ app.get('/api/data', authenticateToken, async (req, res) => {
     }
 });
 
-// Сохранение данных пользователя
 app.post('/api/data', authenticateToken, async (req, res) => {
     try {
         const newData = req.body;
@@ -487,7 +475,6 @@ app.post('/api/data', authenticateToken, async (req, res) => {
     }
 });
 
-// Синхронизация для мобильных устройств
 app.post('/api/sync', authenticateToken, async (req, res) => {
     try {
         const mobileData = req.body;
@@ -542,7 +529,6 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
     }
 });
 
-// Получение статуса синхронизации
 app.get('/api/sync/status', authenticateToken, async (req, res) => {
     try {
         const data = await loadData();
@@ -556,7 +542,6 @@ app.get('/api/sync/status', authenticateToken, async (req, res) => {
     }
 });
 
-// Группы
 app.post('/api/groups', authenticateToken, async (req, res) => {
     if (req.user.role !== 'admin' && req.user.role !== 'counselor') {
         return res.status(403).json({ error: 'Недостаточно прав' });
@@ -605,7 +590,7 @@ app.post('/api/groups', authenticateToken, async (req, res) => {
         }
         
         await saveData(data);
-        res.json({ success: true });
+        res.json({ success: true, group: name });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка создания' });
     }
@@ -631,13 +616,12 @@ app.delete('/api/groups/:name', authenticateToken, async (req, res) => {
         }
         
         await saveData(data);
-        res.json({ success: true });
+        res.json({ success: true, message: 'Группа удалена' });
     } catch (error) {
         res.status(500).json({ error: 'Ошибка удаления' });
     }
 });
 
-// Очистка данных
 app.post('/api/cleanup', authenticateToken, requireAdmin, async (req, res) => {
     try {
         const { type } = req.body;
@@ -765,22 +749,23 @@ app.post('/api/cleanup', authenticateToken, requireAdmin, async (req, res) => {
     }
 });
 
-// Статические файлы
-app.use(express.static(path.join(__dirname, 'public')));
+const publicDir = path.join(__dirname, 'public');
+fs.mkdir(publicDir, { recursive: true }).catch(() => {});
+
+app.use(express.static(publicDir));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'));
+});
 
 app.get('/mobile', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'mobile.html'));
+    res.sendFile(path.join(publicDir, 'mobile.html'));
 });
 
 app.get('/m', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'mobile.html'));
+    res.sendFile(path.join(publicDir, 'mobile.html'));
 });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Запуск сервера
 async function startServer() {
     try {
         await initializeData();

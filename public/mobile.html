@@ -5,96 +5,400 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>ВЖ • мобильная версия</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
-            --primary: #0078d4; --primary-dark: #005a9e; --success: #28a745;
-            --danger: #dc3545; --warning: #ffc107; --info: #17a2b8;
-            --dark: #1a1f2e; --darker: #0f121c; --light: #2a2f3e;
-            --lighter: #383e4e; --text: #eaeef2; --text-muted: #9aa4b8;
-            --completed: #6f42c1; --bg-page: #0a0c14; --border: #3a3f4e;
+            --primary: #0078d4;
+            --primary-dark: #005a9e;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --dark: #1a1f2e;
+            --darker: #0f121c;
+            --light: #2a2f3e;
+            --lighter: #383e4e;
+            --text: #eaeef2;
+            --text-muted: #9aa4b8;
+            --completed: #6f42c1;
+            --bg-page: #0a0c14;
+            --border: #3a3f4e;
         }
+
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-page); color: var(--text);
-            padding: 12px 10px 70px; min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: var(--bg-page);
+            color: var(--text);
+            padding: 12px 10px 70px 10px;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
+
         .vj-logo {
-            position: fixed; top: 10px; left: 12px; width: 46px; height: 46px;
-            background: var(--primary); border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 700; color: white;
-            box-shadow: 0 6px 14px rgba(0,120,212,0.5); z-index: 1100;
-            border: 2px solid rgba(255,255,255,0.15); cursor: pointer;
+            position: fixed;
+            top: 10px;
+            left: 12px;
+            width: 46px;
+            height: 46px;
+            background: var(--primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 6px 14px rgba(0,120,212,0.5);
+            z-index: 1100;
+            border: 2px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+            transition: 0.2s;
         }
+
+        .vj-logo:active { transform: scale(0.94); background: var(--primary-dark); }
+
         .top-bar {
-            position: fixed; top: 10px; right: 12px; left: 70px;
-            display: flex; gap: 6px; z-index: 1100; justify-content: flex-end;
+            position: fixed;
+            top: 10px;
+            right: 12px;
+            left: 70px;
+            display: flex;
+            gap: 6px;
+            z-index: 1100;
+            justify-content: flex-end;
+            align-items: center;
+            pointer-events: none;
         }
+
+        .top-bar > * {
+            pointer-events: auto;
+        }
+
         .user-info {
-            background: var(--dark); padding: 6px 12px; border-radius: 40px;
-            font-size: 13px; display: flex; align-items: center; gap: 8px;
+            background: var(--dark);
+            padding: 6px 12px 6px 10px;
+            border-radius: 40px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            max-width: 200px;
         }
+
+        .role-badge {
+            background: var(--primary);
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .offline-badge {
+            background: #ff9800;
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
         .connection-status {
-            background: #1e3a2a; color: #8bc34a; padding: 6px 14px;
-            border-radius: 40px; font-size: 13px; border: 1px solid #2d4a36;
+            background: #1e3a2a;
+            color: #8bc34a;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid #2d4a36;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
             cursor: pointer;
         }
+
+        .connection-status.offline { background: #3a1e1e; color: #f28b82; border-color: #4a2d2d; }
         .connection-status.demo { background: #3a2e1e; color: #ffb74d; border-color: #4a3a2d; }
+
         .auth-card {
-            background: var(--dark); border-radius: 32px; padding: 28px 20px;
-            max-width: 400px; margin: 80px auto; border: 1px solid var(--border);
+            background: var(--dark);
+            border-radius: 32px;
+            padding: 28px 20px;
+            max-width: 400px;
+            margin: 80px auto 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
         }
+
+        .auth-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--darker);
+            padding: 5px;
+            border-radius: 40px;
+            margin-bottom: 25px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px 5px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
         .app-container {
-            background: var(--dark); border-radius: 30px; padding: 20px 16px;
-            margin-top: 80px; border: 1px solid var(--border);
+            background: var(--dark);
+            border-radius: 30px;
+            padding: 20px 16px;
+            margin-top: 80px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
-        input, select, button {
-            width: 100%; padding: 16px; margin: 5px 0;
-            background: var(--light); border: 1px solid var(--border);
-            border-radius: 40px; color: white; font-size: 16px;
+
+        .sync-info {
+            background: var(--darker);
+            padding: 14px 18px;
+            border-radius: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--info);
+            font-size: 15px;
         }
-        button {
-            background: var(--primary); font-weight: 600; cursor: pointer;
+
+        .sync-info button {
+            width: auto;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            margin: 0;
+            background: var(--info);
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
         }
-        .btn-success { background: var(--success); }
+
+        .last-sync {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 4px;
+        }
+
         .menu-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             margin: 20px 0;
         }
+
         .menu-grid button {
-            padding: 12px 4px; background: var(--light); border: 1px solid var(--border);
-            border-radius: 22px; font-size: 13px; min-height: 70px;
+            padding: 12px 4px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            font-size: 13px;
+            font-weight: 500;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            cursor: pointer;
         }
+
+        .menu-grid button:hover {
+            background: var(--primary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 16px 18px;
+            margin: 5px 0;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            color: white;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 10px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 6px 0;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.15s;
+            border: 1px solid var(--primary-dark);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-success { background: var(--success); border-color: #218838; }
+        .btn-danger { background: var(--danger); border-color: #c82333; }
+        .btn-warning { background: var(--warning); color: #1a1a1a; border-color: #e0a800; }
+        .btn-info { background: var(--info); border-color: #138496; }
+
         .card {
-            background: var(--light); border-radius: 28px; padding: 18px;
-            margin-bottom: 14px; border: 1px solid var(--border);
+            background: var(--light);
+            border-radius: 28px;
+            padding: 18px 16px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
         }
+
         .participant-card {
-            background: var(--light); border-radius: 28px; padding: 18px;
-            margin-bottom: 14px; border: 1px solid var(--border);
+            background: var(--light);
+            border-radius: 28px;
+            padding: 18px 16px;
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
         }
-        .badge {
-            background: var(--primary); padding: 4px 12px; border-radius: 30px;
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .participant-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .detail-item {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .staff-badge {
+            background: var(--darker);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            display: inline-block;
+            margin: 2px;
+            border: 1px solid var(--border);
+        }
+
+        .mark-item-small {
+            display: inline-block;
+            background: var(--darker);
+            padding: 4px 10px;
+            border-radius: 30px;
             font-size: 11px;
+            margin: 2px;
+            border: 1px solid var(--border);
+            cursor: pointer;
         }
+
+        .mark-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .mark-status-dot.present { background: var(--success); }
+        .mark-status-dot.absent { background: var(--danger); }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--primary);
+        }
+
         .demo-badge {
-            background: var(--info); padding: 2px 8px; border-radius: 20px;
-            font-size: 10px; margin-left: 6px;
+            background: var(--info);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-left: 6px;
         }
-        .page { display: none; }
-        .page.active { display: block; }
-        .flex-row { display: flex; gap: 8px; align-items: center; }
-        .no-data { text-align: center; padding: 30px; color: var(--text-muted); }
+
+        .sync-pending {
+            background: var(--warning);
+            color: #1a1a1a;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-left: 6px;
+        }
+
+        .page {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
     <div class="vj-logo" onclick="showPage('studentsPage')">ВЖ</div>
+
     <div class="top-bar">
-        <div class="user-info" id="userInfo" style="display:none;">
+        <div class="user-info" id="userInfo" style="display: none;">
             <span id="userName"></span>
-            <span class="badge" id="userRole"></span>
-            <span class="demo-badge" id="demoBadge" style="display:none;">demo</span>
+            <span class="role-badge" id="userRole"></span>
+            <span class="offline-badge" id="offlineBadge" style="display: none;">офлайн</span>
+            <span class="sync-pending" id="pendingBadge" style="display: none;">⚠️</span>
+            <span class="demo-badge" id="demoBadge" style="display: none;">demo</span>
+            <button onclick="logout()" style="width: auto; padding: 4px 12px; background: rgba(255,255,255,0.2); border: none;">⤴</button>
         </div>
         <div class="connection-status" id="connectionStatus" onclick="checkConnection()">🔄</div>
     </div>
@@ -102,70 +406,400 @@
     <div id="authContainer">
         <div class="auth-card">
             <h2 style="text-align:center; margin-bottom:20px;">📱 ВЖ мобайл</h2>
-            <button onclick="demoLogin()" style="margin-bottom:10px;">🚀 Демо-режим</button>
-            <button onclick="showLoginForm()">🔐 Вход</button>
-            <div id="loginForm" style="display:none; margin-top:15px;">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">вход</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">регистр</div>
+            </div>
+            <div id="loginForm">
                 <input type="text" id="loginUsername" placeholder="Логин">
                 <input type="password" id="loginPassword" placeholder="Пароль">
-                <button onclick="login()">Войти</button>
-                <button onclick="hideLoginForm()" style="background:var(--lighter)">Назад</button>
+                <button onclick="login()">🔓 войти</button>
+                <button class="btn-info" onclick="demoLogin()" style="margin-top: 10px;">🚀 демо-режим</button>
             </div>
-            <p style="text-align:center; margin-top:20px; color:var(--text-muted);" onclick="fillAdmin()">👑 admin</p>
+            <div id="registerForm" style="display:none;">
+                <input type="text" id="registerUsername" placeholder="Логин">
+                <input type="password" id="registerPassword" placeholder="Пароль">
+                <select id="registerRole">
+                    <option value="user">👤 юзер</option>
+                    <option value="counselor">👨‍🏫 вожатый</option>
+                    <option value="helper">🆘 помощник</option>
+                </select>
+                <button onclick="register()">📝 создать</button>
+            </div>
+            <div style="text-align:center; margin-top:20px; color:var(--text-muted); cursor:pointer;" onclick="fillAdminCredentials()">
+                👑 админ (Егор / 382154)
+            </div>
         </div>
     </div>
 
     <div id="appContainer" style="display:none;">
         <div class="app-container">
+            <div class="sync-info">
+                <span id="syncStatus">🌐 <span id="modeText">офлайн</span></span>
+                <button class="btn-info" onclick="forceSync()">🔄 синхр.</button>
+            </div>
+            <div class="last-sync" id="lastSyncTime"></div>
+
             <div class="menu-grid" id="menuGrid"></div>
+
             <div class="page active" id="studentsPage">
                 <h3>👥 Участники</h3>
-                <div id="studentsList" class="no-data">Нет данных</div>
+                <div class="flex-row" style="margin-bottom:15px;">
+                    <input type="text" id="newStudentName" placeholder="Имя" style="flex:2;">
+                    <select id="studentGroupSelect" style="flex:1;"></select>
+                    <button class="btn-success" style="width:auto; padding:16px;" onclick="addStudent()">➕</button>
+                </div>
+                <div id="studentsList" class="no-data">Загрузка...</div>
+            </div>
+
+            <div class="page" id="groupsPage">
+                <h3>👥 Группы</h3>
+                <div class="flex-row"><input type="text" id="newGroupName" placeholder="Название"><button class="btn-success" style="width:auto;" onclick="createGroup()">➕</button></div>
+                <div id="groupsList"></div>
+            </div>
+
+            <div class="page" id="marksPage">
+                <h3>⭐ Отметки</h3>
+                <div class="flex-row">
+                    <select id="markGroupSelect" onchange="updateStudentSelect()" style="flex:1;"></select>
+                    <select id="markStudentSelect" style="flex:1;"></select>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                    <button class="btn-success" onclick="addMark('present')">✅ присут.</button>
+                    <button class="btn-danger" onclick="addMark('absent')">❌ отсут.</button>
+                </div>
+                <div id="marksList" style="margin-top:20px;"></div>
             </div>
         </div>
     </div>
 
     <script>
-        let currentUser = null;
-        let isDemoMode = false;
-        let data = { groups: {}, members: {} };
+        // ========== КОНФИГУРАЦИЯ ==========
+        const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? ''  // локально: относительные пути
+            : 'https://ваш-сервер.com'; // для продакшена замените на реальный URL
 
-        function showToast(msg) { alert(msg); }
-        function checkConnection() {
-            let el = document.getElementById('connectionStatus');
-            el.className = isDemoMode ? 'connection-status demo' : 'connection-status';
-            el.innerHTML = isDemoMode ? '🟡 демо' : '🔴 офлайн';
+        const API_URL = SERVER_URL ? `${SERVER_URL}/api` : '/api';
+
+        // ========== ГЛОБАЛЬНЫЕ ==========
+        let currentUser = null;
+        let token = localStorage.getItem('token');
+        let data = { groups: {}, members: {}, marks: {}, counselors: {}, helpers: {}, books: { list: [] } };
+        let isOnline = navigator.onLine;
+        let pendingChanges = false;
+        let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
+        let isDemoMode = false;
+
+        // ========== УВЕДОМЛЕНИЯ ==========
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--dark);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 40px;
+                border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
+                z-index: 3000;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                max-width: 90%;
+                text-align: center;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
-        function showLoginForm() { document.getElementById('loginForm').style.display = 'block'; }
-        function hideLoginForm() { document.getElementById('loginForm').style.display = 'none'; }
-        function fillAdmin() {
+
+        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ ==========
+        async function checkConnection() {
+            if (isDemoMode) {
+                document.getElementById('connectionStatus').className = 'connection-status demo';
+                document.getElementById('connectionStatus').innerHTML = '🟡 демо';
+                document.getElementById('modeText').innerText = 'демо';
+                document.getElementById('offlineBadge').style.display = 'inline-block';
+                return false;
+            }
+
+            if (!navigator.onLine) {
+                isOnline = false;
+                document.getElementById('connectionStatus').className = 'connection-status offline';
+                document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
+                document.getElementById('modeText').innerText = 'офлайн';
+                document.getElementById('offlineBadge').style.display = 'inline-block';
+                return false;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/health`, { method: 'HEAD' });
+                if (res.ok) {
+                    isOnline = true;
+                    document.getElementById('connectionStatus').className = 'connection-status';
+                    document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
+                    document.getElementById('modeText').innerText = 'онлайн';
+                    document.getElementById('offlineBadge').style.display = 'none';
+                    
+                    if (pendingChanges && currentUser && !isDemoMode) {
+                        await autoSync();
+                    }
+                    return true;
+                } else {
+                    throw new Error();
+                }
+            } catch {
+                isOnline = false;
+                document.getElementById('connectionStatus').className = 'connection-status offline';
+                document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
+                document.getElementById('modeText').innerText = 'офлайн';
+                document.getElementById('offlineBadge').style.display = 'inline-block';
+                return false;
+            }
+        }
+
+        // ========== СИНХРОНИЗАЦИЯ ==========
+        async function autoSync() {
+            if (!currentUser || !token || !isOnline || isDemoMode) return false;
+            
+            try {
+                const syncResponse = await fetch(`${API_URL}/sync`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (syncResponse.ok) {
+                    const dataResponse = await fetch(`${API_URL}/data`, { 
+                        headers: { 'Authorization': `Bearer ${token}` } 
+                    });
+                    
+                    if (dataResponse.ok) {
+                        const serverData = await dataResponse.json();
+                        
+                        if (currentUser?.role === 'admin') {
+                            data = {
+                                groups: serverData.myData?.groups || {},
+                                members: serverData.myData?.members || {},
+                                marks: serverData.myData?.marks || {},
+                                counselors: serverData.myData?.counselors || {},
+                                helpers: serverData.myData?.helpers || {},
+                                books: serverData.myData?.books || { list: [] }
+                            };
+                        } else {
+                            data = {
+                                groups: serverData.groups || {},
+                                members: serverData.members || {},
+                                marks: serverData.marks || {},
+                                counselors: serverData.counselors || {},
+                                helpers: serverData.helpers || {},
+                                books: serverData.books || { list: [] }
+                            };
+                        }
+                        
+                        pendingChanges = false;
+                        document.getElementById('pendingBadge').style.display = 'none';
+                        
+                        lastSyncTime = new Date().toISOString();
+                        localStorage.setItem('lastSyncTime', lastSyncTime);
+                        document.getElementById('lastSyncTime').textContent = `🕒 синхр: ${new Date(lastSyncTime).toLocaleString()}`;
+                        
+                        renderAll();
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.error('Sync error:', e);
+            }
+            return false;
+        }
+
+        async function forceSync() {
+            if (!currentUser) {
+                showToast('⚠️ сначала войдите', 'error');
+                return;
+            }
+            if (isDemoMode) {
+                showToast('📱 демо-режим', 'info');
+                return;
+            }
+            if (!isOnline) {
+                showToast('⚠️ нет подключения', 'error');
+                return;
+            }
+            showToast('🔄 синхронизация...', 'info');
+            await autoSync();
+        }
+
+        // ========== СОХРАНЕНИЕ ==========
+        function saveToLocalStorage() {
+            if (currentUser) {
+                const storageKey = isDemoMode ? `demo_${currentUser.id}` : `user_${currentUser.id}`;
+                localStorage.setItem(storageKey, JSON.stringify({ user: currentUser, data }));
+                localStorage.setItem('lastUser', JSON.stringify(currentUser));
+            }
+        }
+
+        function loadFromLocalStorage() {
+            const lastUser = localStorage.getItem('lastUser');
+            if (lastUser) {
+                try {
+                    const user = JSON.parse(lastUser);
+                    if (user && !user.demo) {
+                        const storageKey = `user_${user.id}`;
+                        const saved = localStorage.getItem(storageKey);
+                        if (saved) {
+                            const parsed = JSON.parse(saved);
+                            currentUser = parsed.user;
+                            data = parsed.data;
+                            isDemoMode = false;
+                            return true;
+                        }
+                    }
+                } catch (e) {}
+            }
+            return false;
+        }
+
+        // ========== АВТОРИЗАЦИЯ ==========
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            if (tab === 'login') {
+                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
+            } else {
+                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+            }
+        }
+
+        function fillAdminCredentials() {
             document.getElementById('loginUsername').value = 'Егор';
             document.getElementById('loginPassword').value = '382154';
         }
 
+        // ДЕМО-ВХОД
         function demoLogin() {
             currentUser = { id: 999, username: 'Демо', role: 'admin' };
+            token = 'demo-token';
             isDemoMode = true;
+            
             data = {
-                groups: { 'Отряд 1': {}, 'Отряд 2': {} },
+                groups: {
+                    'Отряд 1': { createdAt: new Date().toISOString() },
+                    'Отряд 2': { createdAt: new Date().toISOString() }
+                },
                 members: {
                     'Отряд 1': [
                         { id: 1, name: 'Иван Петров', phone: '+7 999 123-45-67' },
                         { id: 2, name: 'Мария Иванова', phone: '+7 999 234-56-78' }
+                    ],
+                    'Отряд 2': [
+                        { id: 3, name: 'Алексей Сидоров', phone: '+7 999 345-67-89' }
+                    ]
+                },
+                marks: {},
+                counselors: {
+                    'Отряд 1': [{ id: 101, name: 'Анна' }]
+                },
+                helpers: {
+                    'Отряд 1': [{ id: 201, name: 'Дмитрий' }]
+                },
+                books: {
+                    list: [
+                        { id: 301, title: 'Азбука', status: 'completed' }
                     ]
                 }
             };
+            
+            localStorage.setItem('token', token);
+            saveToLocalStorage();
             showApp();
+            checkConnection();
         }
 
-        function login() {
-            let u = document.getElementById('loginUsername').value;
-            let p = document.getElementById('loginPassword').value;
-            if (u === 'Егор' && p === '382154') demoLogin();
-            else alert('Неверно. Используйте демо');
+        async function register() {
+            const u = document.getElementById('registerUsername').value.trim();
+            const p = document.getElementById('registerPassword').value;
+            const r = document.getElementById('registerRole').value;
+            
+            if (!u || !p) return showToast('заполните поля', 'error');
+            if (!isOnline) return showToast('нет подключения', 'error');
+            
+            try {
+                const res = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p, role: r })
+                });
+                const d = await res.json();
+                if (res.ok) {
+                    showToast('✅ регистрация успешна', 'success');
+                    switchAuthTab('login');
+                } else {
+                    showToast(d.error || 'ошибка', 'error');
+                }
+            } catch {
+                showToast('ошибка подключения', 'error');
+            }
+        }
+
+        async function login() {
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value;
+            
+            if (!u || !p) return showToast('введите логин и пароль', 'error');
+            
+            if (u === 'Егор' && p === '382154') {
+                demoLogin();
+                return;
+            }
+            
+            if (!isOnline) {
+                if (loadFromLocalStorage()) {
+                    showApp();
+                    showToast('📱 офлайн режим', 'warning');
+                    return;
+                }
+                showToast('⚠️ нет подключения к серверу', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                const d = await res.json();
+                if (res.ok) {
+                    token = d.token;
+                    currentUser = d.user;
+                    isDemoMode = false;
+                    localStorage.setItem('token', token);
+                    await loadData();
+                    showApp();
+                    showToast(`👋 ${u}`, 'success');
+                } else {
+                    showToast(d.error || 'ошибка', 'error');
+                }
+            } catch {
+                showToast('ошибка подключения', 'error');
+            }
         }
 
         function logout() {
-            currentUser = null; isDemoMode = false;
+            saveToLocalStorage();
+            currentUser = null;
+            token = null;
+            isDemoMode = false;
+            localStorage.removeItem('token');
             document.getElementById('authContainer').style.display = 'block';
             document.getElementById('appContainer').style.display = 'none';
             document.getElementById('userInfo').style.display = 'none';
@@ -175,28 +809,227 @@
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             document.getElementById('userInfo').style.display = 'flex';
-            document.getElementById('userName').textContent = currentUser.username;
-            document.getElementById('userRole').textContent = currentUser.role;
-            if (isDemoMode) document.getElementById('demoBadge').style.display = 'inline-block';
-            checkConnection();
+            document.getElementById('userName').textContent = currentUser?.username || 'Демо';
+            
+            const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник', 'user': 'Пользователь' };
+            document.getElementById('userRole').textContent = roleNames[currentUser?.role] || currentUser?.role;
+            
+            document.getElementById('demoBadge').style.display = isDemoMode ? 'inline-block' : 'none';
+            
+            updateMenu();
+            showPage('studentsPage');
+        }
+
+        function updateMenu() {
+            const r = currentUser?.role;
+            let btns = '';
+            
+            btns += '<button onclick="showPage(\'groupsPage\')">👥 группы</button>';
+            btns += '<button onclick="showPage(\'studentsPage\')">👤 участники</button>';
+            btns += '<button onclick="showPage(\'marksPage\')">⭐ отметки</button>';
+            
+            if (r === 'admin') {
+                btns += '<button onclick="showPage(\'counselorsPage\')">👨‍🏫 вожатые</button>';
+            }
+            
+            document.getElementById('menuGrid').innerHTML = btns;
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if (pageId === 'marksPage') { updateGroupSelects(); updateStudentSelect(); }
+            else if (pageId === 'studentsPage' || pageId === 'counselorsPage') updateGroupSelects();
+        }
+
+        async function loadData() {
+            if (!token || !isOnline || isDemoMode) return;
+            try {
+                const res = await fetch(`${API_URL}/data`, { 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                });
+                if (res.ok) {
+                    const serverData = await res.json();
+                    data = {
+                        groups: serverData.groups || {},
+                        members: serverData.members || {},
+                        marks: serverData.marks || {},
+                        counselors: serverData.counselors || {},
+                        helpers: serverData.helpers || {},
+                        books: serverData.books || { list: [] }
+                    };
+                    renderAll();
+                    saveToLocalStorage();
+                }
+            } catch { showToast('❌ ошибка загрузки', 'error'); }
+        }
+
+        async function saveData() {
+            if (isDemoMode) {
+                saveToLocalStorage();
+                pendingChanges = true;
+                document.getElementById('pendingBadge').style.display = 'inline-block';
+                showToast('📱 сохранено в демо', 'info');
+                return;
+            }
+            
+            if (!isOnline) {
+                saveToLocalStorage();
+                pendingChanges = true;
+                document.getElementById('pendingBadge').style.display = 'inline-block';
+                showToast('📱 сохранено локально', 'info');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/data`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    pendingChanges = false;
+                    document.getElementById('pendingBadge').style.display = 'none';
+                    lastSyncTime = new Date().toISOString();
+                    localStorage.setItem('lastSyncTime', lastSyncTime);
+                    document.getElementById('lastSyncTime').textContent = `🕒 синхр: ${new Date(lastSyncTime).toLocaleString()}`;
+                    saveToLocalStorage();
+                    showToast('✅ сохранено', 'success');
+                }
+            } catch { showToast('❌ ошибка', 'error'); }
+        }
+
+        // ========== ОСНОВНЫЕ ФУНКЦИИ ==========
+        window.createGroup = function() {
+            const name = document.getElementById('newGroupName').value.trim();
+            if (!name) return showToast('введите название', 'error');
+            if (!data.groups[name]) {
+                data.groups[name] = { createdAt: new Date().toISOString() };
+                saveData().then(() => {
+                    document.getElementById('newGroupName').value = '';
+                    renderGroups();
+                });
+            } else showToast('группа уже существует', 'error');
+        };
+
+        function addStudent() {
+            const name = document.getElementById('newStudentName').value.trim();
+            const group = document.getElementById('studentGroupSelect').value;
+            
+            if (!name || !group) return showToast('имя и группа обязательны', 'error');
+            
+            if (!data.members[group]) data.members[group] = [];
+            data.members[group].push({ 
+                id: Date.now(), 
+                name,
+                addedAt: new Date().toISOString() 
+            });
+            
+            saveData().then(() => {
+                document.getElementById('newStudentName').value = '';
+                renderStudents();
+            });
+        }
+
+        function updateStudentSelect() {
+            const group = document.getElementById('markGroupSelect').value;
+            const studSel = document.getElementById('markStudentSelect');
+            if (!group || !data.members[group]?.length) {
+                studSel.innerHTML = '<option value="">нет участников</option>';
+                return;
+            }
+            let opts = '<option value="">выберите участника</option>';
+            data.members[group].forEach(s => opts += `<option value="${s.id}">${s.name}</option>`);
+            studSel.innerHTML = opts;
+        }
+
+        window.addMark = function(status) {
+            const group = document.getElementById('markGroupSelect').value;
+            const studentId = document.getElementById('markStudentSelect').value;
+            if (!group || !studentId) return showToast('выберите группу и участника', 'error');
+            
+            if (!data.marks[group]) data.marks[group] = {};
+            if (!data.marks[group][studentId]) data.marks[group][studentId] = [];
+            
+            data.marks[group][studentId].push({ 
+                id: Date.now(), 
+                status, 
+                date: new Date().toISOString(),
+                author: currentUser?.username || 'Пользователь'
+            });
+            
+            saveData().then(() => { renderMarks(); });
+        };
+
+        // ========== РЕНДЕРЫ ==========
+        function renderAll() {
+            renderGroups();
             renderStudents();
+            renderMarks();
+            updateGroupSelects();
+        }
+
+        function renderGroups() {
+            let html = '';
+            for (let g in data.groups) {
+                html += `<div class="card"><strong>${g}</strong></div>`;
+            }
+            document.getElementById('groupsList').innerHTML = html || '<div class="no-data">Нет групп</div>';
         }
 
         function renderStudents() {
             let html = '';
             for (let group in data.members) {
                 data.members[group].forEach(s => {
-                    html += `<div class="participant-card">
-                        <strong>${s.name}</strong>
-                        <div>📞 ${s.phone || 'нет'}</div>
-                        <div>👥 ${group}</div>
-                    </div>`;
+                    html += `
+                        <div class="participant-card">
+                            <strong>${s.name}</strong>
+                            <div>👥 ${group}</div>
+                        </div>
+                    `;
                 });
             }
             document.getElementById('studentsList').innerHTML = html || '<div class="no-data">Нет участников</div>';
         }
 
-        function showPage(p) {}
+        function renderMarks() {
+            let html = '';
+            for (let g in data.marks) {
+                for (let sid in data.marks[g]) {
+                    let s = data.members[g]?.find(m => m.id == sid);
+                    if (!s) continue;
+                    
+                    html += `<div class="card"><strong>${s.name} (${g})</strong>`;
+                    data.marks[g][sid].forEach(m => {
+                        html += `<div>${m.status} - ${new Date(m.date).toLocaleDateString()}</div>`;
+                    });
+                    html += '</div>';
+                }
+            }
+            document.getElementById('marksList').innerHTML = html || '<div class="no-data">Нет отметок</div>';
+        }
+
+        function updateGroupSelects() {
+            let opts = '<option value="">выбрать</option>';
+            for (let g in data.groups) opts += `<option value="${g}">${g}</option>`;
+            ['studentGroupSelect', 'markGroupSelect'].forEach(id => {
+                let sel = document.getElementById(id);
+                if (sel) sel.innerHTML = opts;
+            });
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        window.addEventListener('load', () => {
+            checkConnection();
+            setInterval(checkConnection, 30000);
+            
+            if (loadFromLocalStorage()) {
+                showApp();
+            }
+        });
     </script>
 </body>
 </html>
