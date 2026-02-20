@@ -197,11 +197,9 @@ app.get('/api/health', (req, res) => res.json({
     time: new Date().toISOString()
 }));
 
-// Новый эндпоинт для получения публичных данных (без авторизации)
 app.get('/api/public-data', async (req, res) => {
     try {
         const data = await loadData();
-        // Отдаем только общие данные, без пользователей
         res.json({
             groups: data.groups || {},
             members: data.members || {},

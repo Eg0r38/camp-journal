@@ -6,7 +6,7 @@
       "password": "$2a$10$aSvSfG7XRkR38hRHHzOJJuzIwv7UaELVpA4XjaG0FdTHVtUQOlGRa",
       "role": "admin",
       "createdAt": "2024-09-29T00:00:00.000Z",
-      "lastLogin": "2026-02-20T05:22:43.237Z",
+      "lastLogin": "2026-02-20T05:26:55.831Z",
       "isActive": true
     },
     {
@@ -362,10 +362,16 @@
       "user": "Егор",
       "userId": 1,
       "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-20T05:27:03.699Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
     }
   ],
   "settings": {
     "allowRegistration": true,
-    "lastSync": "2026-02-19T15:08:33.176Z"
+    "lastSync": "2026-02-20T05:27:03.699Z"
   }
 }
