@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>ВЖ • мобильная версия</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал вожатого • ПК версия</title>
     <style>
         * {
             margin: 0;
@@ -33,128 +33,151 @@
             font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
             background: var(--bg-page);
             color: var(--text);
-            padding: 12px 10px 70px 10px;
+            padding: 20px;
             min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app-header {
+            background: var(--dark);
+            border-radius: 30px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
 
         .vj-logo {
-            position: fixed;
-            top: 10px;
-            left: 12px;
-            width: 46px;
-            height: 46px;
+            width: 60px;
+            height: 60px;
             background: var(--primary);
-            border-radius: 18px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 700;
             color: white;
             box-shadow: 0 6px 14px rgba(0,120,212,0.5);
-            z-index: 1100;
             border: 2px solid rgba(255,255,255,0.15);
             cursor: pointer;
             transition: 0.2s;
         }
 
-        .vj-logo:active { transform: scale(0.94); background: var(--primary-dark); }
-
-        .top-bar {
-            position: fixed;
-            top: 10px;
-            right: 12px;
-            left: 70px;
-            display: flex;
-            gap: 6px;
-            z-index: 1100;
-            justify-content: flex-end;
-            align-items: center;
-            pointer-events: none;
+        .vj-logo:hover {
+            transform: scale(1.05);
+            background: var(--primary-dark);
         }
 
-        .top-bar > * {
-            pointer-events: auto;
+        .app-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--primary);
+            flex: 1;
         }
 
         .user-info {
-            background: var(--dark);
-            padding: 6px 12px 6px 10px;
-            border-radius: 40px;
-            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
+            background: var(--light);
+            padding: 8px 20px;
+            border-radius: 40px;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            max-width: 200px;
+        }
+
+        #userName {
+            font-weight: 600;
+            color: white;
         }
 
         .role-badge {
             background: var(--primary);
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 30px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
         }
 
-        .offline-badge {
-            background: #ff9800;
-            color: #000;
-            padding: 3px 8px;
-            border-radius: 30px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
         .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background: #1e3a2a;
             color: #8bc34a;
-            padding: 6px 14px;
+            padding: 8px 20px;
             border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
             border: 1px solid #2d4a36;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            white-space: nowrap;
+            font-weight: 500;
             cursor: pointer;
+            transition: 0.2s;
         }
 
-        .connection-status.offline { background: #3a1e1e; color: #f28b82; border-color: #4a2d2d; }
-        .connection-status.demo { background: #3a2e1e; color: #ffb74d; border-color: #4a3a2d; }
+        .connection-status:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .connection-status.offline {
+            background: #3a1e1e;
+            color: #f28b82;
+            border-color: #4a2d2d;
+        }
+
+        .connection-status.demo {
+            background: #3a2e1e;
+            color: #ffb74d;
+            border-color: #4a3a2d;
+        }
+
+        .logout-btn {
+            background: var(--light);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: var(--lighter);
+            color: white;
+        }
 
         .auth-card {
+            max-width: 450px;
+            margin: 100px auto;
             background: var(--dark);
-            border-radius: 32px;
-            padding: 28px 20px;
-            max-width: 400px;
-            margin: 80px auto 20px;
+            border-radius: 30px;
+            padding: 40px;
             border: 1px solid var(--border);
             box-shadow: 0 15px 30px rgba(0,0,0,0.7);
         }
 
         .auth-tabs {
             display: flex;
-            gap: 6px;
+            gap: 10px;
             background: var(--darker);
             padding: 5px;
             border-radius: 40px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .auth-tab {
             flex: 1;
-            padding: 12px 5px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 15px;
-            background: transparent;
+            padding: 15px;
             border: none;
+            background: transparent;
             color: var(--text-muted);
+            border-radius: 40px;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: 0.2s;
         }
 
         .auth-tab.active {
@@ -165,124 +188,171 @@
         .app-container {
             background: var(--dark);
             border-radius: 30px;
-            padding: 20px 16px;
-            margin-top: 80px;
+            padding: 30px;
             border: 1px solid var(--border);
             box-shadow: 0 8px 20px rgba(0,0,0,0.6);
         }
 
-        .sync-info {
+        .info-panel {
             background: var(--darker);
-            padding: 14px 18px;
             border-radius: 40px;
-            margin-bottom: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid var(--info);
-            font-size: 15px;
         }
 
-        .sync-info button {
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sync-status button {
             width: auto;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 14px;
-            margin: 0;
+            padding: 10px 25px;
             background: var(--info);
             border: none;
             color: white;
+            border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .sync-status button:hover {
+            background: #138496;
+            transform: translateY(-2px);
         }
 
         .last-sync {
-            font-size: 11px;
             color: var(--text-muted);
-            text-align: right;
-            margin-top: 4px;
+            font-size: 13px;
         }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 20px 0;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin: 30px 0;
         }
 
         .menu-grid button {
-            padding: 12px 4px;
+            padding: 15px 5px;
             background: var(--light);
             border: 1px solid var(--border);
-            border-radius: 22px;
-            font-size: 13px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 500;
-            min-height: 70px;
+            min-height: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 5px;
             color: var(--text);
             cursor: pointer;
+            transition: 0.2s;
         }
 
         .menu-grid button:hover {
             background: var(--primary);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,120,212,0.3);
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 16px 18px;
+            padding: 15px 20px;
             margin: 5px 0;
             background: var(--light);
             border: 1px solid var(--border);
             border-radius: 40px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
+            transition: 0.2s;
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
         }
 
         button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 16px 10px;
+            padding: 15px 25px;
             border-radius: 40px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            margin: 6px 0;
-            width: 100%;
+            margin: 5px 0;
             cursor: pointer;
-            transition: 0.15s;
+            transition: 0.2s;
             border: 1px solid var(--primary-dark);
         }
 
-        button:active {
-            transform: scale(0.97);
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,120,212,0.3);
         }
 
         .btn-success { background: var(--success); border-color: #218838; }
+        .btn-success:hover { background: #218838; }
         .btn-danger { background: var(--danger); border-color: #c82333; }
+        .btn-danger:hover { background: #c82333; }
         .btn-warning { background: var(--warning); color: #1a1a1a; border-color: #e0a800; }
+        .btn-warning:hover { background: #e0a800; }
         .btn-info { background: var(--info); border-color: #138496; }
+        .btn-info:hover { background: #138496; }
+
+        .page {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .page.active {
+            display: block;
+        }
 
         .card {
             background: var(--light);
             border-radius: 28px;
-            padding: 18px 16px;
-            margin-bottom: 14px;
+            padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid var(--border);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(0,120,212,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header strong {
+            font-size: 20px;
+            color: var(--primary);
         }
 
         .participant-card {
             background: var(--light);
             border-radius: 28px;
-            padding: 18px 16px;
-            margin-bottom: 14px;
+            padding: 25px;
+            margin-bottom: 20px;
             border: 1px solid var(--border);
         }
 
@@ -290,37 +360,242 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
         }
 
         .participant-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .participant-group {
+            background: var(--darker);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .participant-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .detail-block {
+            background: var(--darker);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-block h4 {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .detail-item i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .mark-item {
+            background: var(--darker);
+            border-radius: 40px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+        }
+
+        .mark-status {
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .mark-status.present { background: var(--success); color: white; }
+        .mark-status.absent { background: var(--danger); color: white; }
+
+        .mark-date-clickable {
+            cursor: pointer;
+            color: var(--info);
+            text-decoration: underline dotted;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .mark-date-clickable:hover {
+            background: var(--lighter);
+        }
+
+        .book-item {
+            background: var(--darker);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+
+        .book-title {
             font-size: 18px;
             font-weight: 600;
             color: var(--primary);
         }
 
-        .detail-item {
-            margin: 8px 0;
-            font-size: 14px;
+        .book-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .book-actions button {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: var(--darker);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 40px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 24px;
+        }
+
+        .close-btn {
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
         }
 
         .staff-badge {
             background: var(--darker);
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-            display: inline-block;
-            margin: 2px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 8px;
+            margin-bottom: 8px;
             border: 1px solid var(--border);
         }
 
-        .mark-item-small {
-            display: inline-block;
-            background: var(--darker);
-            padding: 4px 10px;
+        .staff-badge.counselor { border-left: 3px solid var(--info); }
+        .staff-badge.helper { border-left: 3px solid var(--warning); }
+
+        .lesson-badge {
+            background: var(--completed);
+            padding: 6px 14px;
             border-radius: 30px;
-            font-size: 11px;
-            margin: 2px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-badge.completed { background: var(--completed); }
+        .lesson-badge.in-progress { background: var(--warning); color: #1a1a1a; }
+        .lesson-badge.available { background: var(--success); }
+
+        .mark-item-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--darker);
+            padding: 8px 16px;
+            border-radius: 40px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
             border: 1px solid var(--border);
             cursor: pointer;
         }
@@ -335,162 +610,286 @@
         .mark-status-dot.present { background: var(--success); }
         .mark-status-dot.absent { background: var(--danger); }
 
+        .flex-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-20 { margin-top: 20px; }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+        .no-data {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+            background: var(--darker);
+            border-radius: 40px;
+        }
+
         .badge {
-            padding: 4px 12px;
+            padding: 5px 12px;
             border-radius: 30px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             background: var(--primary);
         }
 
-        .demo-badge {
-            background: var(--info);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 6px;
+        .group-date-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--darker);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .group-date-edit:hover {
+            background: var(--lighter);
+            border-color: var(--primary);
         }
 
         .sync-pending {
             background: var(--warning);
             color: #1a1a1a;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 6px;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
         }
 
-        .page {
-            display: none;
-            margin-top: 8px;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .flex-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .text-muted {
-            color: var(--text-muted);
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-muted);
+        .demo-badge {
+            background: var(--info);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="vj-logo" onclick="showPage('studentsPage')">ВЖ</div>
-
-    <div class="top-bar">
+    <div class="app-header">
+        <div class="vj-logo" onclick="showPage('studentsPage')">ВЖ</div>
+        <div class="app-title">Журнал вожатого</div>
         <div class="user-info" id="userInfo" style="display: none;">
             <span id="userName"></span>
             <span class="role-badge" id="userRole"></span>
-            <span class="offline-badge" id="offlineBadge" style="display: none;">офлайн</span>
             <span class="sync-pending" id="pendingBadge" style="display: none;">⚠️</span>
             <span class="demo-badge" id="demoBadge" style="display: none;">demo</span>
-            <button onclick="logout()" style="width: auto; padding: 4px 12px; background: rgba(255,255,255,0.2); border: none;">⤴</button>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
         </div>
-        <div class="connection-status" id="connectionStatus" onclick="checkConnection()">🔄</div>
+        <div class="connection-status" id="connectionStatus" onclick="checkConnection()">
+            <span id="statusDot">🟢</span> <span id="statusText">онлайн</span>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Заголовок</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detailModalTitle">Детали</h2>
+                <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+            </div>
+            <div id="detailModalBody"></div>
+        </div>
     </div>
 
     <div id="authContainer">
         <div class="auth-card">
-            <h2 style="text-align:center; margin-bottom:20px;">📱 ВЖ мобайл</h2>
+            <h2 class="text-center" style="margin-bottom: 30px;">📋 Вход в систему</h2>
             <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchAuthTab('login')">вход</div>
-                <div class="auth-tab" onclick="switchAuthTab('register')">регистр</div>
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Вход</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Регистрация</div>
             </div>
             <div id="loginForm">
                 <input type="text" id="loginUsername" placeholder="Логин">
                 <input type="password" id="loginPassword" placeholder="Пароль">
-                <button onclick="login()">🔓 войти</button>
-                <button class="btn-info" onclick="demoLogin()" style="margin-top: 10px;">🚀 демо-режим</button>
+                <button onclick="login()">🔓 Войти</button>
+                <button class="btn-info" onclick="demoLogin()" style="margin-top: 15px;">🚀 Демо-режим</button>
             </div>
-            <div id="registerForm" style="display:none;">
+            <div id="registerForm" style="display: none;">
                 <input type="text" id="registerUsername" placeholder="Логин">
                 <input type="password" id="registerPassword" placeholder="Пароль">
                 <select id="registerRole">
-                    <option value="user">👤 юзер</option>
-                    <option value="counselor">👨‍🏫 вожатый</option>
-                    <option value="helper">🆘 помощник</option>
+                    <option value="user">👤 Пользователь</option>
+                    <option value="counselor">👨‍🏫 Вожатый</option>
+                    <option value="helper">🆘 Помощник</option>
                 </select>
-                <button onclick="register()">📝 создать</button>
+                <button onclick="register()">📝 Зарегистрироваться</button>
             </div>
-            <div style="text-align:center; margin-top:20px; color:var(--text-muted); cursor:pointer;" onclick="fillAdminCredentials()">
-                👑 админ (Егор / 382154)
+            <div class="text-center" style="margin-top: 20px;">
+                <small class="text-muted" style="cursor: pointer;" onclick="fillAdminCredentials()">👑 Админ (Егор / 382154)</small>
             </div>
         </div>
     </div>
 
-    <div id="appContainer" style="display:none;">
+    <div id="appContainer" style="display: none;">
         <div class="app-container">
-            <div class="sync-info">
-                <span id="syncStatus">🌐 <span id="modeText">офлайн</span></span>
-                <button class="btn-info" onclick="forceSync()">🔄 синхр.</button>
+            <div class="info-panel">
+                <div class="sync-status">
+                    <span>🌐 Режим: <strong id="modeText">онлайн</strong></span>
+                    <button onclick="forceSync()">🔄 Синхронизировать</button>
+                </div>
+                <div class="last-sync" id="lastSyncTime"></div>
             </div>
-            <div class="last-sync" id="lastSyncTime"></div>
 
             <div class="menu-grid" id="menuGrid"></div>
 
-            <div class="page active" id="studentsPage">
-                <h3>👥 Участники</h3>
-                <div class="flex-row" style="margin-bottom:15px;">
-                    <input type="text" id="newStudentName" placeholder="Имя" style="flex:2;">
-                    <select id="studentGroupSelect" style="flex:1;"></select>
-                    <button class="btn-success" style="width:auto; padding:16px;" onclick="addStudent()">➕</button>
+            <div id="adminStats" class="stats-grid" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalGroupsStat">0</div>
+                    <div class="stat-label">Групп</div>
                 </div>
-                <div id="studentsList" class="no-data">Загрузка...</div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMembersStat">0</div>
+                    <div class="stat-label">Участников</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMarksStat">0</div>
+                    <div class="stat-label">Отметок</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBooksStat">0</div>
+                    <div class="stat-label">Книг</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedBooksStat">0</div>
+                    <div class="stat-label">Пройдено</div>
+                </div>
             </div>
 
             <div class="page" id="groupsPage">
-                <h3>👥 Группы</h3>
-                <div class="flex-row"><input type="text" id="newGroupName" placeholder="Название"><button class="btn-success" style="width:auto;" onclick="createGroup()">➕</button></div>
+                <h2 class="mb-20">👥 Группы</h2>
+                <div class="flex-row mb-20">
+                    <input type="text" id="newGroupName" placeholder="Название группы" style="flex: 2;">
+                    <button class="btn-success" style="width: auto;" onclick="createGroup()">➕ Создать группу</button>
+                </div>
                 <div id="groupsList"></div>
+                <div id="allGroupsSection" class="all-groups-section" style="display: none;">
+                    <h3 class="mb-20">👑 Все группы пользователей</h3>
+                    <div id="allGroupsList"></div>
+                </div>
+            </div>
+
+            <div class="page active" id="studentsPage">
+                <h2 class="mb-20">👤 Участники</h2>
+                <div class="flex-row mb-20" style="background: var(--darker); padding: 25px; border-radius: 40px;">
+                    <input type="text" id="newStudentName" placeholder="Имя" style="flex: 2;">
+                    <input type="date" id="newStudentBirthday" style="flex: 1;">
+                    <input type="text" id="newStudentPhone" placeholder="Телефон" style="flex: 1;">
+                    <input type="text" id="newStudentParentPhone" placeholder="Тел. родителей" style="flex: 1;">
+                    <select id="studentGroupSelect" style="flex: 1;"></select>
+                    <button class="btn-success" style="width: auto;" onclick="addStudent()">➕ Добавить</button>
+                </div>
+                <div id="studentsList"></div>
             </div>
 
             <div class="page" id="marksPage">
-                <h3>⭐ Отметки</h3>
-                <div class="flex-row">
-                    <select id="markGroupSelect" onchange="updateStudentSelect()" style="flex:1;"></select>
-                    <select id="markStudentSelect" style="flex:1;"></select>
+                <h2 class="mb-20">⭐ Отметки</h2>
+                <div class="flex-row mb-20">
+                    <select id="markGroupSelect" onchange="updateStudentSelect()" style="flex: 1;">
+                        <option value="">Выберите группу</option>
+                    </select>
+                    <select id="markStudentSelect" style="flex: 1;">
+                        <option value="">Выберите участника</option>
+                    </select>
+                    <button class="btn-success" onclick="addMark('present')">✅ Присутствует</button>
+                    <button class="btn-danger" onclick="addMark('absent')">❌ Отсутствует</button>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-                    <button class="btn-success" onclick="addMark('present')">✅ присут.</button>
-                    <button class="btn-danger" onclick="addMark('absent')">❌ отсут.</button>
+                <div id="marksList"></div>
+            </div>
+
+            <div class="page" id="activitiesPage">
+                <h2 class="mb-20">📋 Мероприятия</h2>
+                <div class="flex-row mb-20">
+                    <input type="text" id="newActivityName" placeholder="Название" style="flex: 2;">
+                    <input type="date" id="activityDate" style="flex: 1;">
+                    <button class="btn-success" style="width: auto;" onclick="addActivity()">➕ Добавить</button>
                 </div>
-                <div id="marksList" style="margin-top:20px;"></div>
+                <div id="activitiesList"></div>
+            </div>
+
+            <div class="page" id="counselorsPage">
+                <h2 class="mb-20">👨‍🏫 Вожатые</h2>
+                <div class="flex-row mb-20">
+                    <input type="text" id="newCounselorName" placeholder="Имя" style="flex: 2;">
+                    <select id="counselorGroupSelect" style="flex: 1;"></select>
+                    <button class="btn-success" style="width: auto;" onclick="addCounselor()">➕ Назначить</button>
+                </div>
+                <div id="counselorsList"></div>
+            </div>
+
+            <div class="page" id="helpersPage">
+                <h2 class="mb-20">🆘 Помощники</h2>
+                <div class="flex-row mb-20">
+                    <input type="text" id="newHelperName" placeholder="Имя" style="flex: 2;">
+                    <select id="helperGroupSelect" style="flex: 1;"></select>
+                    <button class="btn-success" style="width: auto;" onclick="addHelper()">➕ Назначить</button>
+                </div>
+                <div id="helpersList"></div>
+            </div>
+
+            <div class="page" id="booksPage">
+                <h2 class="mb-20">📚 Книги</h2>
+                <div class="flex-row mb-20">
+                    <input type="text" id="newBookTitle" placeholder="Название" style="flex: 2;">
+                    <input type="text" id="newBookLesson" placeholder="Урок" style="flex: 1;">
+                    <select id="bookStatus" style="flex: 1;">
+                        <option value="available">📖 Доступна</option>
+                        <option value="in-progress">📚 В процессе</option>
+                        <option value="completed">✅ Пройдена</option>
+                    </select>
+                    <button class="btn-success" style="width: auto;" onclick="addBook()">➕ Добавить</button>
+                </div>
+                <div class="flex-row mb-20">
+                    <button class="btn-info" onclick="filterBooks('all')">Все</button>
+                    <button class="btn-success" onclick="filterBooks('available')">Доступные</button>
+                    <button class="btn-warning" onclick="filterBooks('in-progress')">В процессе</button>
+                    <button class="btn-completed" onclick="filterBooks('completed')">Пройденные</button>
+                </div>
+                <div id="booksList"></div>
+            </div>
+
+            <div class="page" id="adminPage">
+                <h2 class="mb-20">⚙️ Управление</h2>
+                <div class="card mb-20">
+                    <h3>📊 Статистика</h3>
+                    <div class="flex-row">
+                        <span>Всего: <span id="totalUsers">0</span></span>
+                        <span>Админов: <span id="adminCount">0</span></span>
+                        <span>Вожатых: <span id="counselorCount">0</span></span>
+                        <span>Помощников: <span id="helperCount">0</span></span>
+                    </div>
+                </div>
+                <div id="usersList"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // ========== КОНФИГУРАЦИЯ ==========
-        const SERVER_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? ''  // локально: относительные пути
-            : 'https://ваш-сервер.com'; // для продакшена замените на реальный URL
+        const API_URL = '/api';
 
-        const API_URL = SERVER_URL ? `${SERVER_URL}/api` : '/api';
-
-        // ========== ГЛОБАЛЬНЫЕ ==========
         let currentUser = null;
         let token = localStorage.getItem('token');
-        let data = { groups: {}, members: {}, marks: {}, counselors: {}, helpers: {}, books: { list: [] } };
-        let isOnline = navigator.onLine;
+        let data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] }, allUsersData: {} };
+        let isOnline = true;
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
+        let currentBookFilter = 'all';
         let isDemoMode = false;
 
-        // ========== УВЕДОМЛЕНИЯ ==========
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
@@ -500,12 +899,12 @@
                 transform: translateX(-50%);
                 background: var(--dark);
                 color: white;
-                padding: 12px 24px;
+                padding: 15px 30px;
                 border-radius: 40px;
                 border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
                 z-index: 3000;
                 font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.5);
                 max-width: 90%;
                 text-align: center;
             `;
@@ -514,52 +913,53 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
-        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ ==========
         async function checkConnection() {
             if (isDemoMode) {
-                document.getElementById('connectionStatus').className = 'connection-status demo';
-                document.getElementById('connectionStatus').innerHTML = '🟡 демо';
-                document.getElementById('modeText').innerText = 'демо';
-                document.getElementById('offlineBadge').style.display = 'inline-block';
-                return false;
-            }
-
-            if (!navigator.onLine) {
-                isOnline = false;
-                document.getElementById('connectionStatus').className = 'connection-status offline';
-                document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
-                document.getElementById('modeText').innerText = 'офлайн';
-                document.getElementById('offlineBadge').style.display = 'inline-block';
+                document.getElementById('statusDot').innerHTML = '🟡';
+                document.getElementById('statusText').innerHTML = 'демо';
+                document.getElementById('connectionStatus').classList.add('demo');
+                document.getElementById('connectionStatus').classList.remove('offline');
+                document.getElementById('modeText').innerHTML = 'демо';
                 return false;
             }
 
             try {
-                const res = await fetch(`${API_URL}/health`, { method: 'HEAD' });
+                const res = await fetch(`${API_URL}/health`, { 
+                    method: 'HEAD',
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
                 if (res.ok) {
                     isOnline = true;
-                    document.getElementById('connectionStatus').className = 'connection-status';
-                    document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
-                    document.getElementById('modeText').innerText = 'онлайн';
-                    document.getElementById('offlineBadge').style.display = 'none';
+                    document.getElementById('statusDot').innerHTML = '🟢';
+                    document.getElementById('statusText').innerHTML = 'онлайн';
+                    document.getElementById('connectionStatus').classList.remove('offline', 'demo');
+                    document.getElementById('modeText').innerHTML = 'онлайн';
                     
                     if (pendingChanges && currentUser && !isDemoMode) {
+                        showToast('🔄 подключено, синхронизация...', 'info');
                         await autoSync();
                     }
                     return true;
                 } else {
-                    throw new Error();
+                    throw new Error('Сервер не отвечает');
                 }
-            } catch {
+            } catch (error) {
                 isOnline = false;
-                document.getElementById('connectionStatus').className = 'connection-status offline';
-                document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
-                document.getElementById('modeText').innerText = 'офлайн';
-                document.getElementById('offlineBadge').style.display = 'inline-block';
+                document.getElementById('statusDot').innerHTML = '🔴';
+                document.getElementById('statusText').innerHTML = 'офлайн';
+                document.getElementById('connectionStatus').classList.add('offline');
+                document.getElementById('connectionStatus').classList.remove('demo');
+                document.getElementById('modeText').innerHTML = 'офлайн';
+                
+                console.log('Сервер недоступен, работаем офлайн');
                 return false;
             }
         }
 
-        // ========== СИНХРОНИЗАЦИЯ ==========
         async function autoSync() {
             if (!currentUser || !token || !isOnline || isDemoMode) return false;
             
@@ -586,15 +986,18 @@
                                 groups: serverData.myData?.groups || {},
                                 members: serverData.myData?.members || {},
                                 marks: serverData.myData?.marks || {},
+                                activities: serverData.myData?.activities || {},
                                 counselors: serverData.myData?.counselors || {},
                                 helpers: serverData.myData?.helpers || {},
-                                books: serverData.myData?.books || { list: [] }
+                                books: serverData.myData?.books || { list: [] },
+                                allUsersData: serverData.allUsersData || {}
                             };
                         } else {
                             data = {
                                 groups: serverData.groups || {},
                                 members: serverData.members || {},
                                 marks: serverData.marks || {},
+                                activities: serverData.activities || {},
                                 counselors: serverData.counselors || {},
                                 helpers: serverData.helpers || {},
                                 books: serverData.books || { list: [] }
@@ -609,11 +1012,13 @@
                         document.getElementById('lastSyncTime').textContent = `🕒 синхр: ${new Date(lastSyncTime).toLocaleString()}`;
                         
                         renderAll();
+                        showToast('✅ синхронизация завершена', 'success');
                         return true;
                     }
                 }
             } catch (e) {
                 console.error('Sync error:', e);
+                showToast('❌ ошибка синхронизации', 'error');
             }
             return false;
         }
@@ -635,7 +1040,6 @@
             await autoSync();
         }
 
-        // ========== СОХРАНЕНИЕ ==========
         function saveToLocalStorage() {
             if (currentUser) {
                 const storageKey = isDemoMode ? `demo_${currentUser.id}` : `user_${currentUser.id}`;
@@ -665,7 +1069,6 @@
             return false;
         }
 
-        // ========== АВТОРИЗАЦИЯ ==========
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             if (tab === 'login') {
@@ -682,11 +1085,16 @@
         function fillAdminCredentials() {
             document.getElementById('loginUsername').value = 'Егор';
             document.getElementById('loginPassword').value = '382154';
+            showToast('👑 админ введён', 'success');
         }
 
-        // ДЕМО-ВХОД
         function demoLogin() {
-            currentUser = { id: 999, username: 'Демо', role: 'admin' };
+            currentUser = {
+                id: 999,
+                username: 'Демо',
+                role: 'admin',
+                demo: true
+            };
             token = 'demo-token';
             isDemoMode = true;
             
@@ -722,6 +1130,7 @@
             saveToLocalStorage();
             showApp();
             checkConnection();
+            showToast('🎲 демо-режим', 'info');
         }
 
         async function register() {
@@ -816,6 +1225,10 @@
             
             document.getElementById('demoBadge').style.display = isDemoMode ? 'inline-block' : 'none';
             
+            if (currentUser?.role === 'admin') {
+                document.getElementById('adminStats').style.display = 'grid';
+            }
+            
             updateMenu();
             showPage('studentsPage');
         }
@@ -824,12 +1237,16 @@
             const r = currentUser?.role;
             let btns = '';
             
-            btns += '<button onclick="showPage(\'groupsPage\')">👥 группы</button>';
-            btns += '<button onclick="showPage(\'studentsPage\')">👤 участники</button>';
-            btns += '<button onclick="showPage(\'marksPage\')">⭐ отметки</button>';
+            btns += '<button onclick="showPage(\'groupsPage\')">👥 Группы</button>';
+            btns += '<button onclick="showPage(\'studentsPage\')">👤 Участники</button>';
+            btns += '<button onclick="showPage(\'marksPage\')">⭐ Отметки</button>';
+            btns += '<button onclick="showPage(\'activitiesPage\')">📋 Мероприятия</button>';
             
             if (r === 'admin') {
-                btns += '<button onclick="showPage(\'counselorsPage\')">👨‍🏫 вожатые</button>';
+                btns += '<button onclick="showPage(\'counselorsPage\')">👨‍🏫 Вожатые</button>';
+                btns += '<button onclick="showPage(\'helpersPage\')">🆘 Помощники</button>';
+                btns += '<button onclick="showPage(\'booksPage\')">📚 Книги</button>';
+                btns += '<button onclick="showPage(\'adminPage\')">⚙️ Админ</button>';
             }
             
             document.getElementById('menuGrid').innerHTML = btns;
@@ -838,8 +1255,10 @@
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
+            if (pageId === 'adminPage' && currentUser?.role === 'admin') loadUsers();
+            if (pageId === 'booksPage') renderBooks();
             if (pageId === 'marksPage') { updateGroupSelects(); updateStudentSelect(); }
-            else if (pageId === 'studentsPage' || pageId === 'counselorsPage') updateGroupSelects();
+            else if (pageId === 'studentsPage' || pageId === 'counselorsPage' || pageId === 'helpersPage') updateGroupSelects();
         }
 
         async function loadData() {
@@ -850,14 +1269,28 @@
                 });
                 if (res.ok) {
                     const serverData = await res.json();
-                    data = {
-                        groups: serverData.groups || {},
-                        members: serverData.members || {},
-                        marks: serverData.marks || {},
-                        counselors: serverData.counselors || {},
-                        helpers: serverData.helpers || {},
-                        books: serverData.books || { list: [] }
-                    };
+                    if (currentUser?.role === 'admin') {
+                        data = {
+                            groups: serverData.myData?.groups || {},
+                            members: serverData.myData?.members || {},
+                            marks: serverData.myData?.marks || {},
+                            activities: serverData.myData?.activities || {},
+                            counselors: serverData.myData?.counselors || {},
+                            helpers: serverData.myData?.helpers || {},
+                            books: serverData.myData?.books || { list: [] },
+                            allUsersData: serverData.allUsersData || {}
+                        };
+                    } else {
+                        data = {
+                            groups: serverData.groups || {},
+                            members: serverData.members || {},
+                            marks: serverData.marks || {},
+                            activities: serverData.activities || {},
+                            counselors: serverData.counselors || {},
+                            helpers: serverData.helpers || {},
+                            books: serverData.books || { list: [] }
+                        };
+                    }
                     renderAll();
                     saveToLocalStorage();
                 }
@@ -902,7 +1335,6 @@
             } catch { showToast('❌ ошибка', 'error'); }
         }
 
-        // ========== ОСНОВНЫЕ ФУНКЦИИ ==========
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('введите название', 'error');
@@ -915,8 +1347,17 @@
             } else showToast('группа уже существует', 'error');
         };
 
+        window.deleteGroup = function(name) {
+            if (!confirm('удалить группу?')) return;
+            delete data.groups[name];
+            saveData().then(() => renderGroups());
+        };
+
         function addStudent() {
             const name = document.getElementById('newStudentName').value.trim();
+            const birthday = document.getElementById('newStudentBirthday').value;
+            const phone = document.getElementById('newStudentPhone').value.trim();
+            const parentPhone = document.getElementById('newStudentParentPhone').value.trim();
             const group = document.getElementById('studentGroupSelect').value;
             
             if (!name || !group) return showToast('имя и группа обязательны', 'error');
@@ -924,15 +1365,28 @@
             if (!data.members[group]) data.members[group] = [];
             data.members[group].push({ 
                 id: Date.now(), 
-                name,
+                name, 
+                birthday: birthday || null,
+                phone: phone || null, 
+                parentPhone: parentPhone || null,
                 addedAt: new Date().toISOString() 
             });
             
             saveData().then(() => {
                 document.getElementById('newStudentName').value = '';
+                document.getElementById('newStudentBirthday').value = '';
+                document.getElementById('newStudentPhone').value = '';
+                document.getElementById('newStudentParentPhone').value = '';
                 renderStudents();
+                updateStats();
             });
         }
+
+        window.removeStudent = function(g, sid) {
+            if (!confirm('удалить участника?')) return;
+            data.members[g] = data.members[g].filter(s => s.id !== sid);
+            saveData().then(() => { renderStudents(); updateStats(); });
+        };
 
         function updateStudentSelect() {
             const group = document.getElementById('markGroupSelect').value;
@@ -961,67 +1415,439 @@
                 author: currentUser?.username || 'Пользователь'
             });
             
-            saveData().then(() => { renderMarks(); });
+            saveData().then(() => { renderMarks(); updateStats(); });
         };
 
-        // ========== РЕНДЕРЫ ==========
+        window.deleteMark = function(g, sid, mid) {
+            if (!confirm('удалить отметку?')) return;
+            const idx = data.marks[g][sid].findIndex(m => m.id === mid);
+            if (idx !== -1) {
+                data.marks[g][sid].splice(idx, 1);
+                if (!data.marks[g][sid].length) delete data.marks[g][sid];
+                if (!Object.keys(data.marks[g]).length) delete data.marks[g];
+                saveData().then(() => { renderMarks(); updateStats(); });
+            }
+        };
+
+        window.editGroupDate = function(groupName) {
+            const currentDate = data.groups[groupName]?.createdAt ? 
+                new Date(data.groups[groupName].createdAt).toISOString().split('T')[0] : 
+                new Date().toISOString().split('T')[0];
+            
+            const modalBody = `
+                <div style="text-align:center; margin:20px 0;">
+                    <label style="display:block; margin-bottom:10px;">📅 Новая дата группы <strong>${groupName}</strong></label>
+                    <input type="date" id="editGroupDateInput" value="${currentDate}" 
+                        style="width:100%; padding:15px; border-radius:40px; background:var(--light); border:1px solid var(--primary);">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn-success" style="flex:1;" onclick="saveGroupDate('${groupName}')">💾 Сохранить</button>
+                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalTitle').textContent = '✏️ Изменить дату группы';
+            document.getElementById('modalBody').innerHTML = modalBody;
+            document.getElementById('modal').classList.add('active');
+        };
+
+        window.saveGroupDate = function(groupName) {
+            const newDateStr = document.getElementById('editGroupDateInput').value;
+            if (!newDateStr) return showToast('выберите дату', 'error');
+            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
+            if (isNaN(newDate.getTime())) return showToast('неверная дата', 'error');
+            data.groups[groupName].createdAt = newDate.toISOString();
+            saveData().then(() => { closeModal(); renderGroups(); });
+        };
+
+        window.editMarkDate = function(group, studentId, markId) {
+            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
+            if (!mark) return showToast('отметка не найдена', 'error');
+            const currentDate = mark.date ? new Date(mark.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+            
+            const modalBody = `
+                <div style="text-align:center; margin:20px 0;">
+                    <label style="display:block; margin-bottom:10px;">📅 Новая дата отметки</label>
+                    <input type="date" id="editMarkDateInput" value="${currentDate}" 
+                        style="width:100%; padding:15px; border-radius:40px; background:var(--light); border:1px solid var(--primary);">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn-success" style="flex:1;" onclick="saveMarkDate('${group}', '${studentId}', ${markId})">💾 Сохранить</button>
+                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalTitle').textContent = '✏️ Изменить дату отметки';
+            document.getElementById('modalBody').innerHTML = modalBody;
+            document.getElementById('modal').classList.add('active');
+        };
+
+        window.saveMarkDate = function(group, studentId, markId) {
+            const newDateStr = document.getElementById('editMarkDateInput').value;
+            if (!newDateStr) return showToast('выберите дату', 'error');
+            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
+            if (isNaN(newDate.getTime())) return showToast('неверная дата', 'error');
+            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
+            if (!mark) return showToast('отметка не найдена', 'error');
+            mark.date = newDate.toISOString();
+            saveData().then(() => { closeModal(); renderMarks(); });
+        };
+
+        function addActivity() {
+            const n = document.getElementById('newActivityName').value.trim();
+            const d = document.getElementById('activityDate').value;
+            if (!n || !d) return showToast('заполните поля', 'error');
+            if (!data.activities[d]) data.activities[d] = [];
+            data.activities[d].push({ id: Date.now(), name: n });
+            saveData().then(() => { document.getElementById('newActivityName').value = ''; renderActivities(); });
+        }
+
+        function addCounselor() {
+            const n = document.getElementById('newCounselorName').value.trim();
+            const g = document.getElementById('counselorGroupSelect').value;
+            if (!n || !g) return showToast('заполните поля', 'error');
+            if (!data.counselors[g]) data.counselors[g] = [];
+            data.counselors[g].push({ id: Date.now(), name: n });
+            saveData().then(() => { document.getElementById('newCounselorName').value = ''; renderCounselors(); });
+        }
+
+        function addHelper() {
+            const n = document.getElementById('newHelperName').value.trim();
+            const g = document.getElementById('helperGroupSelect').value;
+            if (!n || !g) return showToast('заполните поля', 'error');
+            if (!data.helpers[g]) data.helpers[g] = [];
+            data.helpers[g].push({ id: Date.now(), name: n });
+            saveData().then(() => { document.getElementById('newHelperName').value = ''; renderHelpers(); });
+        }
+
+        window.removeCounselor = function(g, id) {
+            if (!confirm('удалить?')) return;
+            data.counselors[g] = data.counselors[g].filter(c => c.id !== id);
+            saveData().then(renderCounselors);
+        };
+
+        window.removeHelper = function(g, id) {
+            if (!confirm('удалить?')) return;
+            data.helpers[g] = data.helpers[g].filter(h => h.id !== id);
+            saveData().then(renderHelpers);
+        };
+
+        function addBook() {
+            const t = document.getElementById('newBookTitle').value.trim();
+            const l = document.getElementById('newBookLesson').value.trim();
+            const s = document.getElementById('bookStatus').value;
+            if (!t || !l) return showToast('заполните поля', 'error');
+            if (!data.books.list) data.books.list = [];
+            data.books.list.push({ id: Date.now(), title: t, lesson: l, status: s });
+            saveData().then(() => { 
+                document.getElementById('newBookTitle').value = ''; 
+                document.getElementById('newBookLesson').value = ''; 
+                renderBooks(); 
+                updateStats(); 
+            });
+        }
+
+        window.updateBookStatus = function(bid, ns) {
+            const b = data.books.list.find(b => b.id === bid);
+            if (b) { b.status = ns; saveData().then(renderBooks); }
+        };
+
+        window.deleteBook = function(bid) {
+            if (!confirm('удалить книгу?')) return;
+            data.books.list = data.books.list.filter(b => b.id !== bid);
+            saveData().then(renderBooks);
+        };
+
+        window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
+
         function renderAll() {
             renderGroups();
             renderStudents();
             renderMarks();
+            renderActivities();
+            renderCounselors();
+            renderHelpers();
+            renderBooks();
             updateGroupSelects();
+            updateStats();
+            if (currentUser?.role === 'admin') renderAllGroups();
         }
 
         function renderGroups() {
-            let html = '';
-            for (let g in data.groups) {
-                html += `<div class="card"><strong>${g}</strong></div>`;
+            const gl = document.getElementById('groupsList');
+            if (!Object.keys(data.groups || {}).length) {
+                gl.innerHTML = '<div class="no-data">📭 Нет групп</div>';
+                return;
             }
-            document.getElementById('groupsList').innerHTML = html || '<div class="no-data">Нет групп</div>';
+            let html = '';
+            for (let n in data.groups) {
+                const createdAt = data.groups[n].createdAt ? new Date(data.groups[n].createdAt).toLocaleDateString() : 'не указана';
+                html += `
+                    <div class="card">
+                        <div class="flex-between">
+                            <strong>${n}</strong>
+                            ${currentUser?.role === 'admin' ? `
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn-info" style="width:auto; padding:8px 16px;" onclick="editGroupDate('${n}')">✏️</button>
+                                    <button class="btn-danger" style="width:auto; padding:8px 16px;" onclick="deleteGroup('${n}')">✕</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div style="margin-top:10px;">👥 ${data.members?.[n]?.length || 0}</div>
+                        <div class="group-date-edit" onclick="editGroupDate('${n}')">
+                            📅 ${createdAt} <span style="color:var(--info);">(ред.)</span>
+                        </div>
+                    </div>
+                `;
+            }
+            gl.innerHTML = html;
         }
 
         function renderStudents() {
-            let html = '';
-            for (let group in data.members) {
-                data.members[group].forEach(s => {
-                    html += `
+            const st = document.getElementById('studentsList');
+            if (!Object.keys(data.members || {}).length) {
+                st.innerHTML = '<div class="no-data">👤 Нет участников</div>';
+                return;
+            }
+            
+            let h = '';
+            const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
+            
+            for (let g in data.members) {
+                if (!data.members[g].length) continue;
+                
+                const groupCounselors = data.counselors?.[g] || [];
+                const groupHelpers = data.helpers?.[g] || [];
+                
+                data.members[g].forEach(s => {
+                    const studentMarks = data.marks?.[g]?.[s.id] || [];
+                    const lastMarks = studentMarks.slice(-5).reverse();
+                    
+                    h += `
                         <div class="participant-card">
-                            <strong>${s.name}</strong>
-                            <div>👥 ${group}</div>
+                            <div class="participant-header">
+                                <span class="participant-name">${s.name}</span>
+                                <span class="participant-group">${g}</span>
+                            </div>
+                            
+                            <div class="participant-details">
+                                <div class="detail-block">
+                                    <h4>📞 Контакты</h4>
+                                    ${s.birthday ? `<div class="detail-item"><i>📅</i> ДР: ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
+                                    ${s.phone ? `<div class="detail-item"><i>📱</i> ${s.phone}</div>` : ''}
+                                    ${s.parentPhone ? `<div class="detail-item"><i>👪</i> ${s.parentPhone}</div>` : ''}
+                                </div>
+                                
+                                <div class="detail-block">
+                                    <h4>👥 Персонал</h4>
+                                    ${groupCounselors.map(c => `<span class="staff-badge counselor">👨‍🏫 ${c.name}</span>`).join('')}
+                                    ${groupHelpers.map(h => `<span class="staff-badge helper">🆘 ${h.name}</span>`).join('')}
+                                </div>
+                                
+                                <div class="detail-block">
+                                    <h4>📚 Пройденные уроки</h4>
+                                    ${completedBooks.map(book => `
+                                        <span class="lesson-badge completed">✅ ${book.title}</span>
+                                    `).join('')}
+                                    ${completedBooks.length === 0 ? '<span class="text-muted">Нет</span>' : ''}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top:15px;">
+                                <h4 style="margin-bottom:10px;">⭐ Последние отметки</h4>
+                                ${lastMarks.map(m => `
+                                    <span class="mark-item-small" onclick="editMarkDate('${g}', ${s.id}, ${m.id})">
+                                        <span class="mark-status-dot ${m.status}"></span>
+                                        ${new Date(m.date).toLocaleDateString()}
+                                        ${m.status === 'present' ? '✅' : '❌'}
+                                    </span>
+                                `).join('')}
+                                ${lastMarks.length === 0 ? '<span class="text-muted">Нет отметок</span>' : ''}
+                            </div>
+                            
+                            <div style="margin-top:20px; text-align:right;">
+                                <button class="btn-danger" style="width:auto; padding:10px 20px;" onclick="removeStudent('${g}',${s.id})">🗑️ Удалить</button>
+                            </div>
                         </div>
                     `;
                 });
             }
-            document.getElementById('studentsList').innerHTML = html || '<div class="no-data">Нет участников</div>';
+            st.innerHTML = h;
         }
 
         function renderMarks() {
-            let html = '';
+            const ml = document.getElementById('marksList');
+            if (!Object.keys(data.marks || {}).length) {
+                ml.innerHTML = '<div class="no-data">⭐ Нет отметок</div>';
+                return;
+            }
+            
+            let h = '';
             for (let g in data.marks) {
                 for (let sid in data.marks[g]) {
                     let s = data.members[g]?.find(m => m.id == sid);
                     if (!s) continue;
                     
-                    html += `<div class="card"><strong>${s.name} (${g})</strong>`;
-                    data.marks[g][sid].forEach(m => {
-                        html += `<div>${m.status} - ${new Date(m.date).toLocaleDateString()}</div>`;
+                    h += `<div class="card"><strong style="font-size:18px;">${s.name} (${g})</strong>`;
+                    data.marks[g][sid].slice().reverse().forEach(m => {
+                        h += `
+                            <div class="mark-item">
+                                <span class="mark-status ${m.status}">${m.status === 'present' ? '✅ Присутствует' : '❌ Отсутствует'}</span>
+                                <span class="mark-date-clickable" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
+                                <span class="mark-author">✍️ ${m.author || ''}</span>
+                                <button class="btn-danger" style="width:auto; padding:8px 16px;" onclick="deleteMark('${g}',${sid},${m.id})">✕</button>
+                            </div>
+                        `;
                     });
-                    html += '</div>';
+                    h += '</div>';
                 }
             }
-            document.getElementById('marksList').innerHTML = html || '<div class="no-data">Нет отметок</div>';
+            ml.innerHTML = h;
+        }
+
+        function renderActivities() {
+            const al = document.getElementById('activitiesList');
+            if (!Object.keys(data.activities || {}).length) {
+                al.innerHTML = '<div class="no-data">📋 Нет мероприятий</div>';
+                return;
+            }
+            let h = '';
+            Object.keys(data.activities).sort().reverse().forEach(d => {
+                h += `<div class="card"><strong>${new Date(d).toLocaleDateString()}</strong>`;
+                data.activities[d].forEach(a => { h += `<div style="margin-top:10px;">📌 ${a.name}</div>`; });
+                h += '</div>';
+            });
+            al.innerHTML = h;
+        }
+
+        function renderCounselors() {
+            const cl = document.getElementById('counselorsList');
+            if (!Object.keys(data.counselors || {}).length) {
+                cl.innerHTML = '<div class="no-data">👨‍🏫 Нет вожатых</div>';
+                return;
+            }
+            let h = '';
+            for (let g in data.counselors) {
+                h += `<div class="card"><strong>${g}</strong><div style="margin-top:15px;">`;
+                data.counselors[g].forEach(c => {
+                    h += `<span class="staff-badge counselor">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none; border:none; color:var(--text-muted);">✕</button></span>`;
+                });
+                h += '</div></div>';
+            }
+            cl.innerHTML = h;
+        }
+
+        function renderHelpers() {
+            const hl = document.getElementById('helpersList');
+            if (!Object.keys(data.helpers || {}).length) {
+                hl.innerHTML = '<div class="no-data">🆘 Нет помощников</div>';
+                return;
+            }
+            let h = '';
+            for (let g in data.helpers) {
+                h += `<div class="card"><strong>${g}</strong><div style="margin-top:15px;">`;
+                data.helpers[g].forEach(hp => {
+                    h += `<span class="staff-badge helper">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none; border:none; color:var(--text-muted);">✕</button></span>`;
+                });
+                h += '</div></div>';
+            }
+            hl.innerHTML = h;
+        }
+
+        function renderBooks() {
+            const bl = document.getElementById('booksList');
+            if (!data.books?.list.length) {
+                bl.innerHTML = '<div class="no-data">📚 Нет книг</div>';
+                return;
+            }
+            let fl = data.books.list;
+            if (currentBookFilter !== 'all') fl = fl.filter(b => b.status === currentBookFilter);
+            
+            let h = '';
+            fl.forEach(b => {
+                let bgColor = b.status === 'available' ? 'var(--success)' : (b.status === 'completed' ? 'var(--completed)' : 'var(--warning)');
+                h += `
+                    <div class="book-item">
+                        <div class="book-title">${b.title}</div>
+                        <div style="margin:10px 0;">📖 Урок: ${b.lesson}</div>
+                        <span class="badge" style="background:${bgColor}; color:${b.status === 'in-progress' ? '#1a1a1a' : 'white'};">${b.status}</span>
+                        ${currentUser?.role === 'admin' ? `
+                            <div class="book-actions">
+                                <button class="btn-success" onclick="updateBookStatus(${b.id},'available')">📖</button>
+                                <button class="btn-warning" onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
+                                <button class="btn-completed" onclick="updateBookStatus(${b.id},'completed')">✅</button>
+                                <button class="btn-danger" onclick="deleteBook(${b.id})">✕</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            bl.innerHTML = h;
         }
 
         function updateGroupSelects() {
-            let opts = '<option value="">выбрать</option>';
-            for (let g in data.groups) opts += `<option value="${g}">${g}</option>`;
-            ['studentGroupSelect', 'markGroupSelect'].forEach(id => {
+            const groups = Object.keys(data.groups || {});
+            const opts = groups.length ? groups.map(g => `<option value="${g}">${g}</option>`).join('') : '<option value="">Нет групп</option>';
+            ['studentGroupSelect', 'markGroupSelect', 'counselorGroupSelect', 'helperGroupSelect'].forEach(id => {
                 let sel = document.getElementById(id);
-                if (sel) sel.innerHTML = opts;
+                if (sel) sel.innerHTML = '<option value="">Выбрать</option>' + opts;
             });
         }
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function updateStats() {
+            if (currentUser?.role !== 'admin') return;
+            let tg = 0, tm = 0, tmk = 0, tb = data.books?.list?.length || 0, cb = data.books?.list?.filter(b => b.status === 'completed').length || 0;
+            for (let g in data.groups) { tg++; tm += data.members[g]?.length || 0; }
+            for (let g in data.marks) for (let s in data.marks[g]) tmk += data.marks[g][s].length;
+            document.getElementById('totalGroupsStat').textContent = tg;
+            document.getElementById('totalMembersStat').textContent = tm;
+            document.getElementById('totalMarksStat').textContent = tmk;
+            document.getElementById('totalBooksStat').textContent = tb;
+            document.getElementById('completedBooksStat').textContent = cb;
+        }
+
+        function renderAllGroups() {
+            if (!data.allUsersData) return;
+            let html = '';
+            for (let uid in data.allUsersData) {
+                let ud = data.allUsersData[uid];
+                for (let gn in ud.groups || {}) {
+                    html += `<div class="card"><strong>${gn}</strong> (user ${uid})</div>`;
+                }
+            }
+            document.getElementById('allGroupsList').innerHTML = html || '<div class="no-data">Нет групп</div>';
+        }
+
+        async function loadUsers() {
+            if (!currentUser || currentUser.role !== 'admin' || !isOnline || isDemoMode) return;
+            try {
+                let res = await fetch(`${API_URL}/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+                if (res.ok) {
+                    let uu = await res.json();
+                    document.getElementById('totalUsers').textContent = uu.length;
+                    document.getElementById('adminCount').textContent = uu.filter(u => u.role === 'admin').length;
+                    document.getElementById('counselorCount').textContent = uu.filter(u => u.role === 'counselor').length;
+                    document.getElementById('helperCount').textContent = uu.filter(u => u.role === 'helper').length;
+                    
+                    let html = '';
+                    uu.forEach(user => {
+                        html += `
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>${user.username}</strong>
+                                    <span class="badge">${user.role}</span>
+                                </div>
+                                <div>Статус: ${user.isActive ? '✅ Активен' : '❌ Заблокирован'}</div>
+                                <div>Последний вход: ${user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'никогда'}</div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('usersList').innerHTML = html;
+                }
+            } catch(e) {}
+        }
+
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+
         window.addEventListener('load', () => {
             checkConnection();
             setInterval(checkConnection, 30000);
