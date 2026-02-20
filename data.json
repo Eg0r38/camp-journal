@@ -1,0 +1,351 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "Егор",
+      "password": "$2a$10$aSvSfG7XRkR38hRHHzOJJuzIwv7UaELVpA4XjaG0FdTHVtUQOlGRa",
+      "role": "admin",
+      "createdAt": "2024-09-29T00:00:00.000Z",
+      "lastLogin": "2026-02-19T14:56:18.271Z",
+      "isActive": true
+    }
+  ],
+  "groups": {
+    "Магнитик": {
+      "createdAt": "2024-09-29T00:00:00.000Z",
+      "createdBy": 1,
+      "createdByUsername": "Егор"
+    }
+  },
+  "members": {
+    "Магнитик": [
+      {
+        "id": 1771508141843,
+        "name": "Олеся",
+        "birthday": "2011-08-20",
+        "phone": "+7 914 715 77 53",
+        "parentPhone": "8 914 661 57 73",
+        "addedAt": "2026-02-19T13:35:41.843Z"
+      }
+    ]
+  },
+  "marks": {
+    "Магнитик": {
+      "1771508141843": [
+        {
+          "id": 1771508250509,
+          "status": "present",
+          "statusText": "✅ Присутствует",
+          "date": "2026-02-19T13:37:30.509Z",
+          "author": "Егор"
+        }
+      ]
+    }
+  },
+  "activities": {},
+  "counselors": {
+    "Магнитик": [
+      {
+        "id": 1771508236416,
+        "name": "Вика",
+        "assignedAt": "2026-02-19T13:37:16.416Z"
+      }
+    ]
+  },
+  "helpers": {
+    "Магнитик": [
+      {
+        "id": 1771508209378,
+        "name": "Егор",
+        "assignedAt": "2026-02-19T13:36:49.378Z"
+      }
+    ]
+  },
+  "books": {
+    "list": [
+      {
+        "id": 1771510711332,
+        "title": "ветры подтверждения",
+        "lesson": "все",
+        "status": "completed",
+        "addedAt": "2026-02-19T14:18:31.332Z"
+      }
+    ]
+  },
+  "userData": {
+    "1": {
+      "groups": {
+        "Магнитик": {
+          "createdAt": "2024-09-29T00:00:00.000Z",
+          "createdBy": 1,
+          "createdByUsername": "Егор"
+        }
+      },
+      "members": {
+        "Магнитик": [
+          {
+            "id": 1771508141843,
+            "name": "Олеся",
+            "birthday": "2011-08-20",
+            "phone": "+7 914 715 77 53",
+            "parentPhone": "8 914 661 57 73",
+            "addedAt": "2026-02-19T13:35:41.843Z"
+          }
+        ]
+      },
+      "marks": {},
+      "activities": {},
+      "counselors": {
+        "Магнитик": [
+          {
+            "id": 1771508236416,
+            "name": "Вика",
+            "assignedAt": "2026-02-19T13:37:16.416Z"
+          }
+        ]
+      },
+      "helpers": {
+        "Магнитик": [
+          {
+            "id": 1771508209378,
+            "name": "Егор",
+            "assignedAt": "2026-02-19T13:36:49.378Z"
+          }
+        ]
+      },
+      "books": {
+        "list": [
+          {
+            "id": 1771510711332,
+            "title": "ветры подтверждения",
+            "lesson": "все",
+            "status": "completed",
+            "addedAt": "2026-02-19T14:18:31.332Z"
+          }
+        ]
+      }
+    }
+  },
+  "syncHistory": [
+    {
+      "timestamp": "2026-02-19T13:26:35.270Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:26:36.499Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:26:37.363Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:26:46.057Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:37:54.717Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:37:56.749Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:07.296Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:08.245Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:08.933Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:12.013Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:25.405Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:38:31.404Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:45:06.973Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:45:07.194Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:45:11.366Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:45:17.201Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:45:28.956Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:46:02.256Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:46:02.456Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:46:02.590Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:46:02.730Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T13:50:15.294Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:16:06.964Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:16:15.896Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:16:23.367Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:16:35.542Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:16:36.282Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:17:56.499Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:18:33.654Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:38:00.696Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T14:45:56.505Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T15:03:54.497Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T15:08:22.858Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T15:08:26.652Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T15:08:29.268Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    },
+    {
+      "timestamp": "2026-02-19T15:08:33.176Z",
+      "user": "Егор",
+      "userId": 1,
+      "action": "sync_from_mobile"
+    }
+  ],
+  "settings": {
+    "allowRegistration": true,
+    "lastSync": "2026-02-19T15:08:33.176Z"
+  }
+}
