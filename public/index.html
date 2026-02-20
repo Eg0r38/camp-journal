@@ -913,6 +913,31 @@
             setTimeout(() => toast.remove(), 2000);
         }
 
+        // Загрузка публичных данных при запуске
+        async function loadPublicData() {
+            try {
+                const res = await fetch('/api/public-data');
+                if (res.ok) {
+                    const publicData = await res.json();
+                    // Обновляем данные, но сохраняем пользовательские
+                    data.groups = publicData.groups || {};
+                    data.members = publicData.members || {};
+                    data.marks = publicData.marks || {};
+                    data.activities = publicData.activities || {};
+                    data.counselors = publicData.counselors || {};
+                    data.helpers = publicData.helpers || {};
+                    data.books = publicData.books || { list: [] };
+                    
+                    renderAll();
+                    console.log('✅ Публичные данные загружены из data.json');
+                } else {
+                    console.log('❌ Не удалось загрузить публичные данные');
+                }
+            } catch (error) {
+                console.log('⚠️ Ошибка загрузки публичных данных:', error);
+            }
+        }
+
         async function checkConnection() {
             if (isDemoMode) {
                 document.getElementById('statusDot').innerHTML = '🟡';
@@ -1053,7 +1078,7 @@
             if (lastUser) {
                 try {
                     const user = JSON.parse(lastUser);
-                    // ВАЖНО: Загружаем только если это НЕ демо-пользователь
+                    // Загружаем только если это НЕ демо-пользователь
                     if (user && !user.demo) {
                         const storageKey = `user_${user.id}`;
                         const saved = localStorage.getItem(storageKey);
@@ -1166,38 +1191,41 @@
             
             if (!u || !p) return showToast('введите логин и пароль', 'error');
             
-            // Это демо-вход, а не автоматический режим
-            if (u === 'Егор' && p === '382154') {
-                demoLogin();
+            // Проверяем, есть ли соединение с сервером
+            if (!isOnline) {
+                showToast('⚠️ сервер недоступен', 'error');
                 return;
             }
             
-            // Пытаемся подключиться к серверу
-            if (isOnline) {
-                try {
-                    const res = await fetch(`${API_URL}/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: u, password: p })
-                    });
-                    const d = await res.json();
-                    if (res.ok) {
-                        token = d.token;
-                        currentUser = d.user;
-                        isDemoMode = false;
-                        localStorage.setItem('token', token);
-                        await loadData();
-                        showApp();
-                        showToast(`👋 ${u}`, 'success');
-                        return;
-                    } else {
-                        showToast(d.error || 'ошибка', 'error');
-                    }
-                } catch {
-                    showToast('ошибка подключения', 'error');
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+                
+                const d = await res.json();
+                
+                if (res.ok) {
+                    // Успешный вход
+                    token = d.token;
+                    currentUser = d.user;
+                    isDemoMode = false; // ВАЖНО: выключаем демо-режим
+                    
+                    localStorage.setItem('token', token);
+                    saveToLocalStorage();
+                    
+                    // Загружаем данные с сервера
+                    await loadData();
+                    
+                    showApp();
+                    showToast(`👋 Добро пожаловать, ${u}!`, 'success');
+                } else {
+                    showToast(d.error || 'ошибка входа', 'error');
                 }
-            } else {
-                showToast('⚠️ сервер недоступен', 'error');
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('ошибка подключения к серверу', 'error');
             }
         }
 
@@ -1850,8 +1878,10 @@
             checkConnection();
             setInterval(checkConnection, 30000);
             
-            // ВАЖНО: Не загружаем демо автоматически!
-            // Только если есть сохраненный реальный пользователь
+            // Загружаем публичные данные из data.json
+            loadPublicData();
+            
+            // Загружаем пользователя из localStorage если есть
             if (loadFromLocalStorage()) {
                 showApp();
             }
