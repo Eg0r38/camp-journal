@@ -109,30 +109,17 @@ if (!fs.existsSync(userDataPath)) {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ========== ЯВНЫЙ МАРШРУТ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ==========
+// Явный маршрут для главной страницы
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, 'public', 'index.html');
     const mobilePath = path.join(__dirname, 'public', 'mobile.html');
     
-    // Проверяем существует ли index.html
     if (fs.existsSync(indexPath)) {
         res.sendFile(indexPath);
-    } 
-    // Если нет, пробуем mobile.html
-    else if (fs.existsSync(mobilePath)) {
+    } else if (fs.existsSync(mobilePath)) {
         res.sendFile(mobilePath);
-    }
-    // Если ничего нет, отправляем сообщение об ошибке
-    else {
-        res.status(404).send(`
-            <html>
-                <body style="background: #0a0c14; color: #eaeef2; font-family: Arial; padding: 50px; text-align: center;">
-                    <h1>❌ Файлы не найдены</h1>
-                    <p>В папке public отсутствуют index.html или mobile.html</p>
-                    <p>Создайте файлы в папке: ${path.join(__dirname, 'public')}</p>
-                </body>
-            </html>
-        `);
+    } else {
+        res.status(404).send('Файлы не найдены');
     }
 });
 
@@ -210,7 +197,6 @@ app.post('/api/register', async (req, res) => {
     users.push(newUser);
     saveUsers(users);
     
-    // Создаем пустой файл данных для пользователя
     saveUserData(newUser.id, { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] } });
 
     res.status(201).json({ message: 'Пользователь создан' });
@@ -240,7 +226,6 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ error: 'Неверный пароль' });
     }
 
-    // Обновляем время последнего входа
     user.lastLogin = new Date().toISOString();
     saveUsers(users);
 
@@ -265,7 +250,6 @@ app.get('/api/data', authenticateToken, (req, res) => {
     const userData = loadUserData(req.user.id);
     
     if (req.user.role === 'admin') {
-        // Для админа собираем данные всех пользователей
         const users = getUsers();
         const allUsersData = {};
         
@@ -291,12 +275,11 @@ app.post('/api/data', authenticateToken, (req, res) => {
     res.json({ message: 'Данные сохранены', time: new Date().toISOString() });
 });
 
-// Синхронизация (полная)
+// Синхронизация
 app.post('/api/sync', authenticateToken, (req, res) => {
     const clientData = req.body;
     const serverData = loadUserData(req.user.id);
     
-    // Объединяем данные (клиентские приоритетнее)
     const mergedData = {
         groups: { ...serverData.groups, ...clientData.groups },
         members: { ...serverData.members, ...clientData.members },
@@ -311,40 +294,11 @@ app.post('/api/sync', authenticateToken, (req, res) => {
     
     saveUserData(req.user.id, mergedData);
     
-    // Добавляем запись в историю синхронизации
-    const syncHistoryPath = path.join(DATA_DIR, 'sync_history.json');
-    let syncHistory = [];
-    if (fs.existsSync(syncHistoryPath)) {
-        syncHistory = JSON.parse(fs.readFileSync(syncHistoryPath, 'utf8'));
-    }
-    syncHistory.push({
-        timestamp: new Date().toISOString(),
-        user: req.user.username,
-        userId: req.user.id,
-        action: 'sync'
-    });
-    fs.writeFileSync(syncHistoryPath, JSON.stringify(syncHistory, null, 2));
-    
     res.json({ 
         message: 'Синхронизация успешна', 
         data: mergedData,
         time: new Date().toISOString() 
     });
-});
-
-// Получить историю синхронизации (только для админа)
-app.get('/api/sync/history', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-    
-    const syncHistoryPath = path.join(DATA_DIR, 'sync_history.json');
-    if (fs.existsSync(syncHistoryPath)) {
-        const history = JSON.parse(fs.readFileSync(syncHistoryPath, 'utf8'));
-        res.json(history);
-    } else {
-        res.json([]);
-    }
 });
 
 // Получить всех пользователей (только для админа)
@@ -357,189 +311,18 @@ app.get('/api/users', authenticateToken, (req, res) => {
     res.json(users);
 });
 
-// Получить данные конкретного пользователя (только для админа)
-app.get('/api/users/:userId/data', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const userId = parseInt(req.params.userId);
-    const userData = loadUserData(userId);
-    res.json(userData);
-});
-
-// Блокировка/разблокировка пользователя
-app.put('/api/users/:userId/toggle', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const users = getUsers();
-    const userIndex = users.findIndex(u => u.id == req.params.userId);
-    
-    if (userIndex === -1) {
-        return res.status(404).json({ error: 'Пользователь не найден' });
-    }
-
-    users[userIndex].isActive = !users[userIndex].isActive;
-    saveUsers(users);
-    res.json({ message: 'Статус изменен', isActive: users[userIndex].isActive });
-});
-
-// Изменить роль пользователя
-app.put('/api/users/:userId/role', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const { role } = req.body;
-    if (!['admin', 'counselor', 'helper'].includes(role)) {
-        return res.status(400).json({ error: 'Недопустимая роль' });
-    }
-
-    const users = getUsers();
-    const userIndex = users.findIndex(u => u.id == req.params.userId);
-    
-    if (userIndex === -1) {
-        return res.status(404).json({ error: 'Пользователь не найден' });
-    }
-
-    users[userIndex].role = role;
-    saveUsers(users);
-    res.json({ message: 'Роль изменена' });
-});
-
-// Удалить пользователя
-app.delete('/api/users/:userId', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const userId = parseInt(req.params.userId);
-    if (userId === 1) {
-        return res.status(400).json({ error: 'Нельзя удалить главного администратора' });
-    }
-
-    let users = getUsers();
-    users = users.filter(u => u.id !== userId);
-    saveUsers(users);
-
-    // Удаляем данные пользователя
-    const dataPath = getUserDataPath(userId);
-    if (fs.existsSync(dataPath)) {
-        fs.unlinkSync(dataPath);
-    }
-
-    res.json({ message: 'Пользователь удален' });
-});
-
-// Очистка данных
-app.post('/api/cleanup', authenticateToken, (req, res) => {
-    if (req.user.role !== 'admin') {
-        return res.status(403).json({ error: 'Доступ запрещен' });
-    }
-
-    const { type } = req.body;
-    const users = getUsers();
-    let cleaned = 0;
-
-    users.forEach(user => {
-        if (user.id === 1) return;
-        
-        const userData = loadUserData(user.id);
-        let changed = false;
-        
-        switch(type) {
-            case 'empty-groups':
-                Object.keys(userData.groups).forEach(groupName => {
-                    if (!userData.members[groupName] || userData.members[groupName].length === 0) {
-                        delete userData.groups[groupName];
-                        cleaned++;
-                        changed = true;
-                    }
-                });
-                break;
-                
-            case 'orphaned-marks':
-                Object.keys(userData.marks).forEach(group => {
-                    Object.keys(userData.marks[group]).forEach(studentId => {
-                        const studentExists = userData.members[group]?.some(s => s.id == studentId);
-                        if (!studentExists) {
-                            delete userData.marks[group][studentId];
-                            cleaned++;
-                            changed = true;
-                        }
-                    });
-                    if (Object.keys(userData.marks[group]).length === 0) {
-                        delete userData.marks[group];
-                    }
-                });
-                break;
-                
-            case 'old-activities':
-                const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
-                Object.keys(userData.activities).forEach(date => {
-                    if (new Date(date).getTime() < thirtyDaysAgo) {
-                        delete userData.activities[date];
-                        cleaned++;
-                        changed = true;
-                    }
-                });
-                break;
-                
-            case 'all':
-                Object.keys(userData.groups).forEach(groupName => {
-                    if (!userData.members[groupName] || userData.members[groupName].length === 0) {
-                        delete userData.groups[groupName];
-                        cleaned++;
-                        changed = true;
-                    }
-                });
-                
-                Object.keys(userData.marks).forEach(group => {
-                    Object.keys(userData.marks[group]).forEach(studentId => {
-                        const studentExists = userData.members[group]?.some(s => s.id == studentId);
-                        if (!studentExists) {
-                            delete userData.marks[group][studentId];
-                            cleaned++;
-                            changed = true;
-                        }
-                    });
-                    if (Object.keys(userData.marks[group]).length === 0) {
-                        delete userData.marks[group];
-                    }
-                });
-                
-                const ninetyDaysAgo = Date.now() - 90 * 24 * 60 * 60 * 1000;
-                Object.keys(userData.activities).forEach(date => {
-                    if (new Date(date).getTime() < ninetyDaysAgo) {
-                        delete userData.activities[date];
-                        cleaned++;
-                        changed = true;
-                    }
-                });
-                break;
-        }
-        
-        if (changed) {
-            saveUserData(user.id, userData);
-        }
-    });
-
-    res.json({ message: `Очистка завершена. Удалено элементов: ${cleaned}` });
-});
-
-// Получить данные текущего пользователя (для /api/me)
+// Получить данные текущего пользователя
 app.get('/api/me', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
 
 // ========== ЗАПУСК СЕРВЕРА ==========
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('\n' + '='.repeat(50));
     console.log('✅ СЕРВЕР ЗАПУЩЕН');
     console.log('='.repeat(50));
-    console.log(`🌐 Адрес: http://localhost:${PORT}`);
+    console.log(`🌐 Локальный адрес: http://localhost:${PORT}`);
+    console.log(`📱 Доступ с телефона: http://192.168.0.105:${PORT}`);
     console.log(`📁 Данные: ${DATA_DIR}`);
     console.log('\n🔑 АДМИНИСТРАТОР:');
     console.log('   Логин: Егор');

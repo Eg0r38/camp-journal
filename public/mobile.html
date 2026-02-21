@@ -40,6 +40,7 @@
             font-size: 14px;
         }
 
+        /* Фиксированная шапка */
         .app-header {
             position: fixed;
             top: 0;
@@ -141,6 +142,7 @@
             cursor: pointer;
         }
 
+        /* Авторизация */
         .auth-card {
             background: var(--dark);
             border-radius: 16px;
@@ -175,6 +177,7 @@
             color: white;
         }
 
+        /* Основной контейнер */
         .app-container {
             background: var(--dark);
             border-radius: 16px;
@@ -183,6 +186,7 @@
             border: 1px solid var(--border);
         }
 
+        /* Секция синхронизации */
         .sync-section {
             background: var(--darker);
             padding: 12px;
@@ -209,6 +213,21 @@
             font-weight: 600;
         }
 
+        .share-buttons {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .share-buttons button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
+            background: var(--warning);
+            color: #1a1a1a;
+        }
+
         .last-sync {
             font-size: 10px;
             color: var(--text-muted);
@@ -216,6 +235,7 @@
             margin-top: 4px;
         }
 
+        /* Меню */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -237,6 +257,7 @@
             gap: 4px;
         }
 
+        /* Формы */
         input, select, textarea {
             width: 100%;
             padding: 12px 16px;
@@ -246,6 +267,11 @@
             border-radius: 8px;
             color: white;
             font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
         }
 
         button {
@@ -270,6 +296,7 @@
         .btn-warning { background: var(--warning); color: #1a1a1a; }
         .btn-info { background: var(--info); }
 
+        /* Карточки */
         .card {
             background: var(--light);
             border-radius: 12px;
@@ -278,6 +305,19 @@
             border: 1px solid var(--border);
         }
 
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-header strong {
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        /* Статистика */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -299,6 +339,7 @@
             color: var(--primary);
         }
 
+        /* Отметки */
         .mark-item {
             background: var(--darker);
             border-radius: 8px;
@@ -319,6 +360,13 @@
         .mark-status.present { background: var(--success); }
         .mark-status.absent { background: var(--danger); }
 
+        .mark-date-clickable {
+            cursor: pointer;
+            text-decoration: underline dotted;
+            text-decoration-color: var(--info);
+        }
+
+        /* Книги */
         .book-item {
             background: var(--darker);
             border-radius: 8px;
@@ -326,6 +374,39 @@
             margin: 6px 0;
         }
 
+        .book-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .book-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .book-status.available { background: var(--success); }
+        .book-status.completed { background: var(--completed); }
+        .book-status.in-progress { background: var(--warning); color: #1a1a1a; }
+
+        .book-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .book-actions button {
+            padding: 6px 0;
+            font-size: 11px;
+            margin: 0;
+        }
+
+        /* Бейджи */
         .badge {
             display: inline-block;
             padding: 2px 8px;
@@ -334,14 +415,136 @@
             font-weight: 600;
         }
 
+        .badge.admin { background: var(--primary); }
+        .badge.counselor { background: var(--info); }
+        .badge.helper { background: var(--warning); color: #1a1a1a; }
+
+        /* Редактирование даты */
+        .group-date-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--darker);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .group-date-edit:hover {
+            background: var(--light);
+        }
+
+        /* Вожатые и помощники в карточке */
+        .staff-badge {
+            background: var(--darker);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .staff-badge.counselor { border-left: 2px solid var(--info); }
+        .staff-badge.helper { border-left: 2px solid var(--warning); }
+
+        /* Маленькие отметки */
+        .mark-item-small {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--darker);
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .mark-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .mark-status-dot.present { background: var(--success); }
+        .mark-status-dot.absent { background: var(--danger); }
+
+        /* Уроки */
+        .lesson-badge {
+            background: var(--completed);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        /* Модалки */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--primary);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Утилиты */
         .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         .page { display: none; }
         .page.active { display: block; }
         .no-data { text-align: center; padding: 20px; color: var(--text-muted); }
         .text-muted { color: var(--text-muted); }
+        .mb-20 { margin-bottom: 16px; }
+        .mt-20 { margin-top: 16px; }
     </style>
 </head>
 <body>
+    <!-- Шапка -->
     <div class="app-header">
         <div class="logo-area">
             <div class="vj-logo">ВЖ</div>
@@ -358,14 +561,18 @@
         </div>
     </div>
 
+    <!-- Модалка -->
     <div class="modal" id="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle"></h2>
+            <div class="modal-header">
+                <h2 id="modalTitle">Заголовок</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
             <div id="modalBody"></div>
         </div>
     </div>
 
+    <!-- Авторизация -->
     <div id="authContainer">
         <div class="auth-card">
             <h2 class="text-center mb-20">📋 Вход</h2>
@@ -378,7 +585,7 @@
                 <input type="password" id="loginPassword" placeholder="Пароль">
                 <button onclick="login()">🔓 войти</button>
             </div>
-            <div id="registerForm" style="display: none;">
+            <div id="registerForm" style="display:none;">
                 <input type="text" id="registerUsername" placeholder="Логин">
                 <input type="password" id="registerPassword" placeholder="Пароль">
                 <select id="registerRole">
@@ -390,19 +597,27 @@
         </div>
     </div>
 
-    <div id="appContainer" style="display: none;">
+    <!-- Приложение -->
+    <div id="appContainer" style="display:none;">
         <div class="app-container">
+            <!-- Секция синхронизации и экспорта/импорта -->
             <div class="sync-section">
                 <div class="sync-row">
                     <span id="syncStatus">🌐 Режим: <strong id="modeText">офлайн</strong></span>
                     <button class="btn-info" onclick="forceSync()">🔄 синхр</button>
                 </div>
+                <div class="share-buttons">
+                    <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
+                    <button class="btn-warning" onclick="importData()">📥 импорт</button>
+                </div>
                 <div class="last-sync" id="lastSyncTime"></div>
             </div>
 
+            <!-- Меню -->
             <div class="menu-grid" id="menuGrid"></div>
 
-            <div id="adminStats" class="stats-grid" style="display: none;">
+            <!-- Статистика админа -->
+            <div id="adminStats" class="stats-grid" style="display:none;">
                 <div class="stat-card"><div class="stat-number" id="totalGroupsStat">0</div><div>групп</div></div>
                 <div class="stat-card"><div class="stat-number" id="totalMembersStat">0</div><div>участн</div></div>
                 <div class="stat-card"><div class="stat-number" id="totalMarksStat">0</div><div>отметок</div></div>
@@ -410,6 +625,7 @@
                 <div class="stat-card"><div class="stat-number" id="completedBooksStat">0</div><div>пройд</div></div>
             </div>
 
+            <!-- Страница групп -->
             <div class="page" id="groupsPage">
                 <h2>👥 группы</h2>
                 <div class="flex-row" style="margin-bottom:12px;">
@@ -419,6 +635,7 @@
                 <div id="groupsList"></div>
             </div>
 
+            <!-- Страница участников -->
             <div class="page" id="studentsPage">
                 <h2>👤 участники</h2>
                 <div style="margin-bottom:12px;">
@@ -432,6 +649,7 @@
                 <div id="studentsList"></div>
             </div>
 
+            <!-- Страница отметок -->
             <div class="page" id="marksPage">
                 <h2>⭐ отметки</h2>
                 <div style="margin-bottom:10px;">
@@ -445,6 +663,7 @@
                 <div id="marksList" style="margin-top:16px;"></div>
             </div>
 
+            <!-- Страница мероприятий -->
             <div class="page" id="activitiesPage">
                 <h2>📋 мероприятия</h2>
                 <div style="margin-bottom:12px;">
@@ -455,6 +674,7 @@
                 <div id="activitiesList"></div>
             </div>
 
+            <!-- Страница вожатых -->
             <div class="page" id="counselorsPage">
                 <h2>👨‍🏫 вожатые</h2>
                 <div style="margin-bottom:12px;">
@@ -465,6 +685,7 @@
                 <div id="counselorsList"></div>
             </div>
 
+            <!-- Страница помощников -->
             <div class="page" id="helpersPage">
                 <h2>🆘 помощники</h2>
                 <div style="margin-bottom:12px;">
@@ -475,6 +696,7 @@
                 <div id="helpersList"></div>
             </div>
 
+            <!-- Страница книг -->
             <div class="page" id="booksPage">
                 <h2>📚 книги</h2>
                 <div style="margin-bottom:12px;">
@@ -496,6 +718,7 @@
                 <div id="booksList"></div>
             </div>
 
+            <!-- Страница админа -->
             <div class="page" id="adminPage">
                 <h2>⚙️ управление</h2>
                 <div class="card">
@@ -511,6 +734,21 @@
     </div>
 
     <script>
+        // ========== АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ АДРЕСА СЕРВЕРА ==========
+        const API_BASE = window.location.origin;
+        console.log('Сервер API:', API_BASE);
+
+        // Перехватываем все fetch запросы для работы через Wi-Fi
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (typeof url === 'string' && url.startsWith('/api')) {
+                url = API_BASE + url;
+                console.log('Перенаправляем запрос на:', url);
+            }
+            return originalFetch(url, options);
+        };
+
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let currentUser = null;
         let token = localStorage.getItem('token');
         let data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] }, allUsersData: {} };
@@ -519,13 +757,15 @@
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
+        // Данные администратора (только в коде)
         const ADMIN_CREDENTIALS = { 'Егор': '382154' };
 
+        // ========== УВЕДОМЛЕНИЯ ==========
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
                 position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-                background: var(--dark); color: white; padding: 10px 20px; border-radius: 8px;
+                background: var(--dark); color: white; padding: 10px 20px; border-radius: 30px;
                 border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
                 z-index: 3000; font-size: 13px; max-width: 80%; text-align: center;
             `;
@@ -540,6 +780,75 @@
             }
         }
 
+        // ========== ЭКСПОРТ/ИМПОРТ ДАННЫХ (ДЛЯ TELEGRAM) ==========
+        window.exportData = function() {
+            if (!currentUser) {
+                showToast('⚠️ Сначала войдите', 'error');
+                return;
+            }
+
+            const exportObj = {
+                user: { 
+                    id: currentUser.id, 
+                    username: currentUser.username, 
+                    role: currentUser.role 
+                },
+                data: data,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const jsonStr = JSON.stringify(exportObj, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vj_data_${currentUser.username}_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('📤 Данные экспортированы', 'success');
+        };
+
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        
+                        if (!imported.data || !imported.user) {
+                            showToast('❌ Неверный формат файла', 'error');
+                            return;
+                        }
+
+                        if (confirm(`Загрузить данные от пользователя ${imported.user.username}?\nТекущие данные будут заменены.`)) {
+                            data = imported.data;
+                            renderAll();
+                            pendingChanges = true;
+                            document.getElementById('pendingBadge').style.display = 'inline-block';
+                            showToast('✅ Данные импортированы', 'success');
+                        }
+                    } catch (err) {
+                        showToast('❌ Ошибка чтения файла', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        };
+
+        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ К СЕРВЕРУ ==========
         async function checkConnection() {
             try {
                 const res = await fetch('/api/health').catch(() => null);
@@ -562,6 +871,7 @@
             return false;
         }
 
+        // ========== АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ==========
         async function autoSync() {
             if (!currentUser || !token || !isOnline || !pendingChanges) return;
             
@@ -591,6 +901,7 @@
             }
         }
 
+        // ========== РУЧНАЯ СИНХРОНИЗАЦИЯ ==========
         async function forceSync() {
             if (!currentUser) {
                 showToast('⚠️ войдите', 'error');
@@ -603,6 +914,7 @@
             await autoSync();
         }
 
+        // ========== АВТОРИЗАЦИЯ ==========
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             if (tab === 'login') {
@@ -653,17 +965,37 @@
                 return;
             }
 
+            // Вход для администратора
             if (ADMIN_CREDENTIALS[username] && ADMIN_CREDENTIALS[username] === password) {
                 currentUser = { id: 1, username, role: 'admin' };
                 token = 'admin-token';
                 localStorage.setItem('token', token);
-                data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] } };
+                
+                try {
+                    const res = await fetch('/api/data', { 
+                        headers: { 'Authorization': `Bearer ${token}` } 
+                    });
+                    if (res.ok) {
+                        const serverData = await res.json();
+                        data = {
+                            groups: serverData.myData?.groups || {},
+                            members: serverData.myData?.members || {},
+                            marks: serverData.myData?.marks || {},
+                            activities: serverData.myData?.activities || {},
+                            counselors: serverData.myData?.counselors || {},
+                            helpers: serverData.myData?.helpers || {},
+                            books: serverData.myData?.books || { list: [] }
+                        };
+                    }
+                } catch {}
+                
                 showApp();
                 showToast(`👑 здравствуйте, ${username}`, 'success');
                 checkConnection();
                 return;
             }
 
+            // Обычный вход
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
@@ -789,6 +1121,81 @@
             }
         }
 
+        // ========== РЕДАКТИРОВАНИЕ ДАТЫ ГРУППЫ ==========
+        window.editGroupDate = function(groupName) {
+            const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
+            
+            const modalBody = `
+                <div style="text-align:center; margin:20px 0;">
+                    <label style="display:block; margin-bottom:10px;">📅 Новая дата группы <strong>${groupName}</strong></label>
+                    <input type="date" id="editGroupDateInput" value="${currentDate}" style="width:100%; padding:12px; border-radius:8px; background:var(--light); border:1px solid var(--primary);">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn-success" style="flex:1;" onclick="saveGroupDate('${groupName}')">💾 Сохранить</button>
+                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalTitle').textContent = '✏️ Изменить дату';
+            document.getElementById('modalBody').innerHTML = modalBody;
+            document.getElementById('modal').classList.add('active');
+        };
+
+        window.saveGroupDate = function(groupName) {
+            const newDateStr = document.getElementById('editGroupDateInput').value;
+            if (!newDateStr) return showToast('Выберите дату', 'error');
+            
+            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
+            if (isNaN(newDate.getTime())) return showToast('Неверная дата', 'error');
+            
+            data.groups[groupName].createdAt = newDate.toISOString();
+            saveData().then(() => {
+                closeModal();
+                renderGroups();
+                showToast('✅ Дата обновлена', 'success');
+            });
+        };
+
+        // ========== РЕДАКТИРОВАНИЕ ДАТЫ ОТМЕТКИ ==========
+        window.editMarkDate = function(group, studentId, markId) {
+            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
+            if (!mark) return showToast('Отметка не найдена', 'error');
+            
+            const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
+            
+            const modalBody = `
+                <div style="text-align:center; margin:20px 0;">
+                    <label style="display:block; margin-bottom:10px;">📅 Новая дата отметки</label>
+                    <input type="date" id="editMarkDateInput" value="${currentDate}" style="width:100%; padding:12px; border-radius:8px; background:var(--light); border:1px solid var(--primary);">
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn-success" style="flex:1;" onclick="saveMarkDate('${group}', '${studentId}', ${markId})">💾 Сохранить</button>
+                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modalTitle').textContent = '✏️ Изменить дату';
+            document.getElementById('modalBody').innerHTML = modalBody;
+            document.getElementById('modal').classList.add('active');
+        };
+
+        window.saveMarkDate = function(group, studentId, markId) {
+            const newDateStr = document.getElementById('editMarkDateInput').value;
+            if (!newDateStr) return showToast('Выберите дату', 'error');
+            
+            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
+            if (isNaN(newDate.getTime())) return showToast('Неверная дата', 'error');
+            
+            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
+            if (!mark) return showToast('Отметка не найдена', 'error');
+            
+            mark.date = newDate.toISOString();
+            saveData().then(() => {
+                closeModal();
+                renderMarks();
+                showToast('✅ Дата обновлена', 'success');
+            });
+        };
+
+        // ========== ОСНОВНЫЕ CRUD ==========
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('введите название', 'error');
@@ -808,15 +1215,6 @@
             saveData().then(renderGroups);
         };
 
-        window.editGroupDate = function(groupName) {
-            const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
-            if (newDate) {
-                data.groups[groupName].createdAt = new Date(newDate).toISOString();
-                saveData().then(renderGroups);
-            }
-        };
-
         function addStudent() {
             const name = document.getElementById('newStudentName').value.trim();
             const birthday = document.getElementById('newStudentBirthday').value;
@@ -828,10 +1226,12 @@
             
             if (!data.members[group]) data.members[group] = [];
             data.members[group].push({ 
-                id: Date.now(), name,
+                id: Date.now(), 
+                name,
                 birthday: birthday || null,
                 phone: phone || null,
-                parentPhone: parentPhone || null
+                parentPhone: parentPhone || null,
+                addedAt: new Date().toISOString() 
             });
             
             saveData().then(() => {
@@ -871,8 +1271,9 @@
             if (!data.marks[group][studentId]) data.marks[group][studentId] = [];
 
             data.marks[group][studentId].push({ 
-                id: Date.now(), status,
-                date: new Date().toISOString(),
+                id: Date.now(), 
+                status, 
+                date: new Date().toISOString(), 
                 author: currentUser?.username
             });
             saveData().then(() => { renderMarks(); updateStats(); });
@@ -886,18 +1287,6 @@
                 if (!data.marks[g][sid].length) delete data.marks[g][sid];
                 if (!Object.keys(data.marks[g]).length) delete data.marks[g];
                 saveData().then(() => { renderMarks(); updateStats(); });
-            }
-        };
-
-        window.editMarkDate = function(group, studentId, markId) {
-            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
-            if (!mark) return showToast('отметка не найдена', 'error');
-            
-            const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
-            if (newDate) {
-                mark.date = new Date(newDate).toISOString();
-                saveData().then(() => { renderMarks(); });
             }
         };
 
@@ -977,10 +1366,17 @@
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
+        // ========== РЕНДЕРЫ ==========
         function renderAll() {
-            renderGroups(); renderStudents(); renderMarks(); renderActivities();
-            renderCounselors(); renderHelpers(); renderBooks();
-            updateGroupSelects(); updateStats();
+            renderGroups(); 
+            renderStudents(); 
+            renderMarks(); 
+            renderActivities();
+            renderCounselors(); 
+            renderHelpers(); 
+            renderBooks();
+            updateGroupSelects(); 
+            updateStats();
         }
 
         function renderGroups() {
@@ -1002,7 +1398,7 @@
                             </div>
                         </div>
                         <div>👥 ${data.members?.[n]?.length || 0}</div>
-                        <div style="cursor:pointer; margin-top:8px; font-size:11px;" onclick="editGroupDate('${n}')">
+                        <div class="group-date-edit" onclick="editGroupDate('${n}')">
                             📅 ${createdAt}
                         </div>
                     </div>
@@ -1021,6 +1417,11 @@
             const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
             
             for (let g in data.members) {
+                if (!data.members[g].length) continue;
+                
+                const groupCounselors = data.counselors?.[g] || [];
+                const groupHelpers = data.helpers?.[g] || [];
+                
                 data.members[g].forEach(s => {
                     const marks = data.marks?.[g]?.[s.id] || [];
                     const lastMarks = marks.slice(-3).reverse();
@@ -1031,28 +1432,40 @@
                                 <strong>${s.name}</strong>
                                 <span class="badge" style="background:var(--info)">${g}</span>
                             </div>
-                            <div style="margin:6px 0;">
-                                ${s.birthday ? `<div>📅 ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
+                            
+                            <div style="margin:8px 0; padding:8px; background:var(--darker); border-radius:8px;">
+                                ${s.birthday ? `<div>📅 ДР: ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
                                 ${s.phone ? `<div>📞 ${s.phone}</div>` : ''}
                                 ${s.parentPhone ? `<div>👪 ${s.parentPhone}</div>` : ''}
                             </div>
-                            <div style="margin:6px 0;">
-                                👨‍🏫 ${(data.counselors?.[g] || []).map(c => c.name).join(', ') || 'нет'}
+                            
+                            <div style="margin:8px 0;">
+                                ${groupCounselors.map(c => `<span class="staff-badge counselor">👨‍🏫 ${c.name}</span>`).join('')}
+                                ${groupHelpers.map(h => `<span class="staff-badge helper">🆘 ${h.name}</span>`).join('')}
                             </div>
-                            <div style="margin:6px 0;">
-                                🆘 ${(data.helpers?.[g] || []).map(h => h.name).join(', ') || 'нет'}
-                            </div>
-                            <div style="margin:6px 0;">
-                                📚 пройдено: ${completedBooks.length}
-                            </div>
-                            <div>
-                                ${lastMarks.map(m => `
-                                    <span style="cursor:pointer; margin-right:4px; font-size:11px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
-                                        ${m.status === 'present' ? '✅' : '❌'} ${new Date(m.date).toLocaleDateString()}
+                            
+                            <div style="margin:8px 0;">
+                                <span>📚 Пройденные книги:</span>
+                                ${completedBooks.map(book => `
+                                    <span class="lesson-badge" style="background:var(--completed);">
+                                        ✅ ${book.title}
                                     </span>
                                 `).join('')}
+                                ${completedBooks.length === 0 ? '<span class="text-muted">нет</span>' : ''}
                             </div>
-                            <button class="btn-danger" style="width:auto; margin-top:6px;" onclick="removeStudent('${g}',${s.id})">✕</button>
+                            
+                            <div style="margin:8px 0;">
+                                <span>⭐ Последние отметки:</span>
+                                ${lastMarks.map(m => `
+                                    <span class="mark-item-small" onclick="editMarkDate('${g}', ${s.id}, ${m.id})">
+                                        <span class="mark-status-dot ${m.status}"></span>
+                                        ${new Date(m.date).toLocaleDateString()}
+                                    </span>
+                                `).join('')}
+                                ${lastMarks.length === 0 ? '<span class="text-muted">нет</span>' : ''}
+                            </div>
+                            
+                            <button class="btn-danger" style="width:auto; margin-top:8px;" onclick="removeStudent('${g}',${s.id})">✕</button>
                         </div>
                     `;
                 });
@@ -1071,12 +1484,15 @@
                 for (let sid in data.marks[g]) {
                     const s = data.members[g]?.find(m => m.id == sid);
                     if (!s) continue;
+                    
                     h += `<div class="card"><strong>${s.name} (${g})</strong>`;
+                    
                     data.marks[g][sid].slice().reverse().forEach(m => {
                         h += `
                             <div class="mark-item">
                                 <span class="mark-status ${m.status}">${m.status === 'present' ? '✅' : '❌'}</span>
-                                <span style="cursor:pointer;" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
+                                <span class="mark-date-clickable" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
+                                <span>✍️ ${m.author || ''}</span>
                                 <button class="btn-danger" style="width:auto;" onclick="deleteMark('${g}',${sid},${m.id})">✕</button>
                             </div>
                         `;
@@ -1110,9 +1526,9 @@
             }
             let h = '';
             for (let g in data.counselors) {
-                h += `<div class="card"><strong>${g}</strong><div>`;
+                h += `<div class="card"><strong>${g}</strong><div class="flex-row" style="margin-top:8px;">`;
                 data.counselors[g].forEach(c => {
-                    h += `<span class="badge" style="background:var(--info);">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="staff-badge counselor">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1127,9 +1543,9 @@
             }
             let h = '';
             for (let g in data.helpers) {
-                h += `<div class="card"><strong>${g}</strong><div>`;
+                h += `<div class="card"><strong>${g}</strong><div class="flex-row" style="margin-top:8px;">`;
                 data.helpers[g].forEach(hp => {
-                    h += `<span class="badge" style="background:var(--warning); color:#000;">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="staff-badge helper">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1149,16 +1565,19 @@
             let h = '';
             filtered.forEach(b => {
                 const statusColor = b.status === 'available' ? 'var(--success)' : b.status === 'completed' ? 'var(--completed)' : 'var(--warning)';
+                const statusText = b.status === 'available' ? '📖' : b.status === 'completed' ? '✅' : '📚';
+                
                 h += `
                     <div class="book-item">
-                        <strong>${b.title}</strong> (${b.lesson})
-                        <span class="badge" style="background:${statusColor}">${b.status}</span>
+                        <div class="book-title">${b.title}</div>
+                        <div style="margin:4px 0;">Урок: ${b.lesson}</div>
+                        <span class="badge" style="background:${statusColor}">${statusText}</span>
                         ${currentUser?.role === 'admin' ? `
-                            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:6px;">
-                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'available')">📖</button>
-                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
-                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'completed')">✅</button>
-                                <button style="padding:4px;" onclick="deleteBook(${b.id})">✕</button>
+                            <div class="book-actions">
+                                <button onclick="updateBookStatus(${b.id},'available')">📖</button>
+                                <button onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
+                                <button onclick="updateBookStatus(${b.id},'completed')">✅</button>
+                                <button onclick="deleteBook(${b.id})">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -1200,12 +1619,19 @@
             document.getElementById('usersList').innerHTML = '<div class="card">консоль админа</div>';
         }
 
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function closeModal() { 
+            document.getElementById('modal').classList.remove('active'); 
+        }
 
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        setInterval(checkConnection, 30000);
+        
         if (token) {
             (async () => {
                 try {
-                    const res = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const res = await fetch('/api/me', { 
+                        headers: { 'Authorization': `Bearer ${token}` } 
+                    });
                     if (res.ok) {
                         const data = await res.json();
                         currentUser = data.user;
