@@ -109,6 +109,33 @@ if (!fs.existsSync(userDataPath)) {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ========== ЯВНЫЙ МАРШРУТ ДЛЯ ГЛАВНОЙ СТРАНИЦЫ ==========
+app.get('/', (req, res) => {
+    const indexPath = path.join(__dirname, 'public', 'index.html');
+    const mobilePath = path.join(__dirname, 'public', 'mobile.html');
+    
+    // Проверяем существует ли index.html
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } 
+    // Если нет, пробуем mobile.html
+    else if (fs.existsSync(mobilePath)) {
+        res.sendFile(mobilePath);
+    }
+    // Если ничего нет, отправляем сообщение об ошибке
+    else {
+        res.status(404).send(`
+            <html>
+                <body style="background: #0a0c14; color: #eaeef2; font-family: Arial; padding: 50px; text-align: center;">
+                    <h1>❌ Файлы не найдены</h1>
+                    <p>В папке public отсутствуют index.html или mobile.html</p>
+                    <p>Создайте файлы в папке: ${path.join(__dirname, 'public')}</p>
+                </body>
+            </html>
+        `);
+    }
+});
+
 // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
 function getUsers() {
     return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
