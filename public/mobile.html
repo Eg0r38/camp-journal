@@ -40,7 +40,6 @@
             font-size: 14px;
         }
 
-        /* Фиксированная шапка */
         .app-header {
             position: fixed;
             top: 0;
@@ -142,7 +141,6 @@
             cursor: pointer;
         }
 
-        /* Авторизация */
         .auth-card {
             background: var(--dark);
             border-radius: 16px;
@@ -177,7 +175,6 @@
             color: white;
         }
 
-        /* Основной контейнер */
         .app-container {
             background: var(--dark);
             border-radius: 16px;
@@ -186,7 +183,6 @@
             border: 1px solid var(--border);
         }
 
-        /* Секция синхронизации */
         .sync-section {
             background: var(--darker);
             padding: 12px;
@@ -228,6 +224,19 @@
             color: #1a1a1a;
         }
 
+        .ip-button {
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .ip-button button {
+            background: var(--info);
+            padding: 6px;
+            font-size: 11px;
+            width: auto;
+            display: inline-block;
+        }
+
         .last-sync {
             font-size: 10px;
             color: var(--text-muted);
@@ -235,7 +244,6 @@
             margin-top: 4px;
         }
 
-        /* Меню */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -257,7 +265,6 @@
             gap: 4px;
         }
 
-        /* Формы */
         input, select, textarea {
             width: 100%;
             padding: 12px 16px;
@@ -296,7 +303,6 @@
         .btn-warning { background: var(--warning); color: #1a1a1a; }
         .btn-info { background: var(--info); }
 
-        /* Карточки */
         .card {
             background: var(--light);
             border-radius: 12px;
@@ -317,7 +323,6 @@
             color: var(--primary);
         }
 
-        /* Статистика */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -339,7 +344,6 @@
             color: var(--primary);
         }
 
-        /* Отметки */
         .mark-item {
             background: var(--darker);
             border-radius: 8px;
@@ -366,7 +370,6 @@
             text-decoration-color: var(--info);
         }
 
-        /* Книги */
         .book-item {
             background: var(--darker);
             border-radius: 8px;
@@ -406,7 +409,6 @@
             margin: 0;
         }
 
-        /* Бейджи */
         .badge {
             display: inline-block;
             padding: 2px 8px;
@@ -419,7 +421,6 @@
         .badge.counselor { background: var(--info); }
         .badge.helper { background: var(--warning); color: #1a1a1a; }
 
-        /* Редактирование даты */
         .group-date-edit {
             display: inline-flex;
             align-items: center;
@@ -432,11 +433,6 @@
             margin-top: 6px;
         }
 
-        .group-date-edit:hover {
-            background: var(--light);
-        }
-
-        /* Вожатые и помощники в карточке */
         .staff-badge {
             background: var(--darker);
             padding: 4px 10px;
@@ -452,7 +448,6 @@
         .staff-badge.counselor { border-left: 2px solid var(--info); }
         .staff-badge.helper { border-left: 2px solid var(--warning); }
 
-        /* Маленькие отметки */
         .mark-item-small {
             display: inline-flex;
             align-items: center;
@@ -476,7 +471,6 @@
         .mark-status-dot.present { background: var(--success); }
         .mark-status-dot.absent { background: var(--danger); }
 
-        /* Уроки */
         .lesson-badge {
             background: var(--completed);
             padding: 2px 8px;
@@ -490,7 +484,6 @@
             margin-bottom: 4px;
         }
 
-        /* Модалки */
         .modal {
             position: fixed;
             inset: 0;
@@ -529,22 +522,14 @@
             cursor: pointer;
         }
 
-        .close-btn:hover {
-            color: var(--danger);
-        }
-
-        /* Утилиты */
         .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
         .page { display: none; }
         .page.active { display: block; }
         .no-data { text-align: center; padding: 20px; color: var(--text-muted); }
         .text-muted { color: var(--text-muted); }
-        .mb-20 { margin-bottom: 16px; }
-        .mt-20 { margin-top: 16px; }
     </style>
 </head>
 <body>
-    <!-- Шапка -->
     <div class="app-header">
         <div class="logo-area">
             <div class="vj-logo">ВЖ</div>
@@ -561,7 +546,6 @@
         </div>
     </div>
 
-    <!-- Модалка -->
     <div class="modal" id="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -572,7 +556,6 @@
         </div>
     </div>
 
-    <!-- Авторизация -->
     <div id="authContainer">
         <div class="auth-card">
             <h2 class="text-center mb-20">📋 Вход</h2>
@@ -597,10 +580,8 @@
         </div>
     </div>
 
-    <!-- Приложение -->
     <div id="appContainer" style="display:none;">
         <div class="app-container">
-            <!-- Секция синхронизации и экспорта/импорта -->
             <div class="sync-section">
                 <div class="sync-row">
                     <span id="syncStatus">🌐 Режим: <strong id="modeText">офлайн</strong></span>
@@ -610,13 +591,14 @@
                     <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
                     <button class="btn-warning" onclick="importData()">📥 импорт</button>
                 </div>
+                <div class="ip-button">
+                    <button onclick="changeServerIp()">🔄 Сменить IP сервера</button>
+                </div>
                 <div class="last-sync" id="lastSyncTime"></div>
             </div>
 
-            <!-- Меню -->
             <div class="menu-grid" id="menuGrid"></div>
 
-            <!-- Статистика админа -->
             <div id="adminStats" class="stats-grid" style="display:none;">
                 <div class="stat-card"><div class="stat-number" id="totalGroupsStat">0</div><div>групп</div></div>
                 <div class="stat-card"><div class="stat-number" id="totalMembersStat">0</div><div>участн</div></div>
@@ -625,7 +607,6 @@
                 <div class="stat-card"><div class="stat-number" id="completedBooksStat">0</div><div>пройд</div></div>
             </div>
 
-            <!-- Страница групп -->
             <div class="page" id="groupsPage">
                 <h2>👥 группы</h2>
                 <div class="flex-row" style="margin-bottom:12px;">
@@ -635,7 +616,6 @@
                 <div id="groupsList"></div>
             </div>
 
-            <!-- Страница участников -->
             <div class="page" id="studentsPage">
                 <h2>👤 участники</h2>
                 <div style="margin-bottom:12px;">
@@ -649,7 +629,6 @@
                 <div id="studentsList"></div>
             </div>
 
-            <!-- Страница отметок -->
             <div class="page" id="marksPage">
                 <h2>⭐ отметки</h2>
                 <div style="margin-bottom:10px;">
@@ -663,7 +642,6 @@
                 <div id="marksList" style="margin-top:16px;"></div>
             </div>
 
-            <!-- Страница мероприятий -->
             <div class="page" id="activitiesPage">
                 <h2>📋 мероприятия</h2>
                 <div style="margin-bottom:12px;">
@@ -674,7 +652,6 @@
                 <div id="activitiesList"></div>
             </div>
 
-            <!-- Страница вожатых -->
             <div class="page" id="counselorsPage">
                 <h2>👨‍🏫 вожатые</h2>
                 <div style="margin-bottom:12px;">
@@ -685,7 +662,6 @@
                 <div id="counselorsList"></div>
             </div>
 
-            <!-- Страница помощников -->
             <div class="page" id="helpersPage">
                 <h2>🆘 помощники</h2>
                 <div style="margin-bottom:12px;">
@@ -696,7 +672,6 @@
                 <div id="helpersList"></div>
             </div>
 
-            <!-- Страница книг -->
             <div class="page" id="booksPage">
                 <h2>📚 книги</h2>
                 <div style="margin-bottom:12px;">
@@ -718,7 +693,6 @@
                 <div id="booksList"></div>
             </div>
 
-            <!-- Страница админа -->
             <div class="page" id="adminPage">
                 <h2>⚙️ управление</h2>
                 <div class="card">
@@ -734,21 +708,54 @@
     </div>
 
     <script>
-        // ========== АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ АДРЕСА СЕРВЕРА ==========
-        const API_BASE = window.location.origin;
+        // ========== АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ IP КОМПЬЮТЕРА ==========
+        function getServerUrl() {
+            // Если открыто через локальный файл
+            if (window.location.protocol === 'file:') {
+                // Пытаемся получить сохраненный IP
+                const savedIp = localStorage.getItem('server_ip');
+                if (savedIp) {
+                    return `http://${savedIp}:3000`;
+                }
+                // Если нет сохраненного IP, показываем диалог с вашим IP
+                const ip = prompt('Введите IP адрес компьютера с сервером (например: 192.168.0.105):', '192.168.0.105');
+                if (ip) {
+                    localStorage.setItem('server_ip', ip);
+                    return `http://${ip}:3000`;
+                }
+                return null;
+            }
+            // Если открыто через браузер по IP
+            return window.location.origin;
+        }
+
+        const API_BASE = getServerUrl();
         console.log('Сервер API:', API_BASE);
 
-        // Перехватываем все fetch запросы для работы через Wi-Fi
+        if (!API_BASE) {
+            alert('Не удалось определить адрес сервера!');
+        }
+
+        // Перехватываем все fetch запросы
         const originalFetch = window.fetch;
         window.fetch = function(url, options) {
             if (typeof url === 'string' && url.startsWith('/api')) {
                 url = API_BASE + url;
-                console.log('Перенаправляем запрос на:', url);
+                console.log('Запрос к:', url);
             }
             return originalFetch(url, options);
         };
 
-        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+        // Функция смены IP
+        window.changeServerIp = function() {
+            localStorage.removeItem('server_ip');
+            const newIp = prompt('Введите новый IP адрес компьютера с сервером:', '192.168.0.105');
+            if (newIp) {
+                localStorage.setItem('server_ip', newIp);
+                window.location.reload();
+            }
+        };
+
         let currentUser = null;
         let token = localStorage.getItem('token');
         let data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] }, allUsersData: {} };
@@ -757,10 +764,8 @@
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
-        // Данные администратора (только в коде)
         const ADMIN_CREDENTIALS = { 'Егор': '382154' };
 
-        // ========== УВЕДОМЛЕНИЯ ==========
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
@@ -780,7 +785,6 @@
             }
         }
 
-        // ========== ЭКСПОРТ/ИМПОРТ ДАННЫХ (ДЛЯ TELEGRAM) ==========
         window.exportData = function() {
             if (!currentUser) {
                 showToast('⚠️ Сначала войдите', 'error');
@@ -848,10 +852,19 @@
             input.click();
         };
 
-        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ К СЕРВЕРУ ==========
         async function checkConnection() {
+            if (!API_BASE) return false;
+            
             try {
-                const res = await fetch('/api/health').catch(() => null);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const res = await fetch(`${API_BASE}/api/health`, {
+                    signal: controller.signal
+                }).catch(() => null);
+                
+                clearTimeout(timeoutId);
+                
                 if (res && res.ok) {
                     isOnline = true;
                     document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
@@ -863,7 +876,10 @@
                     }
                     return true;
                 }
-            } catch {}
+            } catch (e) {
+                console.log('Ошибка подключения:', e);
+            }
+            
             isOnline = false;
             document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
             document.getElementById('connectionStatus').classList.add('offline');
@@ -871,12 +887,11 @@
             return false;
         }
 
-        // ========== АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ==========
         async function autoSync() {
             if (!currentUser || !token || !isOnline || !pendingChanges) return;
             
             try {
-                const response = await fetch('/api/sync', {
+                const response = await fetch(`${API_BASE}/api/sync`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -901,7 +916,6 @@
             }
         }
 
-        // ========== РУЧНАЯ СИНХРОНИЗАЦИЯ ==========
         async function forceSync() {
             if (!currentUser) {
                 showToast('⚠️ войдите', 'error');
@@ -914,7 +928,6 @@
             await autoSync();
         }
 
-        // ========== АВТОРИЗАЦИЯ ==========
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             if (tab === 'login') {
@@ -939,7 +952,7 @@
             }
 
             try {
-                const res = await fetch('/api/register', {
+                const res = await fetch(`${API_BASE}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, role })
@@ -965,14 +978,13 @@
                 return;
             }
 
-            // Вход для администратора
             if (ADMIN_CREDENTIALS[username] && ADMIN_CREDENTIALS[username] === password) {
                 currentUser = { id: 1, username, role: 'admin' };
                 token = 'admin-token';
                 localStorage.setItem('token', token);
                 
                 try {
-                    const res = await fetch('/api/data', { 
+                    const res = await fetch(`${API_BASE}/api/data`, { 
                         headers: { 'Authorization': `Bearer ${token}` } 
                     });
                     if (res.ok) {
@@ -995,9 +1007,8 @@
                 return;
             }
 
-            // Обычный вход
             try {
-                const res = await fetch('/api/login', {
+                const res = await fetch(`${API_BASE}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -1029,7 +1040,7 @@
         async function loadData() {
             if (!token) return;
             try {
-                const res = await fetch('/api/data', { 
+                const res = await fetch(`${API_BASE}/api/data`, { 
                     headers: { 'Authorization': `Bearer ${token}` } 
                 });
                 if (res.ok) {
@@ -1121,7 +1132,6 @@
             }
         }
 
-        // ========== РЕДАКТИРОВАНИЕ ДАТЫ ГРУППЫ ==========
         window.editGroupDate = function(groupName) {
             const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
             
@@ -1155,7 +1165,6 @@
             });
         };
 
-        // ========== РЕДАКТИРОВАНИЕ ДАТЫ ОТМЕТКИ ==========
         window.editMarkDate = function(group, studentId, markId) {
             const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
             if (!mark) return showToast('Отметка не найдена', 'error');
@@ -1195,7 +1204,6 @@
             });
         };
 
-        // ========== ОСНОВНЫЕ CRUD ==========
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('введите название', 'error');
@@ -1366,17 +1374,10 @@
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
-        // ========== РЕНДЕРЫ ==========
         function renderAll() {
-            renderGroups(); 
-            renderStudents(); 
-            renderMarks(); 
-            renderActivities();
-            renderCounselors(); 
-            renderHelpers(); 
-            renderBooks();
-            updateGroupSelects(); 
-            updateStats();
+            renderGroups(); renderStudents(); renderMarks(); renderActivities();
+            renderCounselors(); renderHelpers(); renderBooks();
+            updateGroupSelects(); updateStats();
         }
 
         function renderGroups() {
@@ -1623,13 +1624,12 @@
             document.getElementById('modal').classList.remove('active'); 
         }
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         setInterval(checkConnection, 30000);
         
         if (token) {
             (async () => {
                 try {
-                    const res = await fetch('/api/me', { 
+                    const res = await fetch(`${API_BASE}/api/me`, { 
                         headers: { 'Authorization': `Bearer ${token}` } 
                     });
                     if (res.ok) {
