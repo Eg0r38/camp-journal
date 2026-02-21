@@ -224,17 +224,30 @@
             color: #1a1a1a;
         }
 
-        .ip-button {
+        .diagnostic-buttons {
+            display: flex;
+            gap: 4px;
             margin-top: 8px;
-            text-align: center;
+            flex-wrap: wrap;
         }
         
-        .ip-button button {
-            background: var(--info);
-            padding: 6px;
+        .diagnostic-buttons button {
+            flex: 1;
+            padding: 8px;
             font-size: 11px;
-            width: auto;
-            display: inline-block;
+            margin: 0;
+            min-width: 80px;
+        }
+
+        .debug-info {
+            background: var(--darker);
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            word-break: break-all;
         }
 
         .last-sync {
@@ -591,8 +604,15 @@
                     <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
                     <button class="btn-warning" onclick="importData()">📥 импорт</button>
                 </div>
-                <div class="ip-button">
-                    <button onclick="changeServerIp()">🔄 Сменить IP сервера</button>
+                <div class="diagnostic-buttons">
+                    <button class="btn-info" onclick="diagnostic.test()">🔍 тест</button>
+                    <button class="btn-info" onclick="diagnostic.ping()">📡 ping</button>
+                    <button class="btn-info" onclick="diagnostic.info()">ℹ️ инфо</button>
+                    <button class="btn-info" onclick="diagnostic.changeIp()">🔄 смена IP</button>
+                    <button class="btn-info" onclick="diagnostic.reset()">🔄 сброс</button>
+                </div>
+                <div id="debugInfo" class="debug-info">
+                    Загрузка...
                 </div>
                 <div class="last-sync" id="lastSyncTime"></div>
             </div>
@@ -708,52 +728,125 @@
     </div>
 
     <script>
-        // ========== АВТОМАТИЧЕСКОЕ ОПРЕДЕЛЕНИЕ IP КОМПЬЮТЕРА ==========
+        // ========== ДИАГНОСТИКА И НАСТРОЙКА ПОДКЛЮЧЕНИЯ ==========
+        const YOUR_PC_IP = '192.168.0.105'; // ВАШ IP АДРЕС КОМПЬЮТЕРА
+        
+        // Глобальный объект диагностики
+        window.diagnostic = {
+            getSavedIp: function() {
+                return localStorage.getItem('server_ip');
+            },
+            
+            getApiBase: function() {
+                const savedIp = this.getSavedIp() || YOUR_PC_IP;
+                return `http://${savedIp}:3000`;
+            },
+            
+            test: async function() {
+                const apiBase = this.getApiBase();
+                const debugEl = document.getElementById('debugInfo');
+                debugEl.innerHTML = '⏳ Тестирование...';
+                
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    
+                    const res = await fetch(`${apiBase}/api/health`, {
+                        method: 'GET',
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        debugEl.innerHTML = `✅ УСПЕХ!\nСтатус: ${data.status}\nВремя: ${data.time}\nСервер: ${apiBase}`;
+                        showToast('✅ Сервер доступен', 'success');
+                        await checkConnection();
+                    } else {
+                        debugEl.innerHTML = `❌ Ошибка ${res.status}: ${res.statusText}\nСервер: ${apiBase}`;
+                        showToast(`❌ Ошибка ${res.status}`, 'error');
+                    }
+                } catch (e) {
+                    debugEl.innerHTML = `❌ Ошибка: ${e.message}\n\nПроверьте:\n1. Сервер запущен (npm start)\n2. IP правильный: ${apiBase}\n3. Телефон в той же Wi-Fi\n4. Брандмауэр не блокирует порт 3000`;
+                    showToast(`❌ ${e.message}`, 'error');
+                }
+            },
+            
+            ping: function() {
+                const apiBase = this.getApiBase();
+                const debugEl = document.getElementById('debugInfo');
+                debugEl.innerHTML = `📡 Пинг ${apiBase} ...\n\nПопробуйте открыть в браузере:\n${apiBase}/api/health`;
+                showToast('📡 Проверьте в браузере', 'info');
+            },
+            
+            info: function() {
+                const savedIp = this.getSavedIp();
+                const apiBase = this.getApiBase();
+                const debugEl = document.getElementById('debugInfo');
+                
+                debugEl.innerHTML = `
+📊 ИНФОРМАЦИЯ:
+• Ваш IP в коде: ${YOUR_PC_IP}
+• Сохраненный IP: ${savedIp || 'не сохранен'}
+• Текущий API: ${apiBase}
+• Протокол: ${window.location.protocol}
+• Хост: ${window.location.hostname}
+• Ориджин: ${window.location.origin}
+• User Agent: ${navigator.userAgent}
+                `;
+            },
+            
+            changeIp: function() {
+                const currentIp = this.getSavedIp() || YOUR_PC_IP;
+                const newIp = prompt('Введите IP адрес компьютера с сервером:', currentIp);
+                if (newIp && newIp.trim()) {
+                    localStorage.setItem('server_ip', newIp.trim());
+                    showToast(`✅ IP изменен на ${newIp}`, 'success');
+                    this.info();
+                    window.location.reload();
+                }
+            },
+            
+            reset: function() {
+                localStorage.removeItem('server_ip');
+                localStorage.removeItem('token');
+                localStorage.removeItem('lastSyncTime');
+                showToast('🔄 Настройки сброшены', 'info');
+                this.info();
+                window.location.reload();
+            }
+        };
+
+        // Определяем базовый URL API
         function getServerUrl() {
-            // Если открыто через локальный файл
             if (window.location.protocol === 'file:') {
-                // Пытаемся получить сохраненный IP
                 const savedIp = localStorage.getItem('server_ip');
                 if (savedIp) {
                     return `http://${savedIp}:3000`;
                 }
-                // Если нет сохраненного IP, показываем диалог с вашим IP
-                const ip = prompt('Введите IP адрес компьютера с сервером (например: 192.168.0.105):', '192.168.0.105');
-                if (ip) {
-                    localStorage.setItem('server_ip', ip);
-                    return `http://${ip}:3000`;
-                }
-                return null;
+                return `http://${YOUR_PC_IP}:3000`;
             }
-            // Если открыто через браузер по IP
             return window.location.origin;
         }
 
         const API_BASE = getServerUrl();
-        console.log('Сервер API:', API_BASE);
+        console.log('🖥️ Сервер API:', API_BASE);
 
-        if (!API_BASE) {
-            alert('Не удалось определить адрес сервера!');
-        }
+        // Показываем диагностическую информацию при загрузке
+        setTimeout(() => {
+            diagnostic.info();
+        }, 500);
 
-        // Перехватываем все fetch запросы
+        // Перехватываем fetch
         const originalFetch = window.fetch;
         window.fetch = function(url, options) {
             if (typeof url === 'string' && url.startsWith('/api')) {
                 url = API_BASE + url;
-                console.log('Запрос к:', url);
+                console.log('📡 Запрос к:', url);
             }
             return originalFetch(url, options);
-        };
-
-        // Функция смены IP
-        window.changeServerIp = function() {
-            localStorage.removeItem('server_ip');
-            const newIp = prompt('Введите новый IP адрес компьютера с сервером:', '192.168.0.105');
-            if (newIp) {
-                localStorage.setItem('server_ip', newIp);
-                window.location.reload();
-            }
         };
 
         let currentUser = null;
@@ -857,15 +950,17 @@
             
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
                 
                 const res = await fetch(`${API_BASE}/api/health`, {
+                    method: 'GET',
+                    mode: 'cors',
                     signal: controller.signal
-                }).catch(() => null);
+                });
                 
                 clearTimeout(timeoutId);
                 
-                if (res && res.ok) {
+                if (res.ok) {
                     isOnline = true;
                     document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
                     document.getElementById('connectionStatus').classList.remove('offline');
@@ -877,7 +972,7 @@
                     return true;
                 }
             } catch (e) {
-                console.log('Ошибка подключения:', e);
+                console.log('Ошибка подключения:', e.message);
             }
             
             isOnline = false;
