@@ -15,7 +15,96 @@ const USER_DATA_DIR = path.join(DATA_DIR, 'user_data');
 
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR);
-if (!fs.existsSync(USERS_FILE)) fs.writeFileSync(USERS_FILE, '[]');
+
+// Ваши данные
+const YOUR_DATA = {
+  users: [
+    {
+      id: 1,
+      username: "Егор",
+      password: "$2a$10$aSvSfG7XRkR38hRHHzOJJuzIwv7UaELVpA4XjaG0FdTHVtUQOlGRa",
+      role: "admin",
+      createdAt: "2024-09-29T00:00:00.000Z",
+      lastLogin: "2026-02-19T14:56:18.271Z",
+      isActive: true
+    }
+  ],
+  userData: {
+    "1": {
+      groups: {
+        "Магнитик": {
+          createdAt: "2024-09-29T00:00:00.000Z",
+          createdBy: 1,
+          createdByUsername: "Егор"
+        }
+      },
+      members: {
+        "Магнитик": [
+          {
+            id: 1771508141843,
+            name: "Олеся",
+            birthday: "2011-08-20",
+            phone: "+7 914 715 77 53",
+            parentPhone: "8 914 661 57 73",
+            addedAt: "2026-02-19T13:35:41.843Z"
+          }
+        ]
+      },
+      marks: {
+        "Магнитик": {
+          "1771508141843": [
+            {
+              id: 1771508250509,
+              status: "present",
+              date: "2026-02-19T13:37:30.509Z",
+              author: "Егор"
+            }
+          ]
+        }
+      },
+      counselors: {
+        "Магнитик": [
+          {
+            id: 1771508236416,
+            name: "Вика",
+            assignedAt: "2026-02-19T13:37:16.416Z"
+          }
+        ]
+      },
+      helpers: {
+        "Магнитик": [
+          {
+            id: 1771508209378,
+            name: "Егор",
+            assignedAt: "2026-02-19T13:36:49.378Z"
+          }
+        ]
+      },
+      books: {
+        list: [
+          {
+            id: 1771510711332,
+            title: "ветры подтверждения",
+            lesson: "все",
+            status: "completed",
+            addedAt: "2026-02-19T14:18:31.332Z"
+          }
+        ]
+      }
+    }
+  }
+};
+
+// Инициализация данных при первом запуске
+if (!fs.existsSync(USERS_FILE)) {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(YOUR_DATA.users, null, 2));
+}
+
+// Сохраняем данные пользователя 1
+const userDataPath = path.join(USER_DATA_DIR, 'user_1.json');
+if (!fs.existsSync(userDataPath)) {
+    fs.writeFileSync(userDataPath, JSON.stringify(YOUR_DATA.userData["1"], null, 2));
+}
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -194,6 +283,21 @@ app.post('/api/sync', authenticateToken, (req, res) => {
     };
     
     saveUserData(req.user.id, mergedData);
+    
+    // Добавляем запись в историю синхронизации
+    const syncHistoryPath = path.join(DATA_DIR, 'sync_history.json');
+    let syncHistory = [];
+    if (fs.existsSync(syncHistoryPath)) {
+        syncHistory = JSON.parse(fs.readFileSync(syncHistoryPath, 'utf8'));
+    }
+    syncHistory.push({
+        timestamp: new Date().toISOString(),
+        user: req.user.username,
+        userId: req.user.id,
+        action: 'sync'
+    });
+    fs.writeFileSync(syncHistoryPath, JSON.stringify(syncHistory, null, 2));
+    
     res.json({ 
         message: 'Синхронизация успешна', 
         data: mergedData,
@@ -201,38 +305,19 @@ app.post('/api/sync', authenticateToken, (req, res) => {
     });
 });
 
-// Создать группу
-app.post('/api/groups', authenticateToken, (req, res) => {
-    const { name } = req.body;
-    if (!name) return res.status(400).json({ error: 'Название группы обязательно' });
-
-    const userData = loadUserData(req.user.id);
+// Получить историю синхронизации (только для админа)
+app.get('/api/sync/history', authenticateToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Доступ запрещен' });
+    }
     
-    if (userData.groups[name]) {
-        return res.status(400).json({ error: 'Группа уже существует' });
+    const syncHistoryPath = path.join(DATA_DIR, 'sync_history.json');
+    if (fs.existsSync(syncHistoryPath)) {
+        const history = JSON.parse(fs.readFileSync(syncHistoryPath, 'utf8'));
+        res.json(history);
+    } else {
+        res.json([]);
     }
-
-    userData.groups[name] = {
-        createdAt: new Date().toISOString(),
-        createdBy: req.user.username
-    };
-
-    saveUserData(req.user.id, userData);
-    res.json({ message: 'Группа создана', group: userData.groups[name] });
-});
-
-// Удалить группу
-app.delete('/api/groups/:name', authenticateToken, (req, res) => {
-    const { name } = req.params;
-    const userData = loadUserData(req.user.id);
-
-    if (!userData.groups[name]) {
-        return res.status(404).json({ error: 'Группа не найдена' });
-    }
-
-    delete userData.groups[name];
-    saveUserData(req.user.id, userData);
-    res.json({ message: 'Группа удалена' });
 });
 
 // Получить всех пользователей (только для админа)
@@ -417,27 +502,10 @@ app.post('/api/cleanup', authenticateToken, (req, res) => {
     res.json({ message: `Очистка завершена. Удалено элементов: ${cleaned}` });
 });
 
-// Инициализация администратора при первом запуске
-function initAdmin() {
-    const users = getUsers();
-    if (!users.find(u => u.username === 'Егор')) {
-        const hashedPassword = bcrypt.hashSync('382154', 10);
-        const admin = {
-            id: 1,
-            username: 'Егор',
-            password: hashedPassword,
-            role: 'admin',
-            createdAt: new Date().toISOString(),
-            lastLogin: null,
-            isActive: true
-        };
-        users.push(admin);
-        saveUsers(users);
-        console.log('✅ Администратор создан: Егор / 382154');
-    }
-}
-
-initAdmin();
+// Получить данные текущего пользователя (для /api/me)
+app.get('/api/me', authenticateToken, (req, res) => {
+    res.json({ user: req.user });
+});
 
 // ========== ЗАПУСК СЕРВЕРА ==========
 app.listen(PORT, () => {
@@ -449,8 +517,11 @@ app.listen(PORT, () => {
     console.log('\n🔑 АДМИНИСТРАТОР:');
     console.log('   Логин: Егор');
     console.log('   Пароль: 382154');
-    console.log('\n📱 Доступные версии:');
-    console.log(`   ПК версия: http://localhost:${PORT}/pc.html`);
-    console.log(`   Моб версия: http://localhost:${PORT}/mobile.html`);
+    console.log('\n📊 ВАШИ ДАННЫЕ ЗАГРУЖЕНЫ:');
+    console.log(`   Группа: Магнитик`);
+    console.log(`   Участник: Олеся`);
+    console.log(`   Вожатый: Вика`);
+    console.log(`   Помощник: Егор`);
+    console.log(`   Книга: ветры подтверждения (пройдена)`);
     console.log('='.repeat(50) + '\n');
 });

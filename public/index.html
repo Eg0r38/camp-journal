@@ -288,6 +288,12 @@
             border: 1px solid var(--border);
         }
 
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border-color: var(--primary);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -342,12 +348,48 @@
             text-decoration-color: var(--info);
         }
 
+        .mark-date-clickable:hover {
+            color: var(--info);
+        }
+
         .book-item {
             background: var(--darker);
             border-radius: 8px;
             padding: 14px;
             margin: 8px 0;
             border: 1px solid var(--border);
+        }
+
+        .book-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .book-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .book-status.available { background: var(--success); }
+        .book-status.completed { background: var(--completed); }
+        .book-status.in-progress { background: var(--warning); color: #1a1a1a; }
+
+        .book-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .book-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
         }
 
         .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -378,15 +420,62 @@
             border: 1px solid var(--primary);
         }
 
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
         .close-btn {
-            float: right;
             font-size: 24px;
             cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.admin { background: var(--primary); }
+        .badge.counselor { background: var(--info); }
+        .badge.helper { background: var(--warning); color: #1a1a1a; }
+
+        .group-date-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--darker);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .group-date-edit:hover {
+            background: var(--light);
         }
 
         .sync-pending {
             background: var(--warning);
             color: #1a1a1a;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-left: 6px;
+        }
+
+        .data-badge {
+            background: var(--info);
+            color: white;
             padding: 2px 8px;
             border-radius: 20px;
             font-size: 10px;
@@ -404,6 +493,7 @@
             <div class="user-info">
                 <span id="userName"></span>
                 <span class="role-badge" id="userRole"></span>
+                <span class="data-badge" id="dataBadge" style="display: none;">📊</span>
                 <span class="sync-pending" id="pendingBadge" style="display: none;">⚠️</span>
             </div>
             <div class="connection-status" id="connectionStatus" onclick="checkConnection()">🟢 Онлайн</div>
@@ -413,8 +503,10 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle"></h2>
+            <div class="modal-header">
+                <h2 id="modalTitle">Заголовок</h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
             <div id="modalBody"></div>
         </div>
     </div>
@@ -447,7 +539,7 @@
         <div class="app-container">
             <div class="sync-info">
                 <span>
-                    <span id="syncIcon">🔄</span> 
+                    <span id="syncIcon">✅</span> 
                     <span id="syncStatus">Синхронизировано</span>
                 </span>
                 <button onclick="forceSync()">🔄 Синхронизировать</button>
@@ -552,14 +644,14 @@
                 <h2>⚙️ Управление</h2>
                 <div class="card">
                     <h3>📊 Статистика</h3>
-                    <div>Всего: <span id="totalUsers">0</span></div>
+                    <div>Всего пользователей: <span id="totalUsers">0</span></div>
                     <div>Админов: <span id="adminCount">0</span></div>
                     <div>Вожатых: <span id="counselorCount">0</span></div>
                     <div>Помощников: <span id="helperCount">0</span></div>
                 </div>
                 <div id="usersList"></div>
                 <div class="cleanup-section" style="margin-top:20px; padding:20px; background:var(--darker); border-radius:8px;">
-                    <h3>🗑️ Очистка</h3>
+                    <h3>🗑️ Очистка данных</h3>
                     <div class="flex-row">
                         <button class="btn-warning" onclick="cleanupData('empty-groups')">Пустые группы</button>
                         <button class="btn-warning" onclick="cleanupData('orphaned-marks')">Отметки без уч.</button>
@@ -580,10 +672,30 @@
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
-        const API_URL = '';
+        const ADMIN_CREDENTIALS = { 'Егор': '382154' };
 
         function showToast(msg, type = 'info') {
-            alert(msg);
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--dark);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
+                z-index: 3000;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+                max-width: 80%;
+                text-align: center;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
 
         function updateLastSyncTime() {
@@ -714,6 +826,34 @@
                 return;
             }
 
+            // Специальная проверка для админа Егора
+            if (username === 'Егор' && password === '382154') {
+                try {
+                    // Пробуем получить токен с сервера
+                    const res = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    if (res.ok) {
+                        const data = await res.json();
+                        token = data.token;
+                        currentUser = data.user;
+                        localStorage.setItem('token', token);
+                        await loadData();
+                        showApp();
+                        showToast(`👑 Добро пожаловать, ${username}!`, 'success');
+                    } else {
+                        showToast('Ошибка сервера', 'error');
+                    }
+                } catch {
+                    showToast('Ошибка подключения к серверу', 'error');
+                }
+                return;
+            }
+
+            // Обычный вход
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
@@ -727,6 +867,7 @@
                     localStorage.setItem('token', token);
                     await loadData();
                     showApp();
+                    showToast(`👋 Добро пожаловать, ${username}!`, 'success');
                 } else {
                     showToast(data.error, 'error');
                 }
@@ -764,16 +905,11 @@
                             books: serverData.myData?.books || { list: [] },
                             allUsersData: serverData.allUsersData || {}
                         };
+                        
+                        // Показываем бейдж с данными для админа
+                        document.getElementById('dataBadge').style.display = 'inline-block';
                     } else {
-                        data = {
-                            groups: serverData.groups || {},
-                            members: serverData.members || {},
-                            marks: serverData.marks || {},
-                            activities: serverData.activities || {},
-                            counselors: serverData.counselors || {},
-                            helpers: serverData.helpers || {},
-                            books: serverData.books || { list: [] }
-                        };
+                        data = serverData;
                     }
                     pendingChanges = false;
                     document.getElementById('pendingBadge').style.display = 'none';
@@ -852,6 +988,7 @@
             }
         }
 
+        // Group functions
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('Введите название', 'error');
@@ -880,6 +1017,7 @@
             }
         };
 
+        // Student functions
         function addStudent() {
             const name = document.getElementById('newStudentName').value.trim();
             const birthday = document.getElementById('newStudentBirthday').value;
@@ -891,8 +1029,11 @@
             
             if (!data.members[group]) data.members[group] = [];
             data.members[group].push({ 
-                id: Date.now(), name, birthday: birthday || null,
-                phone: phone || null, parentPhone: parentPhone || null
+                id: Date.now(), 
+                name, 
+                birthday: birthday || null,
+                phone: phone || null, 
+                parentPhone: parentPhone || null
             });
             
             saveData().then(() => {
@@ -911,6 +1052,7 @@
             saveData().then(() => { renderStudents(); updateStats(); });
         };
 
+        // Mark functions
         function updateStudentSelect() {
             const group = document.getElementById('markGroupSelect').value;
             const studSel = document.getElementById('markStudentSelect');
@@ -932,7 +1074,10 @@
             if (!data.marks[group][studentId]) data.marks[group][studentId] = [];
 
             data.marks[group][studentId].push({ 
-                id: Date.now(), status, date: new Date().toISOString(), author: currentUser?.username
+                id: Date.now(), 
+                status, 
+                date: new Date().toISOString(), 
+                author: currentUser?.username
             });
             saveData().then(() => { renderMarks(); updateStats(); });
         };
@@ -960,6 +1105,7 @@
             }
         };
 
+        // Activity functions
         function addActivity() {
             const n = document.getElementById('newActivityName').value.trim();
             const d = document.getElementById('activityDate').value;
@@ -972,6 +1118,7 @@
             });
         }
 
+        // Counselor functions
         function addCounselor() {
             const n = document.getElementById('newCounselorName').value.trim();
             const g = document.getElementById('counselorGroupSelect').value;
@@ -990,6 +1137,7 @@
             saveData().then(renderCounselors);
         };
 
+        // Helper functions
         function addHelper() {
             const n = document.getElementById('newHelperName').value.trim();
             const g = document.getElementById('helperGroupSelect').value;
@@ -1008,6 +1156,7 @@
             saveData().then(renderHelpers);
         };
 
+        // Book functions
         function addBook() {
             const t = document.getElementById('newBookTitle').value.trim();
             const l = document.getElementById('newBookLesson').value.trim();
@@ -1036,10 +1185,17 @@
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
+        // Render functions
         function renderAll() {
-            renderGroups(); renderStudents(); renderMarks(); renderActivities();
-            renderCounselors(); renderHelpers(); renderBooks();
-            updateGroupSelects(); updateStats();
+            renderGroups(); 
+            renderStudents(); 
+            renderMarks(); 
+            renderActivities();
+            renderCounselors(); 
+            renderHelpers(); 
+            renderBooks();
+            updateGroupSelects(); 
+            updateStats();
         }
 
         function renderGroups() {
@@ -1061,7 +1217,7 @@
                             </div>
                         </div>
                         <div>👥 ${data.members?.[n]?.length || 0}</div>
-                        <div class="group-date-edit" style="cursor:pointer; margin-top:8px; font-size:12px;" onclick="editGroupDate('${n}')">
+                        <div class="group-date-edit" onclick="editGroupDate('${n}')">
                             📅 ${createdAt}
                         </div>
                     </div>
@@ -1077,12 +1233,14 @@
                 return;
             }
             let h = '';
-            const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
             
             for (let g in data.members) {
                 data.members[g].forEach(s => {
                     const marks = data.marks?.[g]?.[s.id] || [];
                     const lastMarks = marks.slice(-3).reverse();
+                    const counselors = data.counselors?.[g] || [];
+                    const helpers = data.helpers?.[g] || [];
+                    const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
                     
                     h += `
                         <div class="card">
@@ -1090,26 +1248,33 @@
                                 <strong>${s.name}</strong>
                                 <span class="badge" style="background:var(--info)">${g}</span>
                             </div>
-                            <div style="margin:8px 0;">
-                                ${s.birthday ? `<div>📅 ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
+                            <div style="margin:8px 0; padding:8px; background:var(--darker); border-radius:6px;">
+                                ${s.birthday ? `<div>📅 ДР: ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
                                 ${s.phone ? `<div>📞 ${s.phone}</div>` : ''}
                                 ${s.parentPhone ? `<div>👪 ${s.parentPhone}</div>` : ''}
                             </div>
                             <div style="margin:8px 0;">
-                                👨‍🏫 Вожатые: ${(data.counselors?.[g] || []).map(c => c.name).join(', ') || 'нет'}
+                                👨‍🏫 Вожатые: ${counselors.map(c => c.name).join(', ') || 'нет'}
                             </div>
                             <div style="margin:8px 0;">
-                                🆘 Помощники: ${(data.helpers?.[g] || []).map(h => h.name).join(', ') || 'нет'}
+                                🆘 Помощники: ${helpers.map(h => h.name).join(', ') || 'нет'}
                             </div>
                             <div style="margin:8px 0;">
                                 📚 Пройденные книги: ${completedBooks.length}
+                                ${completedBooks.length > 0 ? `
+                                    <div style="margin-top:4px; font-size:12px;">
+                                        ${completedBooks.map(b => `✅ ${b.title}`).join(', ')}
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div>
-                                ⭐ ${lastMarks.map(m => `
-                                    <span style="cursor:pointer; margin-right:4px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
+                            <div style="margin:8px 0;">
+                                ⭐ Последние отметки: 
+                                ${lastMarks.map(m => `
+                                    <span style="cursor:pointer; margin-right:8px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
                                         ${m.status === 'present' ? '✅' : '❌'} ${new Date(m.date).toLocaleDateString()}
                                     </span>
                                 `).join('')}
+                                ${lastMarks.length === 0 ? 'нет' : ''}
                             </div>
                             <button class="btn-danger" style="width:auto; margin-top:8px;" onclick="removeStudent('${g}',${s.id})">✕ Удалить</button>
                         </div>
@@ -1135,7 +1300,7 @@
                         h += `
                             <div class="mark-item">
                                 <span class="mark-status ${m.status}">${m.status === 'present' ? '✅' : '❌'}</span>
-                                <span style="cursor:pointer;" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
+                                <span class="mark-date-clickable" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
                                 <span>✍️ ${m.author || ''}</span>
                                 <button class="btn-danger" style="width:auto;" onclick="deleteMark('${g}',${sid},${m.id})">✕</button>
                             </div>
@@ -1209,10 +1374,12 @@
             let h = '';
             filtered.forEach(b => {
                 const statusColor = b.status === 'available' ? 'var(--success)' : b.status === 'completed' ? 'var(--completed)' : 'var(--warning)';
+                const statusText = b.status === 'available' ? '📖' : b.status === 'completed' ? '✅' : '📚';
+                
                 h += `
                     <div class="book-item">
                         <strong>${b.title}</strong> (${b.lesson})
-                        <span class="badge" style="background:${statusColor}">${b.status}</span>
+                        <span class="badge" style="background:${statusColor}; margin-left:8px;">${statusText}</span>
                         ${currentUser?.role === 'admin' ? `
                             <div class="book-actions">
                                 <button onclick="updateBookStatus(${b.id},'available')">📖</button>
@@ -1255,7 +1422,9 @@
         async function loadUsers() {
             if (!currentUser || currentUser.role !== 'admin') return;
             try {
-                const res = await fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } });
+                const res = await fetch('/api/users', { 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                });
                 if (res.ok) {
                     const users = await res.json();
                     document.getElementById('totalUsers').textContent = users.length;
@@ -1267,9 +1436,18 @@
                     users.forEach(u => {
                         html += `
                             <div class="card">
-                                <strong>${u.username}</strong> - 
-                                <span class="badge" style="background:${u.role === 'admin' ? 'var(--primary)' : u.role === 'counselor' ? 'var(--info)' : 'var(--warning)'}">${u.role}</span>
-                                <span> ${u.isActive ? '🟢' : '🔴'}</span>
+                                <div class="flex-row" style="justify-content:space-between">
+                                    <strong>${u.username}</strong>
+                                    <span>
+                                        <span class="badge" style="background:${u.role === 'admin' ? 'var(--primary)' : u.role === 'counselor' ? 'var(--info)' : 'var(--warning)'}">
+                                            ${u.role === 'admin' ? '👑' : u.role === 'counselor' ? '👨‍🏫' : '🆘'} ${u.role}
+                                        </span>
+                                        <span> ${u.isActive ? '🟢' : '🔴'}</span>
+                                    </span>
+                                </div>
+                                <div style="font-size:12px; color:var(--text-muted);">
+                                    Создан: ${new Date(u.createdAt).toLocaleDateString()}
+                                </div>
                             </div>
                         `;
                     });
@@ -1283,12 +1461,17 @@
             showToast(`Очистка: ${type}`, 'info');
         }
 
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function closeModal() { 
+            document.getElementById('modal').classList.remove('active'); 
+        }
 
+        // Проверяем авторизацию при загрузке
         if (token) {
             (async () => {
                 try {
-                    const res = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const res = await fetch('/api/me', { 
+                        headers: { 'Authorization': `Bearer ${token}` } 
+                    });
                     if (res.ok) {
                         const data = await res.json();
                         currentUser = data.user;
