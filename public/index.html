@@ -2,13 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Журнал вожатого • ПК версия</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ВЖ • мобильная</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -30,47 +31,51 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-page);
             color: var(--text);
-            padding: 20px;
+            padding: 70px 8px 20px 8px;
             min-height: 100vh;
+            line-height: 1.4;
+            font-size: 14px;
         }
 
         .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--dark);
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--dark);
-            padding: 16px 24px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 8px;
         }
 
         .vj-logo {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: var(--primary);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,120,212,0.3);
         }
 
         .app-title {
-            font-size: 24px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--primary);
         }
@@ -78,42 +83,46 @@
         .user-section {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 8px;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
             background: var(--light);
-            padding: 8px 16px;
-            border-radius: 30px;
+            padding: 4px 10px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-        }
-
-        #userName {
-            font-weight: 600;
-            color: white;
+            font-size: 12px;
         }
 
         .role-badge {
             background: var(--primary);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 10px;
             font-weight: 600;
         }
 
+        .sync-pending {
+            background: var(--warning);
+            color: #1a1a1a;
+            padding: 2px 6px;
+            border-radius: 20px;
+            font-size: 9px;
+            margin-left: 4px;
+        }
+
         .connection-status {
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 13px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 500;
             background: #1e3a2a;
             color: #8bc34a;
             border: 1px solid #2d4a36;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .connection-status.offline {
@@ -122,51 +131,43 @@
             border-color: #4a2d2d;
         }
 
-        .connection-status:hover {
-            transform: scale(1.02);
-        }
-
         .logout-btn {
             background: var(--light);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 8px 20px;
-            border-radius: 30px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
             cursor: pointer;
         }
 
-        .logout-btn:hover {
-            background: var(--lighter);
-        }
-
         .auth-card {
-            max-width: 400px;
-            margin: 100px auto;
             background: var(--dark);
             border-radius: 16px;
-            padding: 32px;
+            padding: 24px 16px;
+            max-width: 340px;
+            margin: 20px auto;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         .auth-tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: var(--darker);
             padding: 4px;
-            border-radius: 10px;
-            margin-bottom: 24px;
+            border-radius: 30px;
+            margin-bottom: 20px;
         }
 
         .auth-tab {
             flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 10px;
+            border-radius: 30px;
             font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
         }
 
         .auth-tab.active {
@@ -177,165 +178,156 @@
         .app-container {
             background: var(--dark);
             border-radius: 16px;
-            padding: 24px;
+            padding: 16px 12px;
+            margin-top: 10px;
             border: 1px solid var(--border);
         }
 
-        .sync-info {
+        .sync-section {
             background: var(--darker);
-            padding: 16px 20px;
+            padding: 12px;
             border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 16px;
             border: 1px solid var(--info);
         }
 
-        .sync-info button {
+        .sync-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .sync-row button {
             width: auto;
-            padding: 8px 20px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
             background: var(--info);
             border: none;
             color: white;
-            border-radius: 8px;
-            cursor: pointer;
+            font-weight: 600;
         }
 
-        .sync-info button:hover {
-            background: var(--primary-dark);
+        .share-buttons {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .share-buttons button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
+            background: var(--warning);
+            color: #1a1a1a;
         }
 
         .last-sync {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--text-muted);
             text-align: right;
             margin-top: 4px;
         }
 
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 16px 0;
+        }
+
+        .menu-grid button {
+            padding: 10px 2px;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 11px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
         input, select, textarea {
             width: 100%;
             padding: 12px 16px;
-            margin: 5px 0;
+            margin: 4px 0;
             background: var(--light);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: white;
             font-size: 14px;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
         }
 
         button {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px 16px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
-            cursor: pointer;
+            margin: 4px 0;
+            width: 100%;
             border: 1px solid var(--primary-dark);
-            transition: 0.2s;
         }
 
-        button:hover {
-            background: var(--primary-dark);
+        button:active {
+            transform: scale(0.98);
         }
 
-        .btn-success { background: var(--success); border-color: #218838; }
-        .btn-danger { background: var(--danger); border-color: #c82333; }
-        .btn-warning { background: var(--warning); color: #1a1a1a; border-color: #e0a800; }
-        .btn-info { background: var(--info); border-color: #138496; }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .menu-grid button {
-            padding: 12px 8px;
-            background: var(--light);
-            border: 1px solid var(--border);
-            font-size: 13px;
-            min-height: 70px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .page {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .page.active {
-            display: block;
-        }
+        .btn-success { background: var(--success); }
+        .btn-danger { background: var(--danger); }
+        .btn-warning { background: var(--warning); color: #1a1a1a; }
+        .btn-info { background: var(--info); }
 
         .card {
             background: var(--light);
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
             border: 1px solid var(--border);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            border-color: var(--primary);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin: 20px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin: 16px 0;
         }
 
         .stat-card {
             background: var(--darker);
             border-radius: 12px;
-            padding: 16px;
+            padding: 10px 4px;
             text-align: center;
             border: 1px solid var(--border);
         }
 
         .stat-number {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 5px;
         }
 
         .mark-item {
             background: var(--darker);
             border-radius: 8px;
-            padding: 12px 16px;
-            margin: 8px 0;
+            padding: 8px 12px;
+            margin: 6px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid var(--border);
         }
 
         .mark-status {
-            padding: 4px 12px;
+            padding: 2px 8px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
         }
 
@@ -348,54 +340,26 @@
             text-decoration-color: var(--info);
         }
 
-        .mark-date-clickable:hover {
-            color: var(--info);
-        }
-
         .book-item {
             background: var(--darker);
             border-radius: 8px;
-            padding: 14px;
-            margin: 8px 0;
-            border: 1px solid var(--border);
+            padding: 12px;
+            margin: 6px 0;
         }
 
-        .book-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .book-status {
+        .badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 2px 8px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
-            margin-top: 8px;
         }
 
-        .book-status.available { background: var(--success); }
-        .book-status.completed { background: var(--completed); }
-        .book-status.in-progress { background: var(--warning); color: #1a1a1a; }
-
-        .book-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .book-actions button {
-            flex: 1;
-            padding: 8px;
-            font-size: 12px;
-            margin: 0;
-        }
-
-        .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .mb-20 { margin-bottom: 20px; }
+        .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .no-data { text-align: center; padding: 20px; color: var(--text-muted); }
         .text-muted { color: var(--text-muted); }
-        .no-data { text-align: center; padding: 30px; color: var(--text-muted); }
 
         .modal {
             position: fixed;
@@ -414,8 +378,8 @@
         .modal-content {
             background: var(--dark);
             border-radius: 16px;
-            padding: 24px;
-            max-width: 500px;
+            padding: 20px;
+            max-width: 400px;
             width: 90%;
             border: 1px solid var(--primary);
         }
@@ -424,62 +388,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .close-btn {
             font-size: 24px;
             cursor: pointer;
-        }
-
-        .close-btn:hover {
-            color: var(--danger);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge.admin { background: var(--primary); }
-        .badge.counselor { background: var(--info); }
-        .badge.helper { background: var(--warning); color: #1a1a1a; }
-
-        .group-date-edit {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--darker);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            cursor: pointer;
-            margin-top: 6px;
-        }
-
-        .group-date-edit:hover {
-            background: var(--light);
-        }
-
-        .sync-pending {
-            background: var(--warning);
-            color: #1a1a1a;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 6px;
-        }
-
-        .data-badge {
-            background: var(--info);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 6px;
         }
     </style>
 </head>
@@ -487,17 +401,16 @@
     <div class="app-header">
         <div class="logo-area">
             <div class="vj-logo">ВЖ</div>
-            <span class="app-title">Журнал вожатого • ПК</span>
+            <span class="app-title">Журнал вожатого</span>
         </div>
         <div class="user-section" id="userInfo" style="display: none;">
             <div class="user-info">
                 <span id="userName"></span>
                 <span class="role-badge" id="userRole"></span>
-                <span class="data-badge" id="dataBadge" style="display: none;">📊</span>
                 <span class="sync-pending" id="pendingBadge" style="display: none;">⚠️</span>
             </div>
-            <div class="connection-status" id="connectionStatus" onclick="checkConnection()">🟢 Онлайн</div>
-            <button class="logout-btn" onclick="logout()">Выйти</button>
+            <div class="connection-status" id="connectionStatus" onclick="checkConnection()">🔄</div>
+            <button class="logout-btn" onclick="logout()">⤴</button>
         </div>
     </div>
 
@@ -513,15 +426,15 @@
 
     <div id="authContainer">
         <div class="auth-card">
-            <h2 class="text-center mb-20">📋 Вход в систему</h2>
+            <h2 class="text-center mb-20">📋 Вход</h2>
             <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchAuthTab('login')">Вход</div>
-                <div class="auth-tab" onclick="switchAuthTab('register')">Регистрация</div>
+                <div class="auth-tab active" onclick="switchAuthTab('login')">вход</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">регистр</div>
             </div>
             <div id="loginForm">
                 <input type="text" id="loginUsername" placeholder="Логин">
                 <input type="password" id="loginPassword" placeholder="Пароль">
-                <button onclick="login()">🔓 Войти</button>
+                <button onclick="login()">🔓 войти</button>
             </div>
             <div id="registerForm" style="display: none;">
                 <input type="text" id="registerUsername" placeholder="Логин">
@@ -530,135 +443,131 @@
                     <option value="counselor">👨‍🏫 Вожатый</option>
                     <option value="helper">🆘 Помощник</option>
                 </select>
-                <button onclick="register()">📝 Зарегистрироваться</button>
+                <button onclick="register()">📝 создать</button>
             </div>
         </div>
     </div>
 
     <div id="appContainer" style="display: none;">
         <div class="app-container">
-            <div class="sync-info">
-                <span>
-                    <span id="syncIcon">✅</span> 
-                    <span id="syncStatus">Синхронизировано</span>
-                </span>
-                <button onclick="forceSync()">🔄 Синхронизировать</button>
+            <div class="sync-section">
+                <div class="sync-row">
+                    <span id="syncStatus">🌐 Режим: <strong id="modeText">офлайн</strong></span>
+                    <button class="btn-info" onclick="forceSync()">🔄 синхр</button>
+                </div>
+                <div class="share-buttons">
+                    <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
+                    <button class="btn-warning" onclick="importData()">📥 импорт</button>
+                </div>
+                <div class="last-sync" id="lastSyncTime"></div>
             </div>
-            <div class="last-sync" id="lastSyncTime"></div>
 
             <div class="menu-grid" id="menuGrid"></div>
 
             <div id="adminStats" class="stats-grid" style="display: none;">
-                <div class="stat-card"><div class="stat-number" id="totalGroupsStat">0</div><div class="stat-label">Групп</div></div>
-                <div class="stat-card"><div class="stat-number" id="totalMembersStat">0</div><div class="stat-label">Участников</div></div>
-                <div class="stat-card"><div class="stat-number" id="totalMarksStat">0</div><div class="stat-label">Отметок</div></div>
-                <div class="stat-card"><div class="stat-number" id="totalBooksStat">0</div><div class="stat-label">Книг</div></div>
-                <div class="stat-card"><div class="stat-number" id="completedBooksStat">0</div><div class="stat-label">Пройдено</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalGroupsStat">0</div><div>групп</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalMembersStat">0</div><div>участн</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalMarksStat">0</div><div>отметок</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalBooksStat">0</div><div>книг</div></div>
+                <div class="stat-card"><div class="stat-number" id="completedBooksStat">0</div><div>пройд</div></div>
             </div>
 
             <div class="page" id="groupsPage">
-                <h2>👥 Группы</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newGroupName" placeholder="Название группы" style="flex:2;">
-                    <button class="btn-success" style="width:auto;" onclick="createGroup()">➕ Создать</button>
+                <h2>👥 группы</h2>
+                <div class="flex-row" style="margin-bottom:12px;">
+                    <input type="text" id="newGroupName" placeholder="Название" style="flex:2;">
+                    <button class="btn-success" style="width:auto; padding:12px 18px;" onclick="createGroup()">➕</button>
                 </div>
                 <div id="groupsList"></div>
             </div>
 
             <div class="page" id="studentsPage">
-                <h2>👤 Участники</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newStudentName" placeholder="Имя" style="flex:2;">
-                    <input type="date" id="newStudentBirthday" style="flex:1;">
-                    <input type="text" id="newStudentPhone" placeholder="Телефон" style="flex:1;">
-                    <input type="text" id="newStudentParentPhone" placeholder="Тел. родителей" style="flex:1;">
-                    <select id="studentGroupSelect" style="flex:1;"></select>
-                    <button class="btn-success" style="width:auto;" onclick="addStudent()">➕ Добавить</button>
+                <h2>👤 участники</h2>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="newStudentName" placeholder="Имя">
+                    <input type="date" id="newStudentBirthday">
+                    <input type="text" id="newStudentPhone" placeholder="Телефон">
+                    <input type="text" id="newStudentParentPhone" placeholder="Тел. родителей">
+                    <select id="studentGroupSelect"></select>
+                    <button class="btn-success" onclick="addStudent()">➕ добавить</button>
                 </div>
                 <div id="studentsList"></div>
             </div>
 
             <div class="page" id="marksPage">
-                <h2>⭐ Отметки</h2>
-                <div class="flex-row mb-20">
-                    <select id="markGroupSelect" onchange="updateStudentSelect()" style="flex:1;"></select>
-                    <select id="markStudentSelect" style="flex:1;"></select>
-                    <button class="btn-success" onclick="addMark('present')">✅ Присутствует</button>
-                    <button class="btn-danger" onclick="addMark('absent')">❌ Отсутствует</button>
+                <h2>⭐ отметки</h2>
+                <div style="margin-bottom:10px;">
+                    <select id="markGroupSelect" onchange="updateStudentSelect()" style="margin-bottom:4px;"></select>
+                    <select id="markStudentSelect"></select>
                 </div>
-                <div id="marksList"></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+                    <button class="btn-success" onclick="addMark('present')">✅ присут</button>
+                    <button class="btn-danger" onclick="addMark('absent')">❌ отсут</button>
+                </div>
+                <div id="marksList" style="margin-top:16px;"></div>
             </div>
 
             <div class="page" id="activitiesPage">
-                <h2>📋 Мероприятия</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newActivityName" placeholder="Название" style="flex:2;">
-                    <input type="date" id="activityDate" style="flex:1;">
-                    <button class="btn-success" style="width:auto;" onclick="addActivity()">➕ Добавить</button>
+                <h2>📋 мероприятия</h2>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="newActivityName" placeholder="Название">
+                    <input type="date" id="activityDate">
+                    <button class="btn-success" onclick="addActivity()">➕ добавить</button>
                 </div>
                 <div id="activitiesList"></div>
             </div>
 
             <div class="page" id="counselorsPage">
-                <h2>👨‍🏫 Вожатые</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newCounselorName" placeholder="Имя" style="flex:2;">
-                    <select id="counselorGroupSelect" style="flex:1;"></select>
-                    <button class="btn-success" style="width:auto;" onclick="addCounselor()">➕ Назначить</button>
+                <h2>👨‍🏫 вожатые</h2>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="newCounselorName" placeholder="Имя">
+                    <select id="counselorGroupSelect"></select>
+                    <button class="btn-success" onclick="addCounselor()">➕ назначить</button>
                 </div>
                 <div id="counselorsList"></div>
             </div>
 
             <div class="page" id="helpersPage">
-                <h2>🆘 Помощники</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newHelperName" placeholder="Имя" style="flex:2;">
-                    <select id="helperGroupSelect" style="flex:1;"></select>
-                    <button class="btn-success" style="width:auto;" onclick="addHelper()">➕ Назначить</button>
+                <h2>🆘 помощники</h2>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="newHelperName" placeholder="Имя">
+                    <select id="helperGroupSelect"></select>
+                    <button class="btn-success" onclick="addHelper()">➕ назначить</button>
                 </div>
                 <div id="helpersList"></div>
             </div>
 
             <div class="page" id="booksPage">
-                <h2>📚 Книги</h2>
-                <div class="flex-row mb-20">
-                    <input type="text" id="newBookTitle" placeholder="Название" style="flex:2;">
-                    <input type="text" id="newBookLesson" placeholder="Урок" style="flex:1;">
-                    <select id="bookStatus" style="flex:1;">
-                        <option value="available">📖 Доступна</option>
-                        <option value="in-progress">📚 В процессе</option>
-                        <option value="completed">✅ Пройдена</option>
+                <h2>📚 книги</h2>
+                <div style="margin-bottom:12px;">
+                    <input type="text" id="newBookTitle" placeholder="Название">
+                    <input type="text" id="newBookLesson" placeholder="Урок">
+                    <select id="bookStatus">
+                        <option value="available">📖 доступна</option>
+                        <option value="in-progress">📚 в процессе</option>
+                        <option value="completed">✅ пройдена</option>
                     </select>
-                    <button class="btn-success" style="width:auto;" onclick="addBook()">➕ Добавить</button>
+                    <button class="btn-success" onclick="addBook()">➕ добавить</button>
                 </div>
-                <div class="flex-row mb-20">
-                    <button onclick="filterBooks('all')">Все</button>
-                    <button class="btn-success" onclick="filterBooks('available')">Доступные</button>
-                    <button class="btn-warning" onclick="filterBooks('in-progress')">В процессе</button>
-                    <button class="btn-completed" onclick="filterBooks('completed')">Пройденные</button>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin:10px 0;">
+                    <button style="padding:8px;" onclick="filterBooks('all')">все</button>
+                    <button style="padding:8px; background:var(--success)" onclick="filterBooks('available')">📖</button>
+                    <button style="padding:8px; background:var(--warning)" onclick="filterBooks('in-progress')">📚</button>
+                    <button style="padding:8px; background:var(--completed)" onclick="filterBooks('completed')">✅</button>
                 </div>
                 <div id="booksList"></div>
             </div>
 
             <div class="page" id="adminPage">
-                <h2>⚙️ Управление</h2>
+                <h2>⚙️ управление</h2>
                 <div class="card">
-                    <h3>📊 Статистика</h3>
-                    <div>Всего пользователей: <span id="totalUsers">0</span></div>
-                    <div>Админов: <span id="adminCount">0</span></div>
-                    <div>Вожатых: <span id="counselorCount">0</span></div>
-                    <div>Помощников: <span id="helperCount">0</span></div>
+                    <h3>📊 статистика</h3>
+                    <div>всего: <span id="totalUsers">0</span></div>
+                    <div>админов: <span id="adminCount">0</span></div>
+                    <div>вожатых: <span id="counselorCount">0</span></div>
+                    <div>помощников: <span id="helperCount">0</span></div>
                 </div>
                 <div id="usersList"></div>
-                <div class="cleanup-section" style="margin-top:20px; padding:20px; background:var(--darker); border-radius:8px;">
-                    <h3>🗑️ Очистка данных</h3>
-                    <div class="flex-row">
-                        <button class="btn-warning" onclick="cleanupData('empty-groups')">Пустые группы</button>
-                        <button class="btn-warning" onclick="cleanupData('orphaned-marks')">Отметки без уч.</button>
-                        <button class="btn-warning" onclick="cleanupData('old-activities')">Старые мероприятия</button>
-                        <button class="btn-danger" onclick="cleanupData('all')">Всё</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -668,7 +577,7 @@
         let token = localStorage.getItem('token');
         let data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] }, allUsersData: {} };
         let currentBookFilter = 'all';
-        let isOnline = true;
+        let isOnline = false;
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
@@ -677,21 +586,10 @@
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: var(--dark);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                background: var(--dark); color: white; padding: 10px 20px; border-radius: 8px;
                 border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
-                z-index: 3000;
-                font-size: 14px;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                max-width: 80%;
-                text-align: center;
+                z-index: 3000; font-size: 13px; max-width: 80%; text-align: center;
             `;
             toast.textContent = msg;
             document.body.appendChild(toast);
@@ -700,17 +598,96 @@
 
         function updateLastSyncTime() {
             if (lastSyncTime) {
-                document.getElementById('lastSyncTime').textContent = `Последняя синхр.: ${new Date(lastSyncTime).toLocaleString()}`;
+                document.getElementById('lastSyncTime').textContent = `синхр: ${new Date(lastSyncTime).toLocaleString()}`;
+            }
+        }
+
+        // ========== ЭКСПОРТ/ИМПОРТ ==========
+        window.exportData = function() {
+            if (!currentUser) {
+                showToast('⚠️ Сначала войдите', 'error');
+                return;
+            }
+
+            const exportObj = {
+                user: { 
+                    id: currentUser.id, 
+                    username: currentUser.username, 
+                    role: currentUser.role 
+                },
+                data: data,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const jsonStr = JSON.stringify(exportObj, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vj_data_${currentUser.username}_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('📤 Данные экспортированы', 'success');
+        };
+
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        
+                        if (!imported.data || !imported.user) {
+                            showToast('❌ Неверный формат файла', 'error');
+                            return;
+                        }
+
+                        if (confirm(`Загрузить данные от пользователя ${imported.user.username}?\nТекущие данные будут заменены.`)) {
+                            data = imported.data;
+                            renderAll();
+                            if (currentUser && currentUser.role !== 'admin' && !currentUser.demo) {
+                                saveToLocalStorage();
+                            }
+                            pendingChanges = true;
+                            document.getElementById('pendingBadge').style.display = 'inline-block';
+                            showToast('✅ Данные импортированы', 'success');
+                        }
+                    } catch (err) {
+                        showToast('❌ Ошибка чтения файла', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        };
+
+        function saveToLocalStorage() {
+            if (currentUser && currentUser.role !== 'admin' && !currentUser.demo) {
+                localStorage.setItem(`user_${currentUser.id}`, JSON.stringify({ user: currentUser, data }));
+                localStorage.setItem('lastUser', JSON.stringify(currentUser));
             }
         }
 
         async function checkConnection() {
             try {
-                const res = await fetch('/api/health');
-                if (res.ok) {
+                const res = await fetch('/api/health').catch(() => null);
+                if (res && res.ok) {
                     isOnline = true;
-                    document.getElementById('connectionStatus').innerHTML = '🟢 Онлайн';
+                    document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
                     document.getElementById('connectionStatus').classList.remove('offline');
+                    document.getElementById('modeText').textContent = 'онлайн';
                     
                     if (pendingChanges) {
                         await autoSync();
@@ -719,8 +696,9 @@
                 }
             } catch {}
             isOnline = false;
-            document.getElementById('connectionStatus').innerHTML = '🔴 Офлайн';
+            document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
             document.getElementById('connectionStatus').classList.add('offline');
+            document.getElementById('modeText').textContent = 'офлайн';
             return false;
         }
 
@@ -728,9 +706,6 @@
             if (!currentUser || !token || !isOnline || !pendingChanges) return;
             
             try {
-                document.getElementById('syncIcon').textContent = '⏳';
-                document.getElementById('syncStatus').textContent = 'Синхронизация...';
-                
                 const response = await fetch('/api/sync', {
                     method: 'POST',
                     headers: { 
@@ -748,31 +723,23 @@
                     lastSyncTime = result.time;
                     localStorage.setItem('lastSyncTime', lastSyncTime);
                     updateLastSyncTime();
-                    
-                    document.getElementById('syncIcon').textContent = '✅';
-                    document.getElementById('syncStatus').textContent = 'Синхронизировано';
-                    
                     renderAll();
-                    showToast('✅ Синхронизация завершена', 'success');
+                    showToast('✅ синхронизация', 'success');
                 }
             } catch (e) {
-                document.getElementById('syncIcon').textContent = '❌';
-                document.getElementById('syncStatus').textContent = 'Ошибка';
-                showToast('❌ Ошибка синхронизации', 'error');
+                showToast('❌ ошибка', 'error');
             }
         }
 
         async function forceSync() {
             if (!currentUser) {
-                showToast('⚠️ Сначала войдите', 'error');
+                showToast('⚠️ войдите', 'error');
                 return;
             }
-            
             if (!isOnline) {
-                showToast('⚠️ Нет подключения к серверу', 'error');
+                showToast('⚠️ нет подключения', 'error');
                 return;
             }
-            
             await autoSync();
         }
 
@@ -795,7 +762,7 @@
             const role = document.getElementById('registerRole').value;
 
             if (!username || !password) {
-                showToast('Заполните все поля', 'error');
+                showToast('заполните поля', 'error');
                 return;
             }
 
@@ -807,13 +774,13 @@
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    showToast('Регистрация успешна', 'success');
+                    showToast('регистрация успешна', 'success');
                     switchAuthTab('login');
                 } else {
                     showToast(data.error, 'error');
                 }
             } catch {
-                showToast('Ошибка подключения к серверу', 'error');
+                showToast('ошибка', 'error');
             }
         }
 
@@ -822,38 +789,39 @@
             const password = document.getElementById('loginPassword').value;
 
             if (!username || !password) {
-                showToast('Введите логин и пароль', 'error');
+                showToast('введите логин и пароль', 'error');
                 return;
             }
 
-            // Специальная проверка для админа Егора
-            if (username === 'Егор' && password === '382154') {
+            if (ADMIN_CREDENTIALS[username] && ADMIN_CREDENTIALS[username] === password) {
+                currentUser = { id: 1, username, role: 'admin' };
+                token = 'admin-token';
+                localStorage.setItem('token', token);
+                
                 try {
-                    // Пробуем получить токен с сервера
-                    const res = await fetch('/api/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password })
+                    const res = await fetch('/api/data', { 
+                        headers: { 'Authorization': `Bearer ${token}` } 
                     });
-                    
                     if (res.ok) {
-                        const data = await res.json();
-                        token = data.token;
-                        currentUser = data.user;
-                        localStorage.setItem('token', token);
-                        await loadData();
-                        showApp();
-                        showToast(`👑 Добро пожаловать, ${username}!`, 'success');
-                    } else {
-                        showToast('Ошибка сервера', 'error');
+                        const serverData = await res.json();
+                        data = {
+                            groups: serverData.myData?.groups || {},
+                            members: serverData.myData?.members || {},
+                            marks: serverData.myData?.marks || {},
+                            activities: serverData.myData?.activities || {},
+                            counselors: serverData.myData?.counselors || {},
+                            helpers: serverData.myData?.helpers || {},
+                            books: serverData.myData?.books || { list: [] }
+                        };
                     }
-                } catch {
-                    showToast('Ошибка подключения к серверу', 'error');
-                }
+                } catch {}
+                
+                showApp();
+                showToast(`👑 здравствуйте, ${username}`, 'success');
+                checkConnection();
                 return;
             }
 
-            // Обычный вход
             try {
                 const res = await fetch('/api/login', {
                     method: 'POST',
@@ -867,12 +835,11 @@
                     localStorage.setItem('token', token);
                     await loadData();
                     showApp();
-                    showToast(`👋 Добро пожаловать, ${username}!`, 'success');
                 } else {
                     showToast(data.error, 'error');
                 }
             } catch {
-                showToast('Ошибка подключения к серверу', 'error');
+                showToast('ошибка', 'error');
             }
         }
 
@@ -893,7 +860,6 @@
                 });
                 if (res.ok) {
                     const serverData = await res.json();
-                    
                     if (currentUser?.role === 'admin') {
                         data = {
                             groups: serverData.myData?.groups || {},
@@ -905,9 +871,6 @@
                             books: serverData.myData?.books || { list: [] },
                             allUsersData: serverData.allUsersData || {}
                         };
-                        
-                        // Показываем бейдж с данными для админа
-                        document.getElementById('dataBadge').style.display = 'inline-block';
                     } else {
                         data = serverData;
                     }
@@ -916,22 +879,18 @@
                     renderAll();
                 }
             } catch {
-                showToast('Ошибка загрузки данных', 'error');
+                showToast('ошибка загрузки', 'error');
             }
         }
 
         async function saveData() {
-            if (!token) return;
-            
             pendingChanges = true;
             document.getElementById('pendingBadge').style.display = 'inline-block';
-            document.getElementById('syncIcon').textContent = '⏳';
-            document.getElementById('syncStatus').textContent = 'Ожидание...';
             
             if (isOnline) {
                 await autoSync();
             } else {
-                showToast('📱 Данные сохранены локально', 'info');
+                showToast('📱 сохранено локально', 'info');
             }
         }
 
@@ -958,15 +917,15 @@
 
         function updateMenu() {
             const role = currentUser?.role;
-            let btns = '<button onclick="showPage(\'groupsPage\')">👥 Группы</button>' +
-                      '<button onclick="showPage(\'studentsPage\')">👤 Участники</button>' +
-                      '<button onclick="showPage(\'marksPage\')">⭐ Отметки</button>' +
-                      '<button onclick="showPage(\'activitiesPage\')">📋 Мероприятия</button>';
+            let btns = '<button onclick="showPage(\'groupsPage\')">👥 группы</button>' +
+                      '<button onclick="showPage(\'studentsPage\')">👤 участники</button>' +
+                      '<button onclick="showPage(\'marksPage\')">⭐ отметки</button>' +
+                      '<button onclick="showPage(\'activitiesPage\')">📋 меропр</button>';
             if (role === 'admin') {
-                btns += '<button onclick="showPage(\'counselorsPage\')">👨‍🏫 Вожатые</button>' +
-                       '<button onclick="showPage(\'helpersPage\')">🆘 Помощники</button>' +
-                       '<button onclick="showPage(\'booksPage\')">📚 Книги</button>' +
-                       '<button onclick="showPage(\'adminPage\')">⚙️ Админ</button>';
+                btns += '<button onclick="showPage(\'counselorsPage\')">👨‍🏫 вожатые</button>' +
+                       '<button onclick="showPage(\'helpersPage\')">🆘 помощники</button>' +
+                       '<button onclick="showPage(\'booksPage\')">📚 книги</button>' +
+                       '<button onclick="showPage(\'adminPage\')">⚙️ админ</button>';
             }
             document.getElementById('menuGrid').innerHTML = btns;
         }
@@ -988,10 +947,9 @@
             }
         }
 
-        // Group functions
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
-            if (!name) return showToast('Введите название', 'error');
+            if (!name) return showToast('введите название', 'error');
             
             if (!data.groups[name]) {
                 data.groups[name] = { createdAt: new Date().toISOString() };
@@ -1003,21 +961,20 @@
         };
 
         window.deleteGroup = function(name) {
-            if (!confirm('Удалить группу?')) return;
+            if (!confirm('удалить группу?')) return;
             delete data.groups[name];
             saveData().then(renderGroups);
         };
 
         window.editGroupDate = function(groupName) {
             const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Введите новую дату (ГГГГ-ММ-ДД):', currentDate);
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
             if (newDate) {
                 data.groups[groupName].createdAt = new Date(newDate).toISOString();
                 saveData().then(renderGroups);
             }
         };
 
-        // Student functions
         function addStudent() {
             const name = document.getElementById('newStudentName').value.trim();
             const birthday = document.getElementById('newStudentBirthday').value;
@@ -1025,14 +982,13 @@
             const parentPhone = document.getElementById('newStudentParentPhone').value.trim();
             const group = document.getElementById('studentGroupSelect').value;
             
-            if (!name || !group) return showToast('Заполните имя и группу', 'error');
+            if (!name || !group) return showToast('имя и группа обязательны', 'error');
             
             if (!data.members[group]) data.members[group] = [];
             data.members[group].push({ 
-                id: Date.now(), 
-                name, 
+                id: Date.now(), name,
                 birthday: birthday || null,
-                phone: phone || null, 
+                phone: phone || null,
                 parentPhone: parentPhone || null
             });
             
@@ -1047,20 +1003,19 @@
         }
 
         window.removeStudent = function(g, sid) {
-            if (!confirm('Удалить участника?')) return;
+            if (!confirm('удалить участника?')) return;
             data.members[g] = data.members[g].filter(s => s.id !== sid);
             saveData().then(() => { renderStudents(); updateStats(); });
         };
 
-        // Mark functions
         function updateStudentSelect() {
             const group = document.getElementById('markGroupSelect').value;
             const studSel = document.getElementById('markStudentSelect');
             if (!group || !data.members[group]?.length) {
-                studSel.innerHTML = '<option value="">Нет участников</option>';
+                studSel.innerHTML = '<option value="">нет</option>';
                 return;
             }
-            let opts = '<option value="">Выберите участника</option>';
+            let opts = '<option value="">выберите</option>';
             data.members[group].forEach(s => opts += `<option value="${s.id}">${s.name}</option>`);
             studSel.innerHTML = opts;
         }
@@ -1068,22 +1023,21 @@
         window.addMark = function(status) {
             const group = document.getElementById('markGroupSelect').value;
             const studentId = document.getElementById('markStudentSelect').value;
-            if (!group || !studentId) return showToast('Выберите группу и участника', 'error');
+            if (!group || !studentId) return showToast('выберите группу и участника', 'error');
 
             if (!data.marks[group]) data.marks[group] = {};
             if (!data.marks[group][studentId]) data.marks[group][studentId] = [];
 
             data.marks[group][studentId].push({ 
-                id: Date.now(), 
-                status, 
-                date: new Date().toISOString(), 
+                id: Date.now(), status,
+                date: new Date().toISOString(),
                 author: currentUser?.username
             });
             saveData().then(() => { renderMarks(); updateStats(); });
         };
 
         window.deleteMark = function(g, sid, mid) {
-            if (!confirm('Удалить отметку?')) return;
+            if (!confirm('удалить отметку?')) return;
             const idx = data.marks[g][sid].findIndex(m => m.id === mid);
             if (idx !== -1) {
                 data.marks[g][sid].splice(idx, 1);
@@ -1095,21 +1049,20 @@
 
         window.editMarkDate = function(group, studentId, markId) {
             const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
-            if (!mark) return showToast('Отметка не найдена', 'error');
+            if (!mark) return showToast('отметка не найдена', 'error');
             
             const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Введите новую дату (ГГГГ-ММ-ДД):', currentDate);
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
             if (newDate) {
                 mark.date = new Date(newDate).toISOString();
                 saveData().then(() => { renderMarks(); });
             }
         };
 
-        // Activity functions
         function addActivity() {
             const n = document.getElementById('newActivityName').value.trim();
             const d = document.getElementById('activityDate').value;
-            if (!n || !d) return showToast('Заполните поля', 'error');
+            if (!n || !d) return showToast('заполните поля', 'error');
             if (!data.activities[d]) data.activities[d] = [];
             data.activities[d].push({ id: Date.now(), name: n });
             saveData().then(() => {
@@ -1118,11 +1071,10 @@
             });
         }
 
-        // Counselor functions
         function addCounselor() {
             const n = document.getElementById('newCounselorName').value.trim();
             const g = document.getElementById('counselorGroupSelect').value;
-            if (!n || !g) return showToast('Заполните поля', 'error');
+            if (!n || !g) return showToast('заполните поля', 'error');
             if (!data.counselors[g]) data.counselors[g] = [];
             data.counselors[g].push({ id: Date.now(), name: n });
             saveData().then(() => {
@@ -1132,16 +1084,15 @@
         }
 
         window.removeCounselor = function(g, id) {
-            if (!confirm('Удалить вожатого?')) return;
+            if (!confirm('удалить вожатого?')) return;
             data.counselors[g] = data.counselors[g].filter(c => c.id !== id);
             saveData().then(renderCounselors);
         };
 
-        // Helper functions
         function addHelper() {
             const n = document.getElementById('newHelperName').value.trim();
             const g = document.getElementById('helperGroupSelect').value;
-            if (!n || !g) return showToast('Заполните поля', 'error');
+            if (!n || !g) return showToast('заполните поля', 'error');
             if (!data.helpers[g]) data.helpers[g] = [];
             data.helpers[g].push({ id: Date.now(), name: n });
             saveData().then(() => {
@@ -1151,17 +1102,16 @@
         }
 
         window.removeHelper = function(g, id) {
-            if (!confirm('Удалить помощника?')) return;
+            if (!confirm('удалить помощника?')) return;
             data.helpers[g] = data.helpers[g].filter(h => h.id !== id);
             saveData().then(renderHelpers);
         };
 
-        // Book functions
         function addBook() {
             const t = document.getElementById('newBookTitle').value.trim();
             const l = document.getElementById('newBookLesson').value.trim();
             const s = document.getElementById('bookStatus').value;
-            if (!t || !l) return showToast('Заполните поля', 'error');
+            if (!t || !l) return showToast('заполните поля', 'error');
             if (!data.books.list) data.books.list = [];
             data.books.list.push({ id: Date.now(), title: t, lesson: l, status: s });
             saveData().then(() => {
@@ -1178,30 +1128,23 @@
         };
 
         window.deleteBook = function(bid) {
-            if (!confirm('Удалить книгу?')) return;
+            if (!confirm('удалить книгу?')) return;
             data.books.list = data.books.list.filter(b => b.id !== bid);
             saveData().then(renderBooks);
         };
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
-        // Render functions
         function renderAll() {
-            renderGroups(); 
-            renderStudents(); 
-            renderMarks(); 
-            renderActivities();
-            renderCounselors(); 
-            renderHelpers(); 
-            renderBooks();
-            updateGroupSelects(); 
-            updateStats();
+            renderGroups(); renderStudents(); renderMarks(); renderActivities();
+            renderCounselors(); renderHelpers(); renderBooks();
+            updateGroupSelects(); updateStats();
         }
 
         function renderGroups() {
             const gl = document.getElementById('groupsList');
             if (!Object.keys(data.groups).length) {
-                gl.innerHTML = '<div class="no-data">Нет групп</div>';
+                gl.innerHTML = '<div class="no-data">нет групп</div>';
                 return;
             }
             let html = '';
@@ -1217,7 +1160,7 @@
                             </div>
                         </div>
                         <div>👥 ${data.members?.[n]?.length || 0}</div>
-                        <div class="group-date-edit" onclick="editGroupDate('${n}')">
+                        <div style="cursor:pointer; margin-top:8px; font-size:11px;" onclick="editGroupDate('${n}')">
                             📅 ${createdAt}
                         </div>
                     </div>
@@ -1229,18 +1172,16 @@
         function renderStudents() {
             const st = document.getElementById('studentsList');
             if (!Object.keys(data.members).length) {
-                st.innerHTML = '<div class="no-data">Нет участников</div>';
+                st.innerHTML = '<div class="no-data">нет участников</div>';
                 return;
             }
             let h = '';
+            const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
             
             for (let g in data.members) {
                 data.members[g].forEach(s => {
                     const marks = data.marks?.[g]?.[s.id] || [];
                     const lastMarks = marks.slice(-3).reverse();
-                    const counselors = data.counselors?.[g] || [];
-                    const helpers = data.helpers?.[g] || [];
-                    const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
                     
                     h += `
                         <div class="card">
@@ -1248,35 +1189,28 @@
                                 <strong>${s.name}</strong>
                                 <span class="badge" style="background:var(--info)">${g}</span>
                             </div>
-                            <div style="margin:8px 0; padding:8px; background:var(--darker); border-radius:6px;">
-                                ${s.birthday ? `<div>📅 ДР: ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
+                            <div style="margin:6px 0;">
+                                ${s.birthday ? `<div>📅 ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
                                 ${s.phone ? `<div>📞 ${s.phone}</div>` : ''}
                                 ${s.parentPhone ? `<div>👪 ${s.parentPhone}</div>` : ''}
                             </div>
-                            <div style="margin:8px 0;">
-                                👨‍🏫 Вожатые: ${counselors.map(c => c.name).join(', ') || 'нет'}
+                            <div style="margin:6px 0;">
+                                👨‍🏫 ${(data.counselors?.[g] || []).map(c => c.name).join(', ') || 'нет'}
                             </div>
-                            <div style="margin:8px 0;">
-                                🆘 Помощники: ${helpers.map(h => h.name).join(', ') || 'нет'}
+                            <div style="margin:6px 0;">
+                                🆘 ${(data.helpers?.[g] || []).map(h => h.name).join(', ') || 'нет'}
                             </div>
-                            <div style="margin:8px 0;">
-                                📚 Пройденные книги: ${completedBooks.length}
-                                ${completedBooks.length > 0 ? `
-                                    <div style="margin-top:4px; font-size:12px;">
-                                        ${completedBooks.map(b => `✅ ${b.title}`).join(', ')}
-                                    </div>
-                                ` : ''}
+                            <div style="margin:6px 0;">
+                                📚 пройдено: ${completedBooks.length}
                             </div>
-                            <div style="margin:8px 0;">
-                                ⭐ Последние отметки: 
+                            <div>
                                 ${lastMarks.map(m => `
-                                    <span style="cursor:pointer; margin-right:8px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
+                                    <span style="cursor:pointer; margin-right:4px; font-size:11px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
                                         ${m.status === 'present' ? '✅' : '❌'} ${new Date(m.date).toLocaleDateString()}
                                     </span>
                                 `).join('')}
-                                ${lastMarks.length === 0 ? 'нет' : ''}
                             </div>
-                            <button class="btn-danger" style="width:auto; margin-top:8px;" onclick="removeStudent('${g}',${s.id})">✕ Удалить</button>
+                            <button class="btn-danger" style="width:auto; margin-top:6px;" onclick="removeStudent('${g}',${s.id})">✕</button>
                         </div>
                     `;
                 });
@@ -1287,7 +1221,7 @@
         function renderMarks() {
             const ml = document.getElementById('marksList');
             if (!Object.keys(data.marks).length) {
-                ml.innerHTML = '<div class="no-data">Нет отметок</div>';
+                ml.innerHTML = '<div class="no-data">нет отметок</div>';
                 return;
             }
             let h = '';
@@ -1300,8 +1234,7 @@
                         h += `
                             <div class="mark-item">
                                 <span class="mark-status ${m.status}">${m.status === 'present' ? '✅' : '❌'}</span>
-                                <span class="mark-date-clickable" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
-                                <span>✍️ ${m.author || ''}</span>
+                                <span style="cursor:pointer;" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
                                 <button class="btn-danger" style="width:auto;" onclick="deleteMark('${g}',${sid},${m.id})">✕</button>
                             </div>
                         `;
@@ -1315,7 +1248,7 @@
         function renderActivities() {
             const al = document.getElementById('activitiesList');
             if (!Object.keys(data.activities).length) {
-                al.innerHTML = '<div class="no-data">Нет мероприятий</div>';
+                al.innerHTML = '<div class="no-data">нет мероприятий</div>';
                 return;
             }
             let h = '';
@@ -1330,14 +1263,14 @@
         function renderCounselors() {
             const cl = document.getElementById('counselorsList');
             if (!Object.keys(data.counselors).length) {
-                cl.innerHTML = '<div class="no-data">Нет вожатых</div>';
+                cl.innerHTML = '<div class="no-data">нет вожатых</div>';
                 return;
             }
             let h = '';
             for (let g in data.counselors) {
                 h += `<div class="card"><strong>${g}</strong><div>`;
                 data.counselors[g].forEach(c => {
-                    h += `<span class="badge" style="background:var(--info); margin-right:4px;">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="badge" style="background:var(--info);">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1347,14 +1280,14 @@
         function renderHelpers() {
             const hl = document.getElementById('helpersList');
             if (!Object.keys(data.helpers).length) {
-                hl.innerHTML = '<div class="no-data">Нет помощников</div>';
+                hl.innerHTML = '<div class="no-data">нет помощников</div>';
                 return;
             }
             let h = '';
             for (let g in data.helpers) {
                 h += `<div class="card"><strong>${g}</strong><div>`;
                 data.helpers[g].forEach(hp => {
-                    h += `<span class="badge" style="background:var(--warning); color:#000; margin-right:4px;">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="badge" style="background:var(--warning); color:#000;">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1368,24 +1301,22 @@
             if (currentBookFilter !== 'all') filtered = books.filter(b => b.status === currentBookFilter);
             
             if (!filtered.length) {
-                bl.innerHTML = '<div class="no-data">Нет книг</div>';
+                bl.innerHTML = '<div class="no-data">нет книг</div>';
                 return;
             }
             let h = '';
             filtered.forEach(b => {
                 const statusColor = b.status === 'available' ? 'var(--success)' : b.status === 'completed' ? 'var(--completed)' : 'var(--warning)';
-                const statusText = b.status === 'available' ? '📖' : b.status === 'completed' ? '✅' : '📚';
-                
                 h += `
                     <div class="book-item">
                         <strong>${b.title}</strong> (${b.lesson})
-                        <span class="badge" style="background:${statusColor}; margin-left:8px;">${statusText}</span>
+                        <span class="badge" style="background:${statusColor}">${b.status}</span>
                         ${currentUser?.role === 'admin' ? `
-                            <div class="book-actions">
-                                <button onclick="updateBookStatus(${b.id},'available')">📖</button>
-                                <button onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
-                                <button onclick="updateBookStatus(${b.id},'completed')">✅</button>
-                                <button onclick="deleteBook(${b.id})">✕</button>
+                            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:6px;">
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'available')">📖</button>
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'completed')">✅</button>
+                                <button style="padding:4px;" onclick="deleteBook(${b.id})">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -1396,7 +1327,7 @@
 
         function updateGroupSelects() {
             const groups = Object.keys(data.groups);
-            let opts = '<option value="">Выберите группу</option>';
+            let opts = '<option value="">выберите</option>';
             groups.forEach(g => opts += `<option value="${g}">${g}</option>`);
             
             ['studentGroupSelect', 'markGroupSelect', 'counselorGroupSelect', 'helperGroupSelect'].forEach(id => {
@@ -1419,59 +1350,20 @@
             document.getElementById('completedBooksStat').textContent = data.books?.list?.filter(b => b.status === 'completed').length || 0;
         }
 
-        async function loadUsers() {
-            if (!currentUser || currentUser.role !== 'admin') return;
-            try {
-                const res = await fetch('/api/users', { 
-                    headers: { 'Authorization': `Bearer ${token}` } 
-                });
-                if (res.ok) {
-                    const users = await res.json();
-                    document.getElementById('totalUsers').textContent = users.length;
-                    document.getElementById('adminCount').textContent = users.filter(u => u.role === 'admin').length;
-                    document.getElementById('counselorCount').textContent = users.filter(u => u.role === 'counselor').length;
-                    document.getElementById('helperCount').textContent = users.filter(u => u.role === 'helper').length;
-                    
-                    let html = '';
-                    users.forEach(u => {
-                        html += `
-                            <div class="card">
-                                <div class="flex-row" style="justify-content:space-between">
-                                    <strong>${u.username}</strong>
-                                    <span>
-                                        <span class="badge" style="background:${u.role === 'admin' ? 'var(--primary)' : u.role === 'counselor' ? 'var(--info)' : 'var(--warning)'}">
-                                            ${u.role === 'admin' ? '👑' : u.role === 'counselor' ? '👨‍🏫' : '🆘'} ${u.role}
-                                        </span>
-                                        <span> ${u.isActive ? '🟢' : '🔴'}</span>
-                                    </span>
-                                </div>
-                                <div style="font-size:12px; color:var(--text-muted);">
-                                    Создан: ${new Date(u.createdAt).toLocaleDateString()}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('usersList').innerHTML = html;
-                }
-            } catch {}
+        function loadUsers() {
+            document.getElementById('totalUsers').textContent = '0';
+            document.getElementById('adminCount').textContent = '1';
+            document.getElementById('counselorCount').textContent = '0';
+            document.getElementById('helperCount').textContent = '0';
+            document.getElementById('usersList').innerHTML = '<div class="card">консоль админа</div>';
         }
 
-        function cleanupData(type) {
-            if (!confirm('Очистить данные?')) return;
-            showToast(`Очистка: ${type}`, 'info');
-        }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
 
-        function closeModal() { 
-            document.getElementById('modal').classList.remove('active'); 
-        }
-
-        // Проверяем авторизацию при загрузке
         if (token) {
             (async () => {
                 try {
-                    const res = await fetch('/api/me', { 
-                        headers: { 'Authorization': `Bearer ${token}` } 
-                    });
+                    const res = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
                     if (res.ok) {
                         const data = await res.json();
                         currentUser = data.user;
