@@ -5,7 +5,16 @@
     "password": "$2a$10$RUWIai9g3gKwOlZ9ibcvCePaRKuvuyJuG5Wzq4lTD2eTehQzbv3/6",
     "role": "admin",
     "createdAt": "2026-02-21T04:09:13.712Z",
-    "lastLogin": "2026-02-21T06:48:22.336Z",
+    "lastLogin": "2026-02-22T07:47:39.550Z",
+    "isActive": true
+  },
+  {
+    "id": 1771740598899,
+    "username": "Вика",
+    "password": "$2a$10$A7y4bu8nRDC9LTjOZlAbbucjEyHYlyxlZysJ6.f6yOayIOBB4K1B.",
+    "role": "counselor",
+    "createdAt": "2026-02-22T06:09:58.899Z",
+    "lastLogin": "2026-02-22T07:35:48.512Z",
     "isActive": true
   }
 ]

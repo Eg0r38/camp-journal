@@ -16,7 +16,7 @@ const USER_DATA_DIR = path.join(DATA_DIR, 'user_data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR);
 
-// Ваши данные
+// ========== ТРИ АККАУНТА ==========
 const YOUR_DATA = {
   users: [
     {
@@ -26,6 +26,24 @@ const YOUR_DATA = {
       role: "admin",
       createdAt: "2024-09-29T00:00:00.000Z",
       lastLogin: "2026-02-19T14:56:18.271Z",
+      isActive: true
+    },
+    {
+      id: 2,
+      username: "Вика",
+      password: "$2a$10$Nt2kK8xYqZ3rL5mP7nR9sT1vW4yX6zA8bC0dE2fG4hI6jK8lM0nO2pQ4rS6tU8vW",
+      role: "counselor",
+      createdAt: new Date().toISOString(),
+      lastLogin: null,
+      isActive: true
+    },
+    {
+      id: 3,
+      username: "Миша",
+      password: "$2a$10$M8nR2sT5vW7yX9zA1bC3dE5fG7hI9jK1lM3nO5pQ7rS9tU1vW3xY5zA7bC9dE1f",
+      role: "helper",
+      createdAt: new Date().toISOString(),
+      lastLogin: null,
       isActive: true
     }
   ],
@@ -91,6 +109,24 @@ const YOUR_DATA = {
           }
         ]
       }
+    },
+    "2": {
+      groups: {},
+      members: {},
+      marks: {},
+      activities: {},
+      counselors: {},
+      helpers: {},
+      books: { list: [] }
+    },
+    "3": {
+      groups: {},
+      members: {},
+      marks: {},
+      activities: {},
+      counselors: {},
+      helpers: {},
+      books: { list: [] }
     }
   }
 };
@@ -100,22 +136,28 @@ if (!fs.existsSync(USERS_FILE)) {
     fs.writeFileSync(USERS_FILE, JSON.stringify(YOUR_DATA.users, null, 2));
 }
 
-// Сохраняем данные пользователя 1
-const userDataPath = path.join(USER_DATA_DIR, 'user_1.json');
-if (!fs.existsSync(userDataPath)) {
-    fs.writeFileSync(userDataPath, JSON.stringify(YOUR_DATA.userData["1"], null, 2));
+// Сохраняем данные пользователей
+const user1Path = path.join(USER_DATA_DIR, 'user_1.json');
+const user2Path = path.join(USER_DATA_DIR, 'user_2.json');
+const user3Path = path.join(USER_DATA_DIR, 'user_3.json');
+
+if (!fs.existsSync(user1Path)) {
+    fs.writeFileSync(user1Path, JSON.stringify(YOUR_DATA.userData["1"], null, 2));
+}
+if (!fs.existsSync(user2Path)) {
+    fs.writeFileSync(user2Path, JSON.stringify(YOUR_DATA.userData["2"], null, 2));
+}
+if (!fs.existsSync(user3Path)) {
+    fs.writeFileSync(user3Path, JSON.stringify(YOUR_DATA.userData["3"], null, 2));
 }
 
 app.use(express.json({ limit: '50mb' }));
 
-// ========== УСИЛЕННЫЙ CORS для доступа с телефона ==========
+// CORS
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    
-    // Отвечаем на preflight запросы
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
@@ -124,7 +166,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Явный маршрут для главной страницы
+// Главная страница
 app.get('/', (req, res) => {
     const indexPath = path.join(__dirname, 'public', 'index.html');
     const mobilePath = path.join(__dirname, 'public', 'mobile.html');
@@ -336,17 +378,11 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('\n' + '='.repeat(50));
     console.log('✅ СЕРВЕР ЗАПУЩЕН');
     console.log('='.repeat(50));
-    console.log(`🌐 Локальный адрес: http://localhost:${PORT}`);
-    console.log(`📱 Доступ с телефона: http://192.168.0.105:${PORT}`);
+    console.log(`🌐 Адрес: http://localhost:${PORT}`);
     console.log(`📁 Данные: ${DATA_DIR}`);
-    console.log('\n🔑 АДМИНИСТРАТОР:');
-    console.log('   Логин: Егор');
-    console.log('   Пароль: 382154');
-    console.log('\n📊 ВАШИ ДАННЫЕ ЗАГРУЖЕНЫ:');
-    console.log(`   Группа: Магнитик`);
-    console.log(`   Участник: Олеся`);
-    console.log(`   Вожатый: Вика`);
-    console.log(`   Помощник: Егор`);
-    console.log(`   Книга: ветры подтверждения (пройдена)`);
+    console.log('\n🔑 ДОСТУПНЫЕ АККАУНТЫ:');
+    console.log('   1. Егор (админ) - 382154');
+    console.log('   2. Вика (вожатый) - 302007');
+    console.log('   3. Миша (помощник) - 282011');
     console.log('='.repeat(50) + '\n');
 });

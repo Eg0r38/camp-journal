@@ -224,32 +224,6 @@
             color: #1a1a1a;
         }
 
-        .diagnostic-buttons {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .diagnostic-buttons button {
-            flex: 1;
-            padding: 8px;
-            font-size: 11px;
-            margin: 0;
-            min-width: 80px;
-        }
-
-        .debug-info {
-            background: var(--darker);
-            padding: 8px;
-            border-radius: 8px;
-            margin-top: 8px;
-            font-size: 10px;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            word-break: break-all;
-        }
-
         .last-sync {
             font-size: 10px;
             color: var(--text-muted);
@@ -604,16 +578,6 @@
                     <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
                     <button class="btn-warning" onclick="importData()">📥 импорт</button>
                 </div>
-                <div class="diagnostic-buttons">
-                    <button class="btn-info" onclick="diagnostic.test()">🔍 тест</button>
-                    <button class="btn-info" onclick="diagnostic.ping()">📡 ping</button>
-                    <button class="btn-info" onclick="diagnostic.info()">ℹ️ инфо</button>
-                    <button class="btn-info" onclick="diagnostic.changeIp()">🔄 смена IP</button>
-                    <button class="btn-info" onclick="diagnostic.reset()">🔄 сброс</button>
-                </div>
-                <div id="debugInfo" class="debug-info">
-                    Загрузка...
-                </div>
                 <div class="last-sync" id="lastSyncTime"></div>
             </div>
 
@@ -728,127 +692,7 @@
     </div>
 
     <script>
-        // ========== ДИАГНОСТИКА И НАСТРОЙКА ПОДКЛЮЧЕНИЯ ==========
-        const YOUR_PC_IP = '192.168.0.105'; // ВАШ IP АДРЕС КОМПЬЮТЕРА
-        
-        // Глобальный объект диагностики
-        window.diagnostic = {
-            getSavedIp: function() {
-                return localStorage.getItem('server_ip');
-            },
-            
-            getApiBase: function() {
-                const savedIp = this.getSavedIp() || YOUR_PC_IP;
-                return `http://${savedIp}:3000`;
-            },
-            
-            test: async function() {
-                const apiBase = this.getApiBase();
-                const debugEl = document.getElementById('debugInfo');
-                debugEl.innerHTML = '⏳ Тестирование...';
-                
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-                    
-                    const res = await fetch(`${apiBase}/api/health`, {
-                        method: 'GET',
-                        mode: 'cors',
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (res.ok) {
-                        const data = await res.json();
-                        debugEl.innerHTML = `✅ УСПЕХ!\nСтатус: ${data.status}\nВремя: ${data.time}\nСервер: ${apiBase}`;
-                        showToast('✅ Сервер доступен', 'success');
-                        await checkConnection();
-                    } else {
-                        debugEl.innerHTML = `❌ Ошибка ${res.status}: ${res.statusText}\nСервер: ${apiBase}`;
-                        showToast(`❌ Ошибка ${res.status}`, 'error');
-                    }
-                } catch (e) {
-                    debugEl.innerHTML = `❌ Ошибка: ${e.message}\n\nПроверьте:\n1. Сервер запущен (npm start)\n2. IP правильный: ${apiBase}\n3. Телефон в той же Wi-Fi\n4. Брандмауэр не блокирует порт 3000`;
-                    showToast(`❌ ${e.message}`, 'error');
-                }
-            },
-            
-            ping: function() {
-                const apiBase = this.getApiBase();
-                const debugEl = document.getElementById('debugInfo');
-                debugEl.innerHTML = `📡 Пинг ${apiBase} ...\n\nПопробуйте открыть в браузере:\n${apiBase}/api/health`;
-                showToast('📡 Проверьте в браузере', 'info');
-            },
-            
-            info: function() {
-                const savedIp = this.getSavedIp();
-                const apiBase = this.getApiBase();
-                const debugEl = document.getElementById('debugInfo');
-                
-                debugEl.innerHTML = `
-📊 ИНФОРМАЦИЯ:
-• Ваш IP в коде: ${YOUR_PC_IP}
-• Сохраненный IP: ${savedIp || 'не сохранен'}
-• Текущий API: ${apiBase}
-• Протокол: ${window.location.protocol}
-• Хост: ${window.location.hostname}
-• Ориджин: ${window.location.origin}
-• User Agent: ${navigator.userAgent}
-                `;
-            },
-            
-            changeIp: function() {
-                const currentIp = this.getSavedIp() || YOUR_PC_IP;
-                const newIp = prompt('Введите IP адрес компьютера с сервером:', currentIp);
-                if (newIp && newIp.trim()) {
-                    localStorage.setItem('server_ip', newIp.trim());
-                    showToast(`✅ IP изменен на ${newIp}`, 'success');
-                    this.info();
-                    window.location.reload();
-                }
-            },
-            
-            reset: function() {
-                localStorage.removeItem('server_ip');
-                localStorage.removeItem('token');
-                localStorage.removeItem('lastSyncTime');
-                showToast('🔄 Настройки сброшены', 'info');
-                this.info();
-                window.location.reload();
-            }
-        };
-
-        // Определяем базовый URL API
-        function getServerUrl() {
-            if (window.location.protocol === 'file:') {
-                const savedIp = localStorage.getItem('server_ip');
-                if (savedIp) {
-                    return `http://${savedIp}:3000`;
-                }
-                return `http://${YOUR_PC_IP}:3000`;
-            }
-            return window.location.origin;
-        }
-
-        const API_BASE = getServerUrl();
-        console.log('🖥️ Сервер API:', API_BASE);
-
-        // Показываем диагностическую информацию при загрузке
-        setTimeout(() => {
-            diagnostic.info();
-        }, 500);
-
-        // Перехватываем fetch
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options) {
-            if (typeof url === 'string' && url.startsWith('/api')) {
-                url = API_BASE + url;
-                console.log('📡 Запрос к:', url);
-            }
-            return originalFetch(url, options);
-        };
-
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let currentUser = null;
         let token = localStorage.getItem('token');
         let data = { groups: {}, members: {}, marks: {}, activities: {}, counselors: {}, helpers: {}, books: { list: [] }, allUsersData: {} };
@@ -857,8 +701,14 @@
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
-        const ADMIN_CREDENTIALS = { 'Егор': '382154' };
+        // ========== ТРИ АККАУНТА ==========
+        const ADMIN_CREDENTIALS = { 
+            'Егор': '382154',
+            'Вика': '302007',
+            'Миша': '282011'
+        };
 
+        // ========== УВЕДОМЛЕНИЯ ==========
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
             toast.style.cssText = `
@@ -878,6 +728,43 @@
             }
         }
 
+        // ========== СОХРАНЕНИЕ В ПАМЯТЬ ТЕЛЕФОНА ==========
+        function saveToLocalStorage() {
+            if (!currentUser) return;
+            
+            const storageKey = `user_${currentUser.id}_data`;
+            const saveData = {
+                user: currentUser,
+                data: data,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem(storageKey, JSON.stringify(saveData));
+            localStorage.setItem('lastUser', JSON.stringify(currentUser));
+            console.log('💾 Данные сохранены в память телефона');
+        }
+
+        function loadFromLocalStorage() {
+            const lastUser = localStorage.getItem('lastUser');
+            if (!lastUser) return false;
+            
+            try {
+                const user = JSON.parse(lastUser);
+                const storageKey = `user_${user.id}_data`;
+                const savedData = localStorage.getItem(storageKey);
+                
+                if (savedData) {
+                    const parsed = JSON.parse(savedData);
+                    currentUser = parsed.user;
+                    data = parsed.data;
+                    document.getElementById('userName').textContent = currentUser?.username;
+                    return true;
+                }
+            } catch (e) {}
+            return false;
+        }
+
+        // ========== ЭКСПОРТ/ИМПОРТ ==========
         window.exportData = function() {
             if (!currentUser) {
                 showToast('⚠️ Сначала войдите', 'error');
@@ -933,6 +820,7 @@
                             renderAll();
                             pendingChanges = true;
                             document.getElementById('pendingBadge').style.display = 'inline-block';
+                            saveToLocalStorage();
                             showToast('✅ Данные импортированы', 'success');
                         }
                     } catch (err) {
@@ -945,22 +833,11 @@
             input.click();
         };
 
+        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ ==========
         async function checkConnection() {
-            if (!API_BASE) return false;
-            
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
-                
-                const res = await fetch(`${API_BASE}/api/health`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (res.ok) {
+                const res = await fetch('/api/health').catch(() => null);
+                if (res && res.ok) {
                     isOnline = true;
                     document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
                     document.getElementById('connectionStatus').classList.remove('offline');
@@ -971,10 +848,7 @@
                     }
                     return true;
                 }
-            } catch (e) {
-                console.log('Ошибка подключения:', e.message);
-            }
-            
+            } catch {}
             isOnline = false;
             document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
             document.getElementById('connectionStatus').classList.add('offline');
@@ -982,11 +856,12 @@
             return false;
         }
 
+        // ========== АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ==========
         async function autoSync() {
             if (!currentUser || !token || !isOnline || !pendingChanges) return;
             
             try {
-                const response = await fetch(`${API_BASE}/api/sync`, {
+                const response = await fetch('/api/sync', {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -1003,6 +878,7 @@
                     lastSyncTime = result.time;
                     localStorage.setItem('lastSyncTime', lastSyncTime);
                     updateLastSyncTime();
+                    saveToLocalStorage();
                     renderAll();
                     showToast('✅ синхронизация', 'success');
                 }
@@ -1023,6 +899,7 @@
             await autoSync();
         }
 
+        // ========== АВТОРИЗАЦИЯ ==========
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             if (tab === 'login') {
@@ -1047,7 +924,7 @@
             }
 
             try {
-                const res = await fetch(`${API_BASE}/api/register`, {
+                const res = await fetch('/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, role })
@@ -1073,37 +950,27 @@
                 return;
             }
 
+            // Проверка для трех аккаунтов
             if (ADMIN_CREDENTIALS[username] && ADMIN_CREDENTIALS[username] === password) {
-                currentUser = { id: 1, username, role: 'admin' };
-                token = 'admin-token';
+                let role = 'user';
+                if (username === 'Егор') role = 'admin';
+                else if (username === 'Вика') role = 'counselor';
+                else if (username === 'Миша') role = 'helper';
+                
+                currentUser = { id: Date.now(), username, role };
+                token = 'local-token';
                 localStorage.setItem('token', token);
                 
-                try {
-                    const res = await fetch(`${API_BASE}/api/data`, { 
-                        headers: { 'Authorization': `Bearer ${token}` } 
-                    });
-                    if (res.ok) {
-                        const serverData = await res.json();
-                        data = {
-                            groups: serverData.myData?.groups || {},
-                            members: serverData.myData?.members || {},
-                            marks: serverData.myData?.marks || {},
-                            activities: serverData.myData?.activities || {},
-                            counselors: serverData.myData?.counselors || {},
-                            helpers: serverData.myData?.helpers || {},
-                            books: serverData.myData?.books || { list: [] }
-                        };
-                    }
-                } catch {}
-                
+                // Загружаем сохраненные данные из памяти
+                loadFromLocalStorage();
                 showApp();
-                showToast(`👑 здравствуйте, ${username}`, 'success');
+                showToast(`👋 здравствуйте, ${username}!`, 'success');
                 checkConnection();
                 return;
             }
 
             try {
-                const res = await fetch(`${API_BASE}/api/login`, {
+                const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -1124,6 +991,7 @@
         }
 
         function logout() {
+            saveToLocalStorage();
             currentUser = null;
             token = null;
             localStorage.removeItem('token');
@@ -1135,7 +1003,7 @@
         async function loadData() {
             if (!token) return;
             try {
-                const res = await fetch(`${API_BASE}/api/data`, { 
+                const res = await fetch('/api/data', { 
                     headers: { 'Authorization': `Bearer ${token}` } 
                 });
                 if (res.ok) {
@@ -1156,16 +1024,24 @@
                     }
                     pendingChanges = false;
                     document.getElementById('pendingBadge').style.display = 'none';
+                    saveToLocalStorage();
                     renderAll();
                 }
             } catch {
-                showToast('ошибка загрузки', 'error');
+                // Если сервер недоступен, загружаем из памяти
+                if (loadFromLocalStorage()) {
+                    showToast('📱 офлайн режим', 'info');
+                    renderAll();
+                } else {
+                    showToast('ошибка загрузки', 'error');
+                }
             }
         }
 
         async function saveData() {
             pendingChanges = true;
             document.getElementById('pendingBadge').style.display = 'inline-block';
+            saveToLocalStorage();
             
             if (isOnline) {
                 await autoSync();
@@ -1180,8 +1056,8 @@
             document.getElementById('userInfo').style.display = 'flex';
             document.getElementById('userName').textContent = currentUser?.username;
 
-            const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник' };
-            document.getElementById('userRole').textContent = roleNames[currentUser?.role];
+            const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник', 'user': 'Пользователь' };
+            document.getElementById('userRole').textContent = roleNames[currentUser?.role] || currentUser?.role;
 
             if (currentUser?.role === 'admin') {
                 document.getElementById('adminStats').style.display = 'grid';
@@ -1227,78 +1103,7 @@
             }
         }
 
-        window.editGroupDate = function(groupName) {
-            const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
-            
-            const modalBody = `
-                <div style="text-align:center; margin:20px 0;">
-                    <label style="display:block; margin-bottom:10px;">📅 Новая дата группы <strong>${groupName}</strong></label>
-                    <input type="date" id="editGroupDateInput" value="${currentDate}" style="width:100%; padding:12px; border-radius:8px; background:var(--light); border:1px solid var(--primary);">
-                    <div style="display:flex; gap:10px; margin-top:20px;">
-                        <button class="btn-success" style="flex:1;" onclick="saveGroupDate('${groupName}')">💾 Сохранить</button>
-                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modalTitle').textContent = '✏️ Изменить дату';
-            document.getElementById('modalBody').innerHTML = modalBody;
-            document.getElementById('modal').classList.add('active');
-        };
-
-        window.saveGroupDate = function(groupName) {
-            const newDateStr = document.getElementById('editGroupDateInput').value;
-            if (!newDateStr) return showToast('Выберите дату', 'error');
-            
-            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
-            if (isNaN(newDate.getTime())) return showToast('Неверная дата', 'error');
-            
-            data.groups[groupName].createdAt = newDate.toISOString();
-            saveData().then(() => {
-                closeModal();
-                renderGroups();
-                showToast('✅ Дата обновлена', 'success');
-            });
-        };
-
-        window.editMarkDate = function(group, studentId, markId) {
-            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
-            if (!mark) return showToast('Отметка не найдена', 'error');
-            
-            const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
-            
-            const modalBody = `
-                <div style="text-align:center; margin:20px 0;">
-                    <label style="display:block; margin-bottom:10px;">📅 Новая дата отметки</label>
-                    <input type="date" id="editMarkDateInput" value="${currentDate}" style="width:100%; padding:12px; border-radius:8px; background:var(--light); border:1px solid var(--primary);">
-                    <div style="display:flex; gap:10px; margin-top:20px;">
-                        <button class="btn-success" style="flex:1;" onclick="saveMarkDate('${group}', '${studentId}', ${markId})">💾 Сохранить</button>
-                        <button class="btn-danger" style="flex:1;" onclick="closeModal()">Отмена</button>
-                    </div>
-                </div>
-            `;
-            document.getElementById('modalTitle').textContent = '✏️ Изменить дату';
-            document.getElementById('modalBody').innerHTML = modalBody;
-            document.getElementById('modal').classList.add('active');
-        };
-
-        window.saveMarkDate = function(group, studentId, markId) {
-            const newDateStr = document.getElementById('editMarkDateInput').value;
-            if (!newDateStr) return showToast('Выберите дату', 'error');
-            
-            const newDate = new Date(newDateStr + 'T00:00:00.000Z');
-            if (isNaN(newDate.getTime())) return showToast('Неверная дата', 'error');
-            
-            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
-            if (!mark) return showToast('Отметка не найдена', 'error');
-            
-            mark.date = newDate.toISOString();
-            saveData().then(() => {
-                closeModal();
-                renderMarks();
-                showToast('✅ Дата обновлена', 'success');
-            });
-        };
-
+        // ========== ОСНОВНЫЕ ФУНКЦИИ ==========
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('введите название', 'error');
@@ -1316,6 +1121,15 @@
             if (!confirm('удалить группу?')) return;
             delete data.groups[name];
             saveData().then(renderGroups);
+        };
+
+        window.editGroupDate = function(groupName) {
+            const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
+            if (newDate) {
+                data.groups[groupName].createdAt = new Date(newDate).toISOString();
+                saveData().then(renderGroups);
+            }
         };
 
         function addStudent() {
@@ -1390,6 +1204,18 @@
                 if (!data.marks[g][sid].length) delete data.marks[g][sid];
                 if (!Object.keys(data.marks[g]).length) delete data.marks[g];
                 saveData().then(() => { renderMarks(); updateStats(); });
+            }
+        };
+
+        window.editMarkDate = function(group, studentId, markId) {
+            const mark = data.marks[group]?.[studentId]?.find(m => m.id === markId);
+            if (!mark) return showToast('отметка не найдена', 'error');
+            
+            const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
+            if (newDate) {
+                mark.date = new Date(newDate).toISOString();
+                saveData().then(() => { renderMarks(); });
             }
         };
 
@@ -1469,6 +1295,7 @@
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
+        // ========== РЕНДЕРЫ ==========
         function renderAll() {
             renderGroups(); renderStudents(); renderMarks(); renderActivities();
             renderCounselors(); renderHelpers(); renderBooks();
@@ -1494,7 +1321,7 @@
                             </div>
                         </div>
                         <div>👥 ${data.members?.[n]?.length || 0}</div>
-                        <div class="group-date-edit" onclick="editGroupDate('${n}')">
+                        <div style="cursor:pointer; margin-top:8px; font-size:11px;" onclick="editGroupDate('${n}')">
                             📅 ${createdAt}
                         </div>
                     </div>
@@ -1529,39 +1356,33 @@
                                 <span class="badge" style="background:var(--info)">${g}</span>
                             </div>
                             
-                            <div style="margin:8px 0; padding:8px; background:var(--darker); border-radius:8px;">
-                                ${s.birthday ? `<div>📅 ДР: ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
+                            <div style="margin:6px 0;">
+                                ${s.birthday ? `<div>📅 ${new Date(s.birthday).toLocaleDateString()}</div>` : ''}
                                 ${s.phone ? `<div>📞 ${s.phone}</div>` : ''}
                                 ${s.parentPhone ? `<div>👪 ${s.parentPhone}</div>` : ''}
                             </div>
                             
-                            <div style="margin:8px 0;">
-                                ${groupCounselors.map(c => `<span class="staff-badge counselor">👨‍🏫 ${c.name}</span>`).join('')}
-                                ${groupHelpers.map(h => `<span class="staff-badge helper">🆘 ${h.name}</span>`).join('')}
+                            <div style="margin:6px 0;">
+                                👨‍🏫 ${groupCounselors.map(c => c.name).join(', ') || 'нет'}
+                            </div>
+                            <div style="margin:6px 0;">
+                                🆘 ${groupHelpers.map(h => h.name).join(', ') || 'нет'}
                             </div>
                             
-                            <div style="margin:8px 0;">
-                                <span>📚 Пройденные книги:</span>
-                                ${completedBooks.map(book => `
-                                    <span class="lesson-badge" style="background:var(--completed);">
-                                        ✅ ${book.title}
-                                    </span>
-                                `).join('')}
-                                ${completedBooks.length === 0 ? '<span class="text-muted">нет</span>' : ''}
+                            <div style="margin:6px 0;">
+                                📚 пройдено: ${completedBooks.length}
                             </div>
                             
-                            <div style="margin:8px 0;">
-                                <span>⭐ Последние отметки:</span>
+                            <div>
                                 ${lastMarks.map(m => `
-                                    <span class="mark-item-small" onclick="editMarkDate('${g}', ${s.id}, ${m.id})">
-                                        <span class="mark-status-dot ${m.status}"></span>
-                                        ${new Date(m.date).toLocaleDateString()}
+                                    <span style="cursor:pointer; margin-right:4px; font-size:11px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
+                                        ${m.status === 'present' ? '✅' : '❌'} ${new Date(m.date).toLocaleDateString()}
                                     </span>
                                 `).join('')}
-                                ${lastMarks.length === 0 ? '<span class="text-muted">нет</span>' : ''}
+                                ${lastMarks.length === 0 ? 'нет отметок' : ''}
                             </div>
                             
-                            <button class="btn-danger" style="width:auto; margin-top:8px;" onclick="removeStudent('${g}',${s.id})">✕</button>
+                            <button class="btn-danger" style="width:auto; margin-top:6px;" onclick="removeStudent('${g}',${s.id})">✕</button>
                         </div>
                     `;
                 });
@@ -1587,7 +1408,7 @@
                         h += `
                             <div class="mark-item">
                                 <span class="mark-status ${m.status}">${m.status === 'present' ? '✅' : '❌'}</span>
-                                <span class="mark-date-clickable" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
+                                <span style="cursor:pointer;" onclick="editMarkDate('${g}',${sid},${m.id})">📅 ${new Date(m.date).toLocaleDateString()}</span>
                                 <span>✍️ ${m.author || ''}</span>
                                 <button class="btn-danger" style="width:auto;" onclick="deleteMark('${g}',${sid},${m.id})">✕</button>
                             </div>
@@ -1622,9 +1443,9 @@
             }
             let h = '';
             for (let g in data.counselors) {
-                h += `<div class="card"><strong>${g}</strong><div class="flex-row" style="margin-top:8px;">`;
+                h += `<div class="card"><strong>${g}</strong><div style="margin-top:6px;">`;
                 data.counselors[g].forEach(c => {
-                    h += `<span class="staff-badge counselor">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="badge" style="background:var(--info); margin-right:4px;">👨‍🏫 ${c.name} <button onclick="removeCounselor('${g}',${c.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1639,9 +1460,9 @@
             }
             let h = '';
             for (let g in data.helpers) {
-                h += `<div class="card"><strong>${g}</strong><div class="flex-row" style="margin-top:8px;">`;
+                h += `<div class="card"><strong>${g}</strong><div style="margin-top:6px;">`;
                 data.helpers[g].forEach(hp => {
-                    h += `<span class="staff-badge helper">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
+                    h += `<span class="badge" style="background:var(--warning); color:#000; margin-right:4px;">🆘 ${hp.name} <button onclick="removeHelper('${g}',${hp.id})" style="background:none;border:none;">✕</button></span>`;
                 });
                 h += '</div></div>';
             }
@@ -1661,19 +1482,16 @@
             let h = '';
             filtered.forEach(b => {
                 const statusColor = b.status === 'available' ? 'var(--success)' : b.status === 'completed' ? 'var(--completed)' : 'var(--warning)';
-                const statusText = b.status === 'available' ? '📖' : b.status === 'completed' ? '✅' : '📚';
-                
                 h += `
                     <div class="book-item">
-                        <div class="book-title">${b.title}</div>
-                        <div style="margin:4px 0;">Урок: ${b.lesson}</div>
-                        <span class="badge" style="background:${statusColor}">${statusText}</span>
+                        <strong>${b.title}</strong> (${b.lesson})
+                        <span class="badge" style="background:${statusColor}">${b.status}</span>
                         ${currentUser?.role === 'admin' ? `
-                            <div class="book-actions">
-                                <button onclick="updateBookStatus(${b.id},'available')">📖</button>
-                                <button onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
-                                <button onclick="updateBookStatus(${b.id},'completed')">✅</button>
-                                <button onclick="deleteBook(${b.id})">✕</button>
+                            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:6px;">
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'available')">📖</button>
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
+                                <button style="padding:4px;" onclick="updateBookStatus(${b.id},'completed')">✅</button>
+                                <button style="padding:4px;" onclick="deleteBook(${b.id})">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -1708,11 +1526,15 @@
         }
 
         function loadUsers() {
-            document.getElementById('totalUsers').textContent = '0';
+            document.getElementById('totalUsers').textContent = '3';
             document.getElementById('adminCount').textContent = '1';
-            document.getElementById('counselorCount').textContent = '0';
-            document.getElementById('helperCount').textContent = '0';
-            document.getElementById('usersList').innerHTML = '<div class="card">консоль админа</div>';
+            document.getElementById('counselorCount').textContent = '1';
+            document.getElementById('helperCount').textContent = '1';
+            document.getElementById('usersList').innerHTML = `
+                <div class="card">👑 Егор (админ)</div>
+                <div class="card">👨‍🏫 Вика (вожатый)</div>
+                <div class="card">🆘 Миша (помощник)</div>
+            `;
         }
 
         function closeModal() { 
@@ -1724,7 +1546,7 @@
         if (token) {
             (async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/api/me`, { 
+                    const res = await fetch('/api/me', { 
                         headers: { 'Authorization': `Bearer ${token}` } 
                     });
                     if (res.ok) {
@@ -1733,7 +1555,12 @@
                         await loadData();
                         showApp();
                     }
-                } catch {}
+                } catch {
+                    // Если сервер недоступен, пробуем из памяти
+                    if (loadFromLocalStorage()) {
+                        showApp();
+                    }
+                }
             })();
         }
     </script>

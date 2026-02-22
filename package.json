@@ -1,7 +1,7 @@
 {
   "name": "counselor-journal",
   "version": "2.0.0",
-  "description": "Журнал вожатого - полная версия с сервером",
+  "description": "Журнал вожатого",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
