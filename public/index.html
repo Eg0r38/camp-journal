@@ -198,30 +198,11 @@
             cursor: pointer;
         }
 
-        .sync-info button:hover {
-            background: var(--primary-dark);
-        }
-
         .last-sync {
             font-size: 12px;
             color: var(--text-muted);
             text-align: right;
             margin-top: 4px;
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .share-buttons button {
-            flex: 1;
-            padding: 10px;
-            font-size: 14px;
-            margin: 0;
-            background: var(--warning);
-            color: #1a1a1a;
         }
 
         input, select, textarea {
@@ -299,9 +280,21 @@
             border: 1px solid var(--border);
         }
 
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header strong {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 12px;
             margin: 20px 0;
         }
@@ -361,6 +354,38 @@
             border: 1px solid var(--border);
         }
 
+        .book-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .book-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .book-status.available { background: var(--success); }
+        .book-status.completed { background: var(--completed); }
+        .book-status.in-progress { background: var(--warning); color: #1a1a1a; }
+
+        .book-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .book-actions button {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            margin: 0;
+        }
+
         .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .mb-20 { margin-bottom: 20px; }
         .text-muted { color: var(--text-muted); }
@@ -403,7 +428,7 @@
 
         .badge {
             display: inline-block;
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
@@ -432,6 +457,37 @@
             border-radius: 20px;
             font-size: 10px;
             margin-left: 6px;
+        }
+
+        .admin-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--darker);
+            border-radius: 12px;
+            border: 1px solid var(--danger);
+        }
+
+        .user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-row:last-child {
+            border-bottom: none;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .user-actions button {
+            padding: 4px 12px;
+            font-size: 12px;
+            margin: 0;
         }
     </style>
 </head>
@@ -493,11 +549,7 @@
                     <span id="syncIcon">✅</span> 
                     <span id="syncStatus">Синхронизировано</span>
                 </span>
-                <button onclick="forceSync()">🔄 Синхронизировать</button>
-            </div>
-            <div class="share-buttons">
-                <button class="btn-warning" onclick="exportData()">📤 Экспорт</button>
-                <button class="btn-warning" onclick="importData()">📥 Импорт</button>
+                <button class="btn-info" onclick="forceSync()">🔄 Синхронизировать</button>
             </div>
             <div class="last-sync" id="lastSyncTime"></div>
 
@@ -596,22 +648,49 @@
             </div>
 
             <div class="page" id="adminPage">
-                <h2>⚙️ Управление</h2>
+                <h2>⚙️ Админ панель</h2>
+                
+                <!-- Статистика -->
                 <div class="card">
                     <h3>📊 Статистика</h3>
-                    <div>Всего пользователей: <span id="totalUsers">0</span></div>
-                    <div>Админов: <span id="adminCount">0</span></div>
-                    <div>Вожатых: <span id="counselorCount">0</span></div>
-                    <div>Помощников: <span id="helperCount">0</span></div>
-                </div>
-                <div id="usersList"></div>
-                <div class="cleanup-section" style="margin-top:20px; padding:20px; background:var(--darker); border-radius:8px;">
-                    <h3>🗑️ Очистка данных</h3>
                     <div class="flex-row">
-                        <button class="btn-warning" onclick="cleanupData('empty-groups')">Пустые группы</button>
-                        <button class="btn-warning" onclick="cleanupData('orphaned-marks')">Отметки без уч.</button>
-                        <button class="btn-warning" onclick="cleanupData('old-activities')">Старые мероприятия</button>
-                        <button class="btn-danger" onclick="cleanupData('all')">Всё</button>
+                        <div>Всего: <span id="totalUsers">0</span></div>
+                        <div>Админов: <span id="adminCount">0</span></div>
+                        <div>Вожатых: <span id="counselorCount">0</span></div>
+                        <div>Помощников: <span id="helperCount">0</span></div>
+                    </div>
+                </div>
+
+                <!-- Список пользователей -->
+                <div class="card">
+                    <h3>👥 Пользователи</h3>
+                    <div id="usersList"></div>
+                </div>
+
+                <!-- Админ функции -->
+                <div class="admin-section">
+                    <h3 style="color: var(--danger); margin-bottom: 15px;">🛠️ Управление данными</h3>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <h4>Выберите пользователя:</h4>
+                        <select id="adminUserSelect" style="margin-bottom: 10px; width: 100%;">
+                            <option value="">-- Выберите пользователя --</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                        <button class="btn-warning" onclick="adminToggleUser()">🔒 Блокировать/Разблокировать</button>
+                        <button class="btn-info" onclick="adminChangeRole()">🔄 Сменить роль</button>
+                        <button class="btn-danger" onclick="adminDeleteUser()">🗑️ Удалить пользователя</button>
+                    </div>
+
+                    <h4 style="margin: 20px 0 10px; color: var(--warning);">🗑️ Удаление данных пользователя:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">
+                        <button class="btn-danger" onclick="adminDeleteGroups()">🗑️ Группы</button>
+                        <button class="btn-danger" onclick="adminDeleteMembers()">🗑️ Участников</button>
+                        <button class="btn-danger" onclick="adminDeleteMarks()">🗑️ Отметки</button>
+                        <button class="btn-danger" onclick="adminDeleteBooks()">🗑️ Книги</button>
+                        <button class="btn-danger" onclick="adminDeleteAll()" style="grid-column: span 2;">🗑️ ВСЕ данные</button>
                     </div>
                 </div>
             </div>
@@ -626,31 +705,12 @@
         let isOnline = true;
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
+        let usersList = [];
 
         const ADMIN_CREDENTIALS = { 'Егор': '382154' };
 
         function showToast(msg, type = 'info') {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: var(--dark);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
-                border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
-                z-index: 3000;
-                font-size: 14px;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-                max-width: 80%;
-                text-align: center;
-            `;
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            alert(msg);
         }
 
         function updateLastSyncTime() {
@@ -658,74 +718,6 @@
                 document.getElementById('lastSyncTime').textContent = `Последняя синхр.: ${new Date(lastSyncTime).toLocaleString()}`;
             }
         }
-
-        // ========== ЭКСПОРТ/ИМПОРТ ==========
-        window.exportData = function() {
-            if (!currentUser) {
-                showToast('⚠️ Сначала войдите', 'error');
-                return;
-            }
-
-            const exportObj = {
-                user: { 
-                    id: currentUser.id, 
-                    username: currentUser.username, 
-                    role: currentUser.role 
-                },
-                data: data,
-                timestamp: new Date().toISOString(),
-                version: '1.0'
-            };
-
-            const jsonStr = JSON.stringify(exportObj, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `vj_data_${currentUser.username}_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showToast('📤 Данные экспортированы', 'success');
-        };
-
-        window.importData = function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const imported = JSON.parse(event.target.result);
-                        
-                        if (!imported.data || !imported.user) {
-                            showToast('❌ Неверный формат файла', 'error');
-                            return;
-                        }
-
-                        if (confirm(`Загрузить данные от пользователя ${imported.user.username}?\nТекущие данные будут заменены.`)) {
-                            data = imported.data;
-                            renderAll();
-                            pendingChanges = true;
-                            document.getElementById('pendingBadge').style.display = 'inline-block';
-                            showToast('✅ Данные импортированы', 'success');
-                        }
-                    } catch (err) {
-                        showToast('❌ Ошибка чтения файла', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            
-            input.click();
-        };
 
         async function checkConnection() {
             try {
@@ -776,26 +768,24 @@
                     document.getElementById('syncStatus').textContent = 'Синхронизировано';
                     
                     renderAll();
-                    showToast('✅ Синхронизация завершена', 'success');
+                    showToast('✅ Синхронизация', 'success');
                 }
             } catch (e) {
                 document.getElementById('syncIcon').textContent = '❌';
                 document.getElementById('syncStatus').textContent = 'Ошибка';
-                showToast('❌ Ошибка синхронизации', 'error');
+                showToast('❌ Ошибка', 'error');
             }
         }
 
         async function forceSync() {
             if (!currentUser) {
-                showToast('⚠️ Сначала войдите', 'error');
+                showToast('⚠️ Войдите', 'error');
                 return;
             }
-            
             if (!isOnline) {
-                showToast('⚠️ Нет подключения к серверу', 'error');
+                showToast('⚠️ Нет подключения', 'error');
                 return;
             }
-            
             await autoSync();
         }
 
@@ -818,7 +808,12 @@
             const role = document.getElementById('registerRole').value;
 
             if (!username || !password) {
-                showToast('Заполните все поля', 'error');
+                showToast('Заполните поля', 'error');
+                return;
+            }
+
+            if (!isOnline) {
+                showToast('Нет подключения', 'error');
                 return;
             }
 
@@ -836,7 +831,7 @@
                     showToast(data.error, 'error');
                 }
             } catch {
-                showToast('Ошибка подключения к серверу', 'error');
+                showToast('Ошибка', 'error');
             }
         }
 
@@ -863,12 +858,12 @@
                     localStorage.setItem('token', token);
                     await loadData();
                     showApp();
-                    showToast(`👋 Добро пожаловать, ${username}!`, 'success');
+                    showToast(`👋 Здравствуйте, ${username}!`, 'success');
                 } else {
                     showToast(data.error, 'error');
                 }
             } catch {
-                showToast('Ошибка подключения к серверу', 'error');
+                showToast('Ошибка подключения', 'error');
             }
         }
 
@@ -901,22 +896,251 @@
                             books: serverData.myData?.books || { list: [] },
                             allUsersData: serverData.allUsersData || {}
                         };
+                        await loadUsersList();
                     } else {
                         data = serverData;
                     }
                     pendingChanges = false;
                     document.getElementById('pendingBadge').style.display = 'none';
                     renderAll();
-                    showToast('✅ Данные загружены', 'success');
                 }
             } catch {
-                showToast('Ошибка загрузки данных', 'error');
+                showToast('Ошибка загрузки', 'error');
             }
         }
 
-        async function saveData() {
-            if (!token) return;
+        async function loadUsersList() {
+            try {
+                const res = await fetch('/api/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    usersList = await res.json();
+                    renderUsersList();
+                    updateUserSelect();
+                    updateStats();
+                }
+            } catch {}
+        }
+
+        function renderUsersList() {
+            const usersListDiv = document.getElementById('usersList');
+            const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник' };
             
+            let html = '';
+            usersList.forEach(user => {
+                const status = user.isActive ? '🟢' : '🔴';
+                html += `
+                    <div class="user-row">
+                        <div>
+                            <strong>${user.username}</strong> 
+                            <span class="badge ${user.role}">${roleNames[user.role]}</span>
+                            <span> ${status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            usersListDiv.innerHTML = html;
+        }
+
+        function updateUserSelect() {
+            const select = document.getElementById('adminUserSelect');
+            let options = '<option value="">-- Выберите пользователя --</option>';
+            usersList.forEach(user => {
+                if (user.id !== 1) {
+                    options += `<option value="${user.id}">${user.username} (${user.role})</option>`;
+                }
+            });
+            select.innerHTML = options;
+        }
+
+        // ========== АДМИН ФУНКЦИИ ==========
+        window.adminToggleUser = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/toggle`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Статус изменен', 'success');
+                    await loadUsersList();
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminChangeRole = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            const newRole = prompt('Введите новую роль (admin/counselor/helper):');
+            if (!newRole) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+                if (res.ok) {
+                    showToast('✅ Роль изменена', 'success');
+                    await loadUsersList();
+                } else {
+                    const data = await res.json();
+                    showToast(data.error, 'error');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteUser = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('Удалить пользователя? Все его данные будут потеряны!')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Пользователь удален', 'success');
+                    await loadUsersList();
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteGroups = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('Удалить все группы у пользователя?')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/groups`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Группы удалены', 'success');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteMembers = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('Удалить всех участников?')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/members`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Участники удалены', 'success');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteMarks = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('Удалить все отметки?')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/marks`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Отметки удалены', 'success');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteBooks = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('Удалить все книги?')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/books`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Книги удалены', 'success');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        window.adminDeleteAll = async function() {
+            const userId = document.getElementById('adminUserSelect').value;
+            if (!userId) {
+                showToast('Выберите пользователя', 'error');
+                return;
+            }
+            
+            if (!confirm('⚠️ Удалить ВСЕ данные пользователя?')) return;
+            
+            try {
+                const res = await fetch(`/api/users/${userId}/all`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    showToast('✅ Все данные удалены', 'success');
+                }
+            } catch {
+                showToast('❌ Ошибка', 'error');
+            }
+        };
+
+        async function saveData() {
             pendingChanges = true;
             document.getElementById('pendingBadge').style.display = 'inline-block';
             document.getElementById('syncIcon').textContent = '⏳';
@@ -925,7 +1149,7 @@
             if (isOnline) {
                 await autoSync();
             } else {
-                showToast('📱 Данные сохранены локально', 'info');
+                showToast('📱 Сохранено локально', 'info');
             }
         }
 
@@ -969,7 +1193,6 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'booksPage') renderBooks();
-            if (pageId === 'adminPage' && currentUser?.role === 'admin') loadUsers();
             updatePageControls(pageId);
         }
 
@@ -1003,7 +1226,7 @@
 
         window.editGroupDate = function(groupName) {
             const currentDate = data.groups[groupName]?.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Введите новую дату (ГГГГ-ММ-ДД):', currentDate);
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
             if (newDate) {
                 data.groups[groupName].createdAt = new Date(newDate).toISOString();
                 saveData().then(renderGroups);
@@ -1017,15 +1240,16 @@
             const parentPhone = document.getElementById('newStudentParentPhone').value.trim();
             const group = document.getElementById('studentGroupSelect').value;
             
-            if (!name || !group) return showToast('Заполните имя и группу', 'error');
+            if (!name || !group) return showToast('Имя и группа обязательны', 'error');
             
             if (!data.members[group]) data.members[group] = [];
             data.members[group].push({ 
                 id: Date.now(), 
-                name, 
+                name,
                 birthday: birthday || null,
-                phone: phone || null, 
-                parentPhone: parentPhone || null
+                phone: phone || null,
+                parentPhone: parentPhone || null,
+                addedAt: new Date().toISOString() 
             });
             
             saveData().then(() => {
@@ -1038,20 +1262,25 @@
             });
         }
 
-        window.removeStudent = function(g, sid) {
-            if (!confirm('Удалить участника?')) return;
-            data.members[g] = data.members[g].filter(s => s.id !== sid);
-            saveData().then(() => { renderStudents(); updateStats(); });
+        window.removeStudent = function(g, sid) { 
+            if (!confirm('Удалить участника?')) return; 
+            data.members[g] = data.members[g].filter(s => s.id !== sid); 
+            saveData().then(() => { 
+                renderStudents(); 
+                updateStats(); 
+            }); 
         };
 
         function updateStudentSelect() {
             const group = document.getElementById('markGroupSelect').value;
             const studSel = document.getElementById('markStudentSelect');
-            if (!group || !data.members[group]?.length) {
-                studSel.innerHTML = '<option value="">Нет участников</option>';
-                return;
+            
+            if (!group || !data.members[group]?.length) { 
+                studSel.innerHTML = '<option value="">Нет участников</option>'; 
+                return; 
             }
-            let opts = '<option value="">Выберите участника</option>';
+            
+            let opts = '<option value="">Выберите</option>';
             data.members[group].forEach(s => opts += `<option value="${s.id}">${s.name}</option>`);
             studSel.innerHTML = opts;
         }
@@ -1073,15 +1302,19 @@
             saveData().then(() => { renderMarks(); updateStats(); });
         };
 
-        window.deleteMark = function(g, sid, mid) {
-            if (!confirm('Удалить отметку?')) return;
-            const idx = data.marks[g][sid].findIndex(m => m.id === mid);
-            if (idx !== -1) {
-                data.marks[g][sid].splice(idx, 1);
-                if (!data.marks[g][sid].length) delete data.marks[g][sid];
-                if (!Object.keys(data.marks[g]).length) delete data.marks[g];
-                saveData().then(() => { renderMarks(); updateStats(); });
-            }
+        window.deleteMark = function(g, sid, mid) { 
+            if (!confirm('Удалить отметку?')) return; 
+            
+            const idx = data.marks[g][sid].findIndex(m => m.id === mid); 
+            if (idx !== -1) { 
+                data.marks[g][sid].splice(idx, 1); 
+                if (!data.marks[g][sid].length) delete data.marks[g][sid]; 
+                if (!Object.keys(data.marks[g]).length) delete data.marks[g]; 
+                saveData().then(() => { 
+                    renderMarks(); 
+                    updateStats(); 
+                }); 
+            } 
         };
 
         window.editMarkDate = function(group, studentId, markId) {
@@ -1089,88 +1322,91 @@
             if (!mark) return showToast('Отметка не найдена', 'error');
             
             const currentDate = mark.date?.split('T')[0] || new Date().toISOString().split('T')[0];
-            const newDate = prompt('Введите новую дату (ГГГГ-ММ-ДД):', currentDate);
+            const newDate = prompt('Новая дата (ГГГГ-ММ-ДД):', currentDate);
             if (newDate) {
                 mark.date = new Date(newDate).toISOString();
                 saveData().then(() => { renderMarks(); });
             }
         };
 
-        function addActivity() {
-            const n = document.getElementById('newActivityName').value.trim();
-            const d = document.getElementById('activityDate').value;
-            if (!n || !d) return showToast('Заполните поля', 'error');
-            if (!data.activities[d]) data.activities[d] = [];
-            data.activities[d].push({ id: Date.now(), name: n });
-            saveData().then(() => {
-                document.getElementById('newActivityName').value = '';
-                renderActivities();
-            });
+        function addActivity() { 
+            const n = document.getElementById('newActivityName').value.trim(); 
+            const d = document.getElementById('activityDate').value; 
+            if (!n || !d) return showToast('Заполните поля', 'error'); 
+            if (!data.activities[d]) data.activities[d] = []; 
+            data.activities[d].push({ id: Date.now(), name: n }); 
+            saveData().then(() => { 
+                document.getElementById('newActivityName').value = ''; 
+                renderActivities(); 
+            }); 
         }
 
-        function addCounselor() {
-            const n = document.getElementById('newCounselorName').value.trim();
-            const g = document.getElementById('counselorGroupSelect').value;
-            if (!n || !g) return showToast('Заполните поля', 'error');
-            if (!data.counselors[g]) data.counselors[g] = [];
-            data.counselors[g].push({ id: Date.now(), name: n });
-            saveData().then(() => {
-                document.getElementById('newCounselorName').value = '';
-                renderCounselors();
-            });
+        function addCounselor() { 
+            const n = document.getElementById('newCounselorName').value.trim(); 
+            const g = document.getElementById('counselorGroupSelect').value; 
+            if (!n || !g) return showToast('Заполните поля', 'error'); 
+            if (!data.counselors[g]) data.counselors[g] = []; 
+            data.counselors[g].push({ id: Date.now(), name: n }); 
+            saveData().then(() => { 
+                document.getElementById('newCounselorName').value = ''; 
+                renderCounselors(); 
+            }); 
         }
 
-        window.removeCounselor = function(g, id) {
-            if (!confirm('Удалить вожатого?')) return;
-            data.counselors[g] = data.counselors[g].filter(c => c.id !== id);
-            saveData().then(renderCounselors);
+        window.removeCounselor = function(g, id) { 
+            if (!confirm('Удалить вожатого?')) return; 
+            data.counselors[g] = data.counselors[g].filter(c => c.id !== id); 
+            saveData().then(renderCounselors); 
         };
 
-        function addHelper() {
-            const n = document.getElementById('newHelperName').value.trim();
-            const g = document.getElementById('helperGroupSelect').value;
-            if (!n || !g) return showToast('Заполните поля', 'error');
-            if (!data.helpers[g]) data.helpers[g] = [];
-            data.helpers[g].push({ id: Date.now(), name: n });
-            saveData().then(() => {
-                document.getElementById('newHelperName').value = '';
-                renderHelpers();
-            });
+        function addHelper() { 
+            const n = document.getElementById('newHelperName').value.trim(); 
+            const g = document.getElementById('helperGroupSelect').value; 
+            if (!n || !g) return showToast('Заполните поля', 'error'); 
+            if (!data.helpers[g]) data.helpers[g] = []; 
+            data.helpers[g].push({ id: Date.now(), name: n }); 
+            saveData().then(() => { 
+                document.getElementById('newHelperName').value = ''; 
+                renderHelpers(); 
+            }); 
         }
 
-        window.removeHelper = function(g, id) {
-            if (!confirm('Удалить помощника?')) return;
-            data.helpers[g] = data.helpers[g].filter(h => h.id !== id);
-            saveData().then(renderHelpers);
+        window.removeHelper = function(g, id) { 
+            if (!confirm('Удалить помощника?')) return; 
+            data.helpers[g] = data.helpers[g].filter(h => h.id !== id); 
+            saveData().then(renderHelpers); 
         };
 
-        function addBook() {
-            const t = document.getElementById('newBookTitle').value.trim();
-            const l = document.getElementById('newBookLesson').value.trim();
-            const s = document.getElementById('bookStatus').value;
-            if (!t || !l) return showToast('Заполните поля', 'error');
-            if (!data.books.list) data.books.list = [];
-            data.books.list.push({ id: Date.now(), title: t, lesson: l, status: s });
-            saveData().then(() => {
-                document.getElementById('newBookTitle').value = '';
-                document.getElementById('newBookLesson').value = '';
-                renderBooks();
-                updateStats();
-            });
+        function addBook() { 
+            const t = document.getElementById('newBookTitle').value.trim(); 
+            const l = document.getElementById('newBookLesson').value.trim(); 
+            const s = document.getElementById('bookStatus').value; 
+            if (!t || !l) return showToast('Заполните поля', 'error'); 
+            if (!data.books.list) data.books.list = []; 
+            data.books.list.push({ id: Date.now(), title: t, lesson: l, status: s }); 
+            saveData().then(() => { 
+                document.getElementById('newBookTitle').value = ''; 
+                document.getElementById('newBookLesson').value = ''; 
+                renderBooks(); 
+                updateStats(); 
+            }); 
         }
 
-        window.updateBookStatus = function(bid, ns) {
-            const b = data.books.list.find(b => b.id === bid);
-            if (b) { b.status = ns; saveData().then(renderBooks); }
+        window.updateBookStatus = function(bid, ns) { 
+            const b = data.books.list.find(b => b.id === bid); 
+            if (b) { b.status = ns; saveData().then(renderBooks); } 
         };
 
-        window.deleteBook = function(bid) {
-            if (!confirm('Удалить книгу?')) return;
-            data.books.list = data.books.list.filter(b => b.id !== bid);
-            saveData().then(renderBooks);
+        window.deleteBook = function(bid) { 
+            if (!confirm('Удалить книгу?')) return; 
+            data.books.list = data.books.list.filter(b => b.id !== bid); 
+            saveData().then(renderBooks); 
         };
 
-        window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
+        window.filterBooks = function(f) { 
+            currentBookFilter = f; 
+            renderBooks(); 
+        };
 
         function renderAll() {
             renderGroups(); renderStudents(); renderMarks(); renderActivities();
@@ -1213,14 +1449,17 @@
                 return;
             }
             let h = '';
+            const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
             
             for (let g in data.members) {
+                if (!data.members[g].length) continue;
+                
+                const groupCounselors = data.counselors?.[g] || [];
+                const groupHelpers = data.helpers?.[g] || [];
+                
                 data.members[g].forEach(s => {
                     const marks = data.marks?.[g]?.[s.id] || [];
                     const lastMarks = marks.slice(-3).reverse();
-                    const counselors = data.counselors?.[g] || [];
-                    const helpers = data.helpers?.[g] || [];
-                    const completedBooks = data.books?.list?.filter(b => b.status === 'completed') || [];
                     
                     h += `
                         <div class="card">
@@ -1234,27 +1473,21 @@
                                 ${s.parentPhone ? `<div>👪 ${s.parentPhone}</div>` : ''}
                             </div>
                             <div style="margin:8px 0;">
-                                👨‍🏫 Вожатые: ${counselors.map(c => c.name).join(', ') || 'нет'}
+                                👨‍🏫 Вожатые: ${groupCounselors.map(c => c.name).join(', ') || 'нет'}
                             </div>
                             <div style="margin:8px 0;">
-                                🆘 Помощники: ${helpers.map(h => h.name).join(', ') || 'нет'}
+                                🆘 Помощники: ${groupHelpers.map(h => h.name).join(', ') || 'нет'}
                             </div>
                             <div style="margin:8px 0;">
-                                📚 Пройденные книги: ${completedBooks.length}
-                                ${completedBooks.length > 0 ? `
-                                    <div style="margin-top:4px; font-size:12px;">
-                                        ${completedBooks.map(b => `✅ ${b.title}`).join(', ')}
-                                    </div>
-                                ` : ''}
+                                📚 Пройдено: ${completedBooks.length}
                             </div>
                             <div style="margin:8px 0;">
-                                ⭐ Последние отметки: 
+                                ⭐ Последние: 
                                 ${lastMarks.map(m => `
                                     <span style="cursor:pointer; margin-right:8px;" onclick="editMarkDate('${g}',${s.id},${m.id})">
                                         ${m.status === 'present' ? '✅' : '❌'} ${new Date(m.date).toLocaleDateString()}
                                     </span>
                                 `).join('')}
-                                ${lastMarks.length === 0 ? 'нет' : ''}
                             </div>
                             <button class="btn-danger" style="width:auto; margin-top:8px;" onclick="removeStudent('${g}',${s.id})">✕ Удалить</button>
                         </div>
@@ -1275,7 +1508,9 @@
                 for (let sid in data.marks[g]) {
                     const s = data.members[g]?.find(m => m.id == sid);
                     if (!s) continue;
+                    
                     h += `<div class="card"><strong>${s.name} (${g})</strong>`;
+                    
                     data.marks[g][sid].slice().reverse().forEach(m => {
                         h += `
                             <div class="mark-item">
@@ -1354,18 +1589,16 @@
             let h = '';
             filtered.forEach(b => {
                 const statusColor = b.status === 'available' ? 'var(--success)' : b.status === 'completed' ? 'var(--completed)' : 'var(--warning)';
-                const statusText = b.status === 'available' ? '📖' : b.status === 'completed' ? '✅' : '📚';
-                
                 h += `
                     <div class="book-item">
                         <strong>${b.title}</strong> (${b.lesson})
-                        <span class="badge" style="background:${statusColor}; margin-left:8px;">${statusText}</span>
+                        <span class="badge" style="background:${statusColor}">${b.status}</span>
                         ${currentUser?.role === 'admin' ? `
-                            <div class="book-actions" style="display:flex; gap:4px; margin-top:8px;">
-                                <button style="flex:1; padding:4px;" onclick="updateBookStatus(${b.id},'available')">📖</button>
-                                <button style="flex:1; padding:4px;" onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
-                                <button style="flex:1; padding:4px;" onclick="updateBookStatus(${b.id},'completed')">✅</button>
-                                <button style="flex:1; padding:4px;" onclick="deleteBook(${b.id})">✕</button>
+                            <div class="book-actions">
+                                <button onclick="updateBookStatus(${b.id},'available')">📖</button>
+                                <button onclick="updateBookStatus(${b.id},'in-progress')">📚</button>
+                                <button onclick="updateBookStatus(${b.id},'completed')">✅</button>
+                                <button onclick="deleteBook(${b.id})">✕</button>
                             </div>
                         ` : ''}
                     </div>
@@ -1389,62 +1622,30 @@
             if (currentUser?.role !== 'admin') return;
             
             let tg = 0, tm = 0, tmk = 0;
+            let tb = data.books?.list?.length || 0;
+            let cb = data.books?.list?.filter(b => b.status === 'completed').length || 0;
+            
             for (let g in data.groups) { tg++; tm += data.members[g]?.length || 0; }
             for (let g in data.marks) for (let s in data.marks[g]) tmk += data.marks[g][s].length;
             
             document.getElementById('totalGroupsStat').textContent = tg;
             document.getElementById('totalMembersStat').textContent = tm;
             document.getElementById('totalMarksStat').textContent = tmk;
-            document.getElementById('totalBooksStat').textContent = data.books?.list?.length || 0;
-            document.getElementById('completedBooksStat').textContent = data.books?.list?.filter(b => b.status === 'completed').length || 0;
-        }
-
-        async function loadUsers() {
-            if (!currentUser || currentUser.role !== 'admin') return;
-            try {
-                const res = await fetch('/api/users', { 
-                    headers: { 'Authorization': `Bearer ${token}` } 
-                });
-                if (res.ok) {
-                    const users = await res.json();
-                    document.getElementById('totalUsers').textContent = users.length;
-                    document.getElementById('adminCount').textContent = users.filter(u => u.role === 'admin').length;
-                    document.getElementById('counselorCount').textContent = users.filter(u => u.role === 'counselor').length;
-                    document.getElementById('helperCount').textContent = users.filter(u => u.role === 'helper').length;
-                    
-                    let html = '';
-                    users.forEach(u => {
-                        html += `
-                            <div class="card">
-                                <div class="flex-row" style="justify-content:space-between">
-                                    <strong>${u.username}</strong>
-                                    <span>
-                                        <span class="badge" style="background:${u.role === 'admin' ? 'var(--primary)' : u.role === 'counselor' ? 'var(--info)' : 'var(--warning)'}">
-                                            ${u.role === 'admin' ? '👑' : u.role === 'counselor' ? '👨‍🏫' : '🆘'} ${u.role}
-                                        </span>
-                                        <span> ${u.isActive ? '🟢' : '🔴'}</span>
-                                    </span>
-                                </div>
-                                <div style="font-size:12px; color:var(--text-muted);">
-                                    Создан: ${new Date(u.createdAt).toLocaleDateString()}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('usersList').innerHTML = html;
-                }
-            } catch {}
-        }
-
-        function cleanupData(type) {
-            if (!confirm('Очистить данные?')) return;
-            showToast(`Очистка: ${type}`, 'info');
+            document.getElementById('totalBooksStat').textContent = tb;
+            document.getElementById('completedBooksStat').textContent = cb;
+            
+            document.getElementById('totalUsers').textContent = usersList.length;
+            document.getElementById('adminCount').textContent = usersList.filter(u => u.role === 'admin').length;
+            document.getElementById('counselorCount').textContent = usersList.filter(u => u.role === 'counselor').length;
+            document.getElementById('helperCount').textContent = usersList.filter(u => u.role === 'helper').length;
         }
 
         function closeModal() { 
             document.getElementById('modal').classList.remove('active'); 
         }
 
+        setInterval(checkConnection, 30000);
+        
         if (token) {
             (async () => {
                 try {

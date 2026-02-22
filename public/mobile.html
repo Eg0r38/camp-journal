@@ -224,6 +224,19 @@
             color: #1a1a1a;
         }
 
+        .ip-button {
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .ip-button button {
+            background: var(--info);
+            padding: 6px;
+            font-size: 11px;
+            width: auto;
+            display: inline-block;
+        }
+
         .last-sync {
             font-size: 10px;
             color: var(--text-muted);
@@ -520,7 +533,7 @@
     <div class="app-header">
         <div class="logo-area">
             <div class="vj-logo">ВЖ</div>
-            <span class="app-title">Журнал вожатого</span>
+            <span class="app-title">Журнал вожатого • мобильная</span>
         </div>
         <div class="user-section" id="userInfo" style="display: none;">
             <div class="user-info">
@@ -578,7 +591,21 @@
                     <button class="btn-warning" onclick="exportData()">📤 экспорт</button>
                     <button class="btn-warning" onclick="importData()">📥 импорт</button>
                 </div>
+                <div class="ip-button">
+                    <button onclick="showManualIpInput()">🔄 Сменить IP</button>
+                </div>
                 <div class="last-sync" id="lastSyncTime"></div>
+            </div>
+
+            <!-- Модалка для ручного ввода IP -->
+            <div id="manualIpModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 3000; align-items: center; justify-content: center; padding: 20px;">
+                <div style="background: var(--dark); border-radius: 20px; padding: 24px; max-width: 340px; width: 100%; border: 2px solid var(--primary);">
+                    <h3 style="color: var(--primary); margin-bottom: 16px;">🌐 Настройка подключения</h3>
+                    <p style="margin-bottom: 16px; color: var(--text-muted);">Введите IP адрес компьютера с сервером:</p>
+                    <input type="text" id="manualIpInput" placeholder="192.168.0.105" value="192.168.0.105" style="margin-bottom: 16px;">
+                    <button id="saveManualIpBtn" class="btn-success" style="margin-bottom: 8px;">💾 Сохранить</button>
+                    <button id="testManualIpBtn" class="btn-info">🔍 Проверить</button>
+                </div>
             </div>
 
             <div class="menu-grid" id="menuGrid"></div>
@@ -692,6 +719,80 @@
     </div>
 
     <script>
+        // ========== НАСТРОЙКА ПОДКЛЮЧЕНИЯ ==========
+        const YOUR_PC_IP = '192.168.0.105'; // ВАШ IP АДРЕС
+
+        function getServerUrl() {
+            if (window.location.protocol === 'file:') {
+                let savedIp = localStorage.getItem('server_ip');
+                if (!savedIp) {
+                    savedIp = YOUR_PC_IP;
+                    localStorage.setItem('server_ip', savedIp);
+                    setTimeout(() => {
+                        alert(`✅ IP сервера сохранен: ${savedIp}\nСтраница будет перезагружена.`);
+                        window.location.reload();
+                    }, 100);
+                    return null;
+                }
+                return `http://${savedIp}:3000`;
+            }
+            return window.location.origin;
+        }
+
+        const API_BASE = getServerUrl();
+        console.log('🖥️ Сервер API:', API_BASE);
+
+        function showManualIpInput() {
+            document.getElementById('manualIpModal').style.display = 'flex';
+        }
+
+        function hideManualIpInput() {
+            document.getElementById('manualIpModal').style.display = 'none';
+        }
+
+        async function testConnection(ip) {
+            try {
+                const res = await fetch(`http://${ip}:3000/api/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    timeout: 5000
+                });
+                return res.ok;
+            } catch {
+                return false;
+            }
+        }
+
+        document.getElementById('saveManualIpBtn').onclick = async function() {
+            const ip = document.getElementById('manualIpInput').value.trim();
+            if (!ip) return;
+            
+            const isConnected = await testConnection(ip);
+            if (isConnected) {
+                localStorage.setItem('server_ip', ip);
+                hideManualIpInput();
+                alert('✅ Подключение установлено!');
+                window.location.reload();
+            } else {
+                alert('❌ Не удалось подключиться к серверу');
+            }
+        };
+
+        document.getElementById('testManualIpBtn').onclick = async function() {
+            const ip = document.getElementById('manualIpInput').value.trim();
+            const isConnected = await testConnection(ip);
+            alert(isConnected ? '✅ Сервер доступен!' : '❌ Сервер не отвечает');
+        };
+
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (!API_BASE) return originalFetch(url, options);
+            if (typeof url === 'string' && url.startsWith('/api')) {
+                url = API_BASE + url;
+            }
+            return originalFetch(url, options);
+        };
+
         // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let currentUser = null;
         let token = localStorage.getItem('token');
@@ -701,34 +802,6 @@
         let pendingChanges = false;
         let lastSyncTime = localStorage.getItem('lastSyncTime') || null;
 
-        // ========== ТРИ АККАУНТА ==========
-        const ADMIN_CREDENTIALS = { 
-            'Егор': '382154',
-            'Вика': '302007',
-            'Миша': '282011'
-        };
-
-        // ========== УВЕДОМЛЕНИЯ ==========
-        function showToast(msg, type = 'info') {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-                background: var(--dark); color: white; padding: 10px 20px; border-radius: 30px;
-                border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
-                z-index: 3000; font-size: 13px; max-width: 80%; text-align: center;
-            `;
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
-        function updateLastSyncTime() {
-            if (lastSyncTime) {
-                document.getElementById('lastSyncTime').textContent = `синхр: ${new Date(lastSyncTime).toLocaleString()}`;
-            }
-        }
-
-        // ========== СОХРАНЕНИЕ В ПАМЯТЬ ТЕЛЕФОНА ==========
         function saveToLocalStorage() {
             if (!currentUser) return;
             
@@ -741,15 +814,17 @@
             
             localStorage.setItem(storageKey, JSON.stringify(saveData));
             localStorage.setItem('lastUser', JSON.stringify(currentUser));
-            console.log('💾 Данные сохранены в память телефона');
+            console.log('💾 Данные сохранены для:', currentUser.username);
         }
 
-        function loadFromLocalStorage() {
+        function loadFromLocalStorage(username) {
             const lastUser = localStorage.getItem('lastUser');
             if (!lastUser) return false;
             
             try {
                 const user = JSON.parse(lastUser);
+                if (username && user.username !== username) return false;
+                
                 const storageKey = `user_${user.id}_data`;
                 const savedData = localStorage.getItem(storageKey);
                 
@@ -758,13 +833,36 @@
                     currentUser = parsed.user;
                     data = parsed.data;
                     document.getElementById('userName').textContent = currentUser?.username;
+                    
+                    const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник' };
+                    document.getElementById('userRole').textContent = roleNames[currentUser?.role] || currentUser?.role;
+                    
+                    console.log('📱 Загружен пользователь:', currentUser.username);
                     return true;
                 }
             } catch (e) {}
             return false;
         }
 
-        // ========== ЭКСПОРТ/ИМПОРТ ==========
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                background: var(--dark); color: white; padding: 10px 20px; border-radius: 30px;
+                border: 2px solid ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--info)'};
+                z-index: 4000; font-size: 13px; max-width: 80%; text-align: center;
+            `;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function updateLastSyncTime() {
+            if (lastSyncTime) {
+                document.getElementById('lastSyncTime').textContent = `синхр: ${new Date(lastSyncTime).toLocaleString()}`;
+            }
+        }
+
         window.exportData = function() {
             if (!currentUser) {
                 showToast('⚠️ Сначала войдите', 'error');
@@ -833,11 +931,17 @@
             input.click();
         };
 
-        // ========== ПРОВЕРКА ПОДКЛЮЧЕНИЯ ==========
         async function checkConnection() {
+            if (!API_BASE) return false;
+            
             try {
-                const res = await fetch('/api/health').catch(() => null);
-                if (res && res.ok) {
+                const res = await fetch(`${API_BASE}/api/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    timeout: 3000
+                });
+                
+                if (res.ok) {
                     isOnline = true;
                     document.getElementById('connectionStatus').innerHTML = '🟢 онлайн';
                     document.getElementById('connectionStatus').classList.remove('offline');
@@ -848,7 +952,8 @@
                     }
                     return true;
                 }
-            } catch {}
+            } catch (e) {}
+            
             isOnline = false;
             document.getElementById('connectionStatus').innerHTML = '🔴 офлайн';
             document.getElementById('connectionStatus').classList.add('offline');
@@ -856,12 +961,11 @@
             return false;
         }
 
-        // ========== АВТОМАТИЧЕСКАЯ СИНХРОНИЗАЦИЯ ==========
         async function autoSync() {
             if (!currentUser || !token || !isOnline || !pendingChanges) return;
             
             try {
-                const response = await fetch('/api/sync', {
+                const response = await fetch(`${API_BASE}/api/sync`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -899,7 +1003,6 @@
             await autoSync();
         }
 
-        // ========== АВТОРИЗАЦИЯ ==========
         function switchAuthTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             if (tab === 'login') {
@@ -923,8 +1026,13 @@
                 return;
             }
 
+            if (!isOnline || !API_BASE) {
+                showToast('нет подключения к серверу', 'error');
+                return;
+            }
+
             try {
-                const res = await fetch('/api/register', {
+                const res = await fetch(`${API_BASE}/api/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password, role })
@@ -950,43 +1058,61 @@
                 return;
             }
 
-            // Проверка для трех аккаунтов
-            if (ADMIN_CREDENTIALS[username] && ADMIN_CREDENTIALS[username] === password) {
-                let role = 'user';
-                if (username === 'Егор') role = 'admin';
-                else if (username === 'Вика') role = 'counselor';
-                else if (username === 'Миша') role = 'helper';
-                
-                currentUser = { id: Date.now(), username, role };
-                token = 'local-token';
-                localStorage.setItem('token', token);
-                
-                // Загружаем сохраненные данные из памяти
-                loadFromLocalStorage();
+            if (loadFromLocalStorage(username)) {
+                showToast(`👋 Здравствуйте, ${username}! (офлайн)`, 'success');
                 showApp();
-                showToast(`👋 здравствуйте, ${username}!`, 'success');
                 checkConnection();
                 return;
             }
 
+            if (!isOnline || !API_BASE) {
+                showToast('нет подключения к серверу', 'error');
+                return;
+            }
+
             try {
-                const res = await fetch('/api/login', {
+                const res = await fetch(`${API_BASE}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
+                
                 const data = await res.json();
                 if (res.ok) {
                     token = data.token;
                     currentUser = data.user;
                     localStorage.setItem('token', token);
-                    await loadData();
+                    
+                    const dataRes = await fetch(`${API_BASE}/api/data`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (dataRes.ok) {
+                        const serverData = await dataRes.json();
+                        if (currentUser.role === 'admin') {
+                            data = {
+                                groups: serverData.myData?.groups || {},
+                                members: serverData.myData?.members || {},
+                                marks: serverData.myData?.marks || {},
+                                activities: serverData.myData?.activities || {},
+                                counselors: serverData.myData?.counselors || {},
+                                helpers: serverData.myData?.helpers || {},
+                                books: serverData.myData?.books || { list: [] },
+                                allUsersData: serverData.allUsersData || {}
+                            };
+                        } else {
+                            data = serverData;
+                        }
+                    }
+                    
+                    saveToLocalStorage();
                     showApp();
+                    showToast(`👋 здравствуйте, ${username}!`, 'success');
                 } else {
                     showToast(data.error, 'error');
                 }
             } catch {
-                showToast('ошибка', 'error');
+                showToast('ошибка подключения', 'error');
             }
         }
 
@@ -1000,50 +1126,14 @@
             document.getElementById('userInfo').style.display = 'none';
         }
 
-        async function loadData() {
-            if (!token) return;
-            try {
-                const res = await fetch('/api/data', { 
-                    headers: { 'Authorization': `Bearer ${token}` } 
-                });
-                if (res.ok) {
-                    const serverData = await res.json();
-                    if (currentUser?.role === 'admin') {
-                        data = {
-                            groups: serverData.myData?.groups || {},
-                            members: serverData.myData?.members || {},
-                            marks: serverData.myData?.marks || {},
-                            activities: serverData.myData?.activities || {},
-                            counselors: serverData.myData?.counselors || {},
-                            helpers: serverData.myData?.helpers || {},
-                            books: serverData.myData?.books || { list: [] },
-                            allUsersData: serverData.allUsersData || {}
-                        };
-                    } else {
-                        data = serverData;
-                    }
-                    pendingChanges = false;
-                    document.getElementById('pendingBadge').style.display = 'none';
-                    saveToLocalStorage();
-                    renderAll();
-                }
-            } catch {
-                // Если сервер недоступен, загружаем из памяти
-                if (loadFromLocalStorage()) {
-                    showToast('📱 офлайн режим', 'info');
-                    renderAll();
-                } else {
-                    showToast('ошибка загрузки', 'error');
-                }
-            }
-        }
-
         async function saveData() {
+            if (!currentUser) return;
+            
             pendingChanges = true;
             document.getElementById('pendingBadge').style.display = 'inline-block';
             saveToLocalStorage();
             
-            if (isOnline) {
+            if (isOnline && token) {
                 await autoSync();
             } else {
                 showToast('📱 сохранено локально', 'info');
@@ -1054,10 +1144,12 @@
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             document.getElementById('userInfo').style.display = 'flex';
-            document.getElementById('userName').textContent = currentUser?.username;
-
-            const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник', 'user': 'Пользователь' };
-            document.getElementById('userRole').textContent = roleNames[currentUser?.role] || currentUser?.role;
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.username;
+                const roleNames = { 'admin': 'Админ', 'counselor': 'Вожатый', 'helper': 'Помощник' };
+                document.getElementById('userRole').textContent = roleNames[currentUser.role] || currentUser.role;
+            }
 
             if (currentUser?.role === 'admin') {
                 document.getElementById('adminStats').style.display = 'grid';
@@ -1103,7 +1195,6 @@
             }
         }
 
-        // ========== ОСНОВНЫЕ ФУНКЦИИ ==========
         window.createGroup = function() {
             const name = document.getElementById('newGroupName').value.trim();
             if (!name) return showToast('введите название', 'error');
@@ -1295,7 +1386,6 @@
 
         window.filterBooks = function(f) { currentBookFilter = f; renderBooks(); };
 
-        // ========== РЕНДЕРЫ ==========
         function renderAll() {
             renderGroups(); renderStudents(); renderMarks(); renderActivities();
             renderCounselors(); renderHelpers(); renderBooks();
@@ -1543,25 +1633,8 @@
 
         setInterval(checkConnection, 30000);
         
-        if (token) {
-            (async () => {
-                try {
-                    const res = await fetch('/api/me', { 
-                        headers: { 'Authorization': `Bearer ${token}` } 
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        currentUser = data.user;
-                        await loadData();
-                        showApp();
-                    }
-                } catch {
-                    // Если сервер недоступен, пробуем из памяти
-                    if (loadFromLocalStorage()) {
-                        showApp();
-                    }
-                }
-            })();
+        if (loadFromLocalStorage()) {
+            showApp();
         }
     </script>
 </body>
